@@ -11,14 +11,12 @@ function Canvas(canvas) {
 	this.formasGeometricas = new Array();
 
 	this.addFormaGeometrica = function(forma) {
-		console.log("adicionando forma geometrica no canvas");
 		if (forma instanceof FormaGeometrica) {
 			this.formasGeometricas[forma.getId()] = forma;
 		}
 	};
 
 	this.desenharFormaGeometrica = function(formaGeometrica) {
-		console.log("desenhando forma geometrica");
 		if (formaGeometrica instanceof Poligono) {
 			this.desenharPoligono(formaGeometrica);
 		} else if (formaGeometrica instanceof Circulo) {
@@ -27,14 +25,12 @@ function Canvas(canvas) {
 	};
 
 	this.desenharCirculo = function(circulo) {
-		console.log("desenhando circulo");
 		if (circulo instanceof Circulo) {
 			this.desenharArco(circulo);
 		}
 	};
 
 	this.desenharArco = function(arco) {
-		console.log("desenhando arco");
 		if (arco instanceof Arco) {
 			this.contexto.fillStyle = arco.getCor();
 			this.contexto.strokeStyle = arco.getBorda().getCor();
@@ -49,14 +45,12 @@ function Canvas(canvas) {
 	};
 
 	this.desenharPoligono = function(poligono) {
-		console.log("desenhando polígono");
 		if (poligono instanceof Poligono) {
 			var pontos = poligono.getPontos();
 			this.contexto.fillStyle = poligono.getCor();
 			this.contexto.beginPath();
 			this.contexto.moveTo(pontos[0].getX(), pontos[0].getY());
 			for (var i = 1; i < pontos.length; i++) {
-				alert("conectando linha");
 				this.contexto.lineTo(pontos[i].getX(), pontos[i].getY());
 			}
 			this.contexto.closePath();
@@ -68,7 +62,6 @@ function Canvas(canvas) {
 	};
 
 	this.limparTela = function() {
-		console.log("limpando tela");
 		var ponto = new Ponto(this.largura * 0.5, this.altura * 0.5);
 		var quadrado = new Retangulo(ponto, this.largura, this.altura);
 		quadrado.setCor('white');

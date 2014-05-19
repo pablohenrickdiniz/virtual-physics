@@ -1,7 +1,6 @@
 Poligono.prototype = new FormaGeometrica();
 
 function Poligono(centro, angulo) {
-	console.log("criando polígono");
 	FormaGeometrica.call(this, centro, 'white', new Borda('black', 1), angulo);
 
 	this.pontoMinimo = null;
@@ -9,17 +8,14 @@ function Poligono(centro, angulo) {
 	this.pontos = new Array();
 
 	this.getPontos = function() {
-		console.log("pegando pontos do polígono");
 		return this.pontos;
 	};
 
 	this.getPonto = function(index) {
-		console.log("pegando ponto do polígono");
 		return this.pontos[index];
 	};
 
 	this.setPontos = function(pontos) {
-		console.log("setando pontos do polígono");
 		if (pontos instanceof Array) {
 			this.pontoMinimo = null;
 			this.pontoMaximo = null;
@@ -33,7 +29,6 @@ function Poligono(centro, angulo) {
 	};
 
 	this.addPonto = function(ponto) {
-		console.log("adicionando ponto ao polígono");
 		if (ponto instanceof Ponto) {
 			ponto.setDono(this);
 			ponto.girar(this.angulo);
@@ -43,7 +38,6 @@ function Poligono(centro, angulo) {
 	};
 
 	this.setPonto = function(index, ponto) {
-		console.log("setando ponto específico do polígono");
 		if (ponto instanceof Ponto && isNaN(index)) {
 			index = parseInt(index);
 			ponto.setDono(this);
@@ -54,7 +48,6 @@ function Poligono(centro, angulo) {
 	};
 
 	this.setMinAndMaxValues = function(ponto) {
-		console.log("setando os valores mínimos e máximos do polígono");
 		if (ponto instanceof Ponto) {
 			if (this.pontoMinimo == null && this.pontoMaximo == null) {
 				this.pontoMinimo = new Ponto(ponto.getX(), ponto.getY());
@@ -73,7 +66,6 @@ function Poligono(centro, angulo) {
 	};
 
 	this.atualizarCentro = function() {
-		console.log("atualizando centro do polígono");
 		this.centro
 				.setX((this.pontoMinimo.getX() + this.pontoMaximo.getX()) * 0.5);
 		this.centro
@@ -81,7 +73,6 @@ function Poligono(centro, angulo) {
 	};
 
 	this.girar = function(graus) {
-		console.log("girando pontos do polígono");
 		if (!isNaN(graus)) {
 			while (graus > 360) {
 				graus = graus % 360;
@@ -97,7 +88,6 @@ function Poligono(centro, angulo) {
 	};
 
 	this.inverterHorizontalMente = function() {
-		console.log("invertendo polígono horizontalmente");
 		for ( var index in this.pontos) {
 			this.pontos[index].inverterHorizontalMente();
 			this.setMinAndMaxValues(this.pontos[index]);
@@ -105,7 +95,6 @@ function Poligono(centro, angulo) {
 	};
 
 	this.inverterVerticalmente = function() {
-		console.log("invertendo polígono verticalmente");
 		for ( var index in this.pontos) {
 			this.pontos[index].inverterVerticalmente();
 			this.setMinAndMaxValues(this.pontos[index]);
@@ -113,7 +102,6 @@ function Poligono(centro, angulo) {
 	};
 
 	this.getQuadradoCircunscrito = function() {
-		console.log("pegando quadrado circunscrito do polígono");
 		var centro = new Ponto(this.centro.getX(), this.centro.getY());
 		var largura = this.pontoMaximo.getX() - this.pontoMinimo.getX();
 		var altura = this.pontoMaximo.getY() - this.pontoMinimo.getY();
@@ -122,12 +110,10 @@ function Poligono(centro, angulo) {
 	};
 
 	this.getCentro = function() {
-		console.log("pegando centro do polígono");
 		return this.centro;
 	};
 
 	this.setAngulo = function(angulo) {
-		console.log("setando angulo do polígono");
 		if (!isNaN(angulo)) {
 			angulo = Math.abs(angulo);
 			while (angulo > 360) {
@@ -142,7 +128,6 @@ function Poligono(centro, angulo) {
 	};
 
 	this.setCentro = function(centro) {
-		console.log("setando centro do polígono");
 		if (centro instanceof Ponto) {
 			if (this.centro.getX() != centro.getX()
 					|| this.centro.getY() != centro.getY()) {

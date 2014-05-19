@@ -1,6 +1,5 @@
 ArvoreColisao.prototype = new Retangulo();
 function ArvoreColisao(nivel, centro, largura, altura) {
-	console.log("criando arvore de colisão");
 	Retangulo.call(this, centro, largura, altura);
 	this.canvas = new Canvas("#canvas");
 	this.a = null;
@@ -11,7 +10,6 @@ function ArvoreColisao(nivel, centro, largura, altura) {
 	this.nivel = nivel;
 
 	this.addForma = function(forma) {
-		console.log("adicionando forma na quadtree");
 		this.formas.push(forma);
 		if (this.formas.length > 1 && this.nivel < 5) {
 			var caixa = forma.getQuadradoCircunscrito();
@@ -21,7 +19,6 @@ function ArvoreColisao(nivel, centro, largura, altura) {
 			var cy = this.centro.getY();
 
 			if (colisaoCaixaB(caixa, cx - cw, cy - ch, cw, ch)) {
-				console.log("adicionado forma no filho a");
 				if (this.a == null) {
 					this.a = new ArvoreColisao(this.nivel + 1, new Ponto(cx
 							- (cw / 2), cy - (ch / 2)), cw, ch);
@@ -30,7 +27,6 @@ function ArvoreColisao(nivel, centro, largura, altura) {
 				this.a.addForma(forma);
 			}
 			if (colisaoCaixaB(caixa, cx, cy - ch, cw, ch)) {
-				console.log("adicionando forma no filho b");
 				if (this.b == null) {
 					this.b = new ArvoreColisao(this.nivel + 1, new Ponto(cx
 							+ (cw / 2), cy - (ch / 2)), cw, ch);
@@ -40,7 +36,6 @@ function ArvoreColisao(nivel, centro, largura, altura) {
 				this.b.addForma(forma);
 			}
 			if (colisaoCaixaB(caixa, cx - cw, cy, cw, ch)) {
-				console.log("adicionando forma no filho c");
 				if (this.c == null) {
 					this.c = new ArvoreColisao(this.nivel + 1, new Ponto(cx
 							- (cw / 2), cy + (ch / 2)), cw, ch);
@@ -49,7 +44,6 @@ function ArvoreColisao(nivel, centro, largura, altura) {
 				this.c.addForma(forma);
 			}
 			if (colisaoCaixaB(caixa, cx, cy, cw, ch)) {
-				console.log("adicionando forma no filho d");
 				if (this.d == null) {
 					this.d = new ArvoreColisao(this.nivel + 1, new Ponto(cx
 							+ (cw / 2), cy + (ch / 2)), cw, ch);
@@ -61,7 +55,6 @@ function ArvoreColisao(nivel, centro, largura, altura) {
 	};
 
 	this.testarColisao = function() {
-		console.log("testando colisão");
 		if (this.formas.length > 1) {
 			for (var i = 0; i < this.formas.length; i++) {
 				var objetoA = this.formas[i].getDono();
@@ -71,7 +64,7 @@ function ArvoreColisao(nivel, centro, largura, altura) {
 						var cp = colisaoCaixa(this.formas[i], this.formas[j]);
 						if (cp instanceof Ponto) {
 							moverParaColisao(objetoA, objetoB);
-							aplicarForcas2(objetoA, objetoB);
+							aplicarForcas(objetoA, objetoB);
 						}
 					}
 				}
@@ -80,7 +73,6 @@ function ArvoreColisao(nivel, centro, largura, altura) {
 	};
 
 	this.removeForma = function(forma) {
-		console.log("removendo forma");
 		this.formas.remove(forma);
 		if (this.formas.length < 2) {
 			this.a = null;

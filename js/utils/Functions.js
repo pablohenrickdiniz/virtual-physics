@@ -2,7 +2,7 @@ const GRAVITY = new Vetor(270, 10);
 const MAX_VELOCITY = 10;
 
 function aplicarForcas(objetoA, objetoB) {
-	console.log("aplicando forças");
+
 }
 
 function IdGenerator() {
@@ -29,17 +29,14 @@ function toInt(px) {
 }
 
 function converterParaRadianos(graus) {
-	console.log("convertendo para radianos");
 	return (Math.PI / 180) * graus;
 }
 
 function converterParaGraus(radianos) {
-	console.log("convertendo para graus");
 	return (180 / Math.PI) * radianos;
 }
 
 function colisaoCaixa(retanguloA, retanguloB) {
-	console.log("testando colisão de caixa");
 	if (retanguloA instanceof Retangulo && retanguloB instanceof Retangulo) {
 		var pta = retanguloA.getPontos();
 		var ptb = retanguloB.getPontos();
@@ -77,7 +74,6 @@ function colisaoCaixa(retanguloA, retanguloB) {
 };
 
 function moverParaColisao(objetoA, objetoB) {
-	console.log("movendo objeto para instante da colisão");
 	var va = objetoA.getVetor().getIntensidade();
 	var vb = objetoB.getVetor().getIntensidade();
 	var ca = (100 * va / (va + vb)) * 0.01;
@@ -93,7 +89,6 @@ function moverParaColisao(objetoA, objetoB) {
 }
 
 function colisaoCaixaB(retanguloA, xb, yb, wb, hb) {
-	console.log("testando colisão caixa");
 	var pta = retanguloA.getPontos();
 
 	if (pta[0].x > xb + wb || xb > pta[1].x || pta[0].y > yb + hb

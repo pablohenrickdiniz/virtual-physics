@@ -1,24 +1,18 @@
 Retangulo.prototype = new Poligono();
 function Retangulo(centro, largura, altura) {
-	console.log("criando retângulo");
 	Poligono.call(this, centro);
-	this.largura = largura == undefined || isNaN(largura) || largura < 1 ? 10
-			: largura;
-	this.altura = altura == undefined || isNaN(altura) || altura < 1 ? 10
-			: altura;
+	this.largura = largura == undefined || isNaN(largura) || largura < 1 ? 10: largura;
+	this.altura = altura == undefined || isNaN(altura) || altura < 1 ? 10: altura;
 
 	this.getLargura = function() {
-		console.log("pegando largura do retângulo");
 		return this.largura;
 	};
 
 	this.getAltura = function() {
-		console.log("pegando altura do retângulo");
 		return this.altura;
 	};
 
 	this.setLargura = function(largura) {
-		console.log("setando largura do retângulo");
 		if (!isNaN(largura)) {
 			this.largura = largura;
 			this.atualizarPontos();
@@ -27,7 +21,6 @@ function Retangulo(centro, largura, altura) {
 	};
 
 	this.setAltura = function(altura) {
-		console.log("setando altura do retângulo");
 		if (!isNaN(altura)) {
 			this.altura = altura;
 			this.atualizarPontos();
@@ -35,7 +28,6 @@ function Retangulo(centro, largura, altura) {
 	};
 
 	this.atualizarPontos = function() {
-		console.log("atualizando pontos do retângulo");
 		var pontos = new Array();
 		var x = this.centro.getX();
 		var y = this.centro.getY();
@@ -51,7 +43,6 @@ function Retangulo(centro, largura, altura) {
 	};
 
 	this.getArea = function() {
-		console.log("pegando área  do retângulo");
 		return this.largura * this.altura;
 	};
 

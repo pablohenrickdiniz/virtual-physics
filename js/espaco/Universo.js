@@ -1,11 +1,9 @@
 function Universo(centro, largura, altura) {
-	console.log("criando universo...");
 	this.objetos = new Array();
 	this.arvoreColisao = new ArvoreColisao(1, centro, largura, altura);
 	this.canvas = new Canvas("#canvas");
 
 	this.addObjeto = function(objeto) {
-		console.log("adicionando objeto ao universo...");
 		if (objeto instanceof Objeto) {
 			this.objetos.push(objeto);
 			this.arvoreColisao.addForma(objeto.getForma());
@@ -13,7 +11,6 @@ function Universo(centro, largura, altura) {
 	};
 
 	this.removerObjeto = function(objeto) {
-		console.log("removendo objeto do universo...");
 		if (objeto instanceof Objeto) {
 			this.objetos.splice(objeto.getId());
 			this.arvoreColisao.removerObjeto(objeto.getForma());
@@ -21,7 +18,6 @@ function Universo(centro, largura, altura) {
 	};
 
 	this.step = function() {
-		console.log("passo do universo");
 		this.canvas.limparTela();
 		this.desenharArvore(this.arvoreColisao);
 		this.arvoreColisao.testarColisao();
@@ -37,7 +33,6 @@ function Universo(centro, largura, altura) {
 	};
 
 	this.desenharArvore = function(arvore) {
-		console.log("desenhando arvore");
 		if (arvore instanceof ArvoreColisao) {
 			this.canvas.desenharPoligono(arvore);
 			this.desenharArvore(arvore.a);

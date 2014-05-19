@@ -11,63 +11,52 @@ function Objeto(forma) {
 	this.id = idGenerator.getId();
 
 	this.getForma = function() {
-		console.log("pegando forma do objeto");
 		return this.forma;
 	};
 
 	this.getDinamico = function() {
-		console.log("testando se objeto é dinâmico");
 		return this.dinamico;
 	};
 
 	this.getFriccao = function() {
-		console.log("pegando fricção do objeto");
 		return this.friccao;
 	};
 
 	this.getElasticidade = function() {
-		console.log("pegando elasticidade do objeto");
 		return this.elasticidade;
 	};
 
 	this.getMassa = function() {
-		console.log("pegando massa do objeto");
 		return this.massa;
 	};
 
 	this.getDensidade = function() {
-		console.log("pegando densidade do objeto");
 		return this.densidade;
 	};
 
 	this.getVelocidadeAngular = function() {
-		console.log("pegando velocidade angular do objeto");
 		return this.velocidadeAngular;
 	};
 
 	this.setForma = function(forma) {
-		console.log("setando forma do objeto");
 		if (forma instanceof FormaGeometrica) {
 			this.forma = forma;
 		}
 	};
 
 	this.setDinamico = function(dinamico) {
-		console.log("setando dinâmica do objeto");
 		if (dinamico instanceof Boolean) {
 			this.dinamico = dinamico;
 		}
 	};
 
 	this.setFriccao = function(friccao) {
-		console.log("setando fricção do objeto");
 		if (!isNaN(friccao)) {
 			this.friccao = friccao;
 		}
 	};
 
 	this.setElasticidade = function(elasticidade) {
-		console.log("setando elasticidade do objeto");
 		if (!isNaN(elasticidade)) {
 			this.elasticidade = elasticidade;
 		}
