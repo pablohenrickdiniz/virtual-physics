@@ -63,7 +63,6 @@ function ArvoreColisao(nivel, centro, largura, altura) {
 					if (objetoA.isMoving() || objetoB.isMoving()) {
 						var cp = colisaoCaixa(this.formas[i], this.formas[j]);
 						if (cp instanceof Ponto) {
-							moverParaColisao(objetoA, objetoB);
 							aplicarForcas(objetoA, objetoB);
 						}
 					}

@@ -1,5 +1,5 @@
 function Objeto(forma) {
-	this.forma = forma = !(forma instanceof FormaGeometrica) ? null : forma;
+	this.forma = !(forma instanceof FormaGeometrica) ? null : forma;
 	this.forma.setDono(this);
 	this.dinamico = false;
 	this.friccao = false;
@@ -63,42 +63,35 @@ function Objeto(forma) {
 	};
 
 	this.setMassa = function(massa) {
-		console.log("setando massa do objeto");
 		if (!isNaN(massa)) {
 			this.massa = massa;
 		}
 	};
 
 	this.setDensidade = function(densidade) {
-		console.log("setando densidade do objeto");
 		if (!isNaN(densidade)) {
 			this.densidade = densidade;
 		}
 	};
 
 	this.setVelocidadeAngular = function(velocidadeAngular) {
-		console.log("setando a velocidade angular");
 		if (!isNaN(velocidadeAngular)) {
 			this.velocidadeAngular = velocidadeAngular;
 		}
 	};
 
 	this.getId = function() {
-		console.log("pegando o id do objeto");
 		return this.id;
 	};
 
 	this.isMoving = function() {
-		console.log("verificando se o objeto está se movendo");
-		return (this.vetor.obterNorma() != 0 || this.velocidadeAngular != 0);
+		return (this.dinamico || this.vetor.getX() != 0 || this.vetor.getX() != 0 || this.velocidadeAngular != 0);
 	};
 
 	this.step = function() {
-		console.log("passo do objeto");
-		if (this.vetor.obterNorma() != 0) {
-
-			var x = this.forma.getCentro().getX() + this.vetor.getX();
-			var y = this.forma.getCentro().getY() + this.vetor.getY();
+		if (this.vetor.getX() != 0 || this.vetor.getY() != 0) {
+			var x = this.forma.getCentro().getX() + (this.vetor.getX()/METERPIXEL);
+			var y = this.forma.getCentro().getY() + (this.vetor.getY()/METERPIXEL);
 			this.forma.getCentro().setX(x);
 			this.forma.getCentro().setY(y);
 		}
@@ -107,18 +100,16 @@ function Objeto(forma) {
 			this.forma.girar(this.velocidadeAngular);
 		}
 
-		if (this.vetor.getY() < MAX_VELOCITY) {
-			this.vetor = somaVetor(this.vetor, GRAVITY);
-		}
+	    if(this.vetor.obterNorma() < VELOCIDADETERMINAL){
+            this.vetor = somaVetor(this.vetor, GRAVITY);
+        }
 	};
 
 	this.getVetor = function() {
-		console.log("obtendo vetor do objeto");
 		return this.vetor;
 	};
 
 	this.rollBack = function() {
-		console.log("retprnando o vetor para o estado anterior");
 		this.forma.getCentro().setX(this.forma.getCentro().getAntigoX());
 		this.forma.getCentro().setY(this.forma.getCentro().getAntigoY());
 		this.forma.setAngulo(this.forma.getAntigoAngulo());

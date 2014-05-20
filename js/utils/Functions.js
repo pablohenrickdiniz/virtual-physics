@@ -1,5 +1,7 @@
-const GRAVITY = new Vetor(270, 10);
-const MAX_VELOCITY = 10;
+const METERPIXEL = 1000;
+const GRAVITY = new Vetor(0, 10);
+const VELOCIDADETERMINAL = 50;
+const FPS = 60;
 
 function aplicarForcas(objetoA, objetoB) {
 
@@ -74,8 +76,8 @@ function colisaoCaixa(retanguloA, retanguloB) {
 };
 
 function moverParaColisao(objetoA, objetoB) {
-	var va = objetoA.getVetor().getIntensidade();
-	var vb = objetoB.getVetor().getIntensidade();
+	var va = objetoA.getVetor().obterNorma();
+	var vb = objetoB.getVetor().obterNorma();
 	var ca = (100 * va / (va + vb)) * 0.01;
 	var cb = (100 * vb / (va + vb)) * 0.01;
 	var da = va * ca / 100;

@@ -19,7 +19,7 @@ function Universo(centro, largura, altura) {
 
 	this.step = function() {
 		this.canvas.limparTela();
-		this.desenharArvore(this.arvoreColisao);
+		//this.desenharArvore(this.arvoreColisao);
 		this.arvoreColisao.testarColisao();
 		for (var i = 0; i < this.objetos.length; i++) {
 		    if (this.objetos[i].dinamico) {

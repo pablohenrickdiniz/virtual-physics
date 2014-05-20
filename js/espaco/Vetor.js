@@ -43,8 +43,7 @@ function Vetor(x, y) {
 }
 
 function obterAnguloVetores(vetorA, vetorB) {
-	return converterParaGraus(Math.acos(obterProdutoEscalar(vetorA, vetorB)
-			/ vetorA.obterNorma() * vetorB.obterNorma()));
+	return converterParaGraus(Math.acos(obterProdutoEscalar(vetorA, vetorB)/ vetorA.obterNorma() * vetorB.obterNorma()));
 }
 
 function obterProdutoEscalar(vetorA, vetorB) {

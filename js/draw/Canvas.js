@@ -3,7 +3,6 @@
  */
 
 function Canvas(canvas) {
-	console.log("criando canvas");
 	this.canvas = canvas;
 	this.largura = toInt($(canvas).css('width'));
 	this.altura = toInt($(canvas).css('height'));

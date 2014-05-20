@@ -145,4 +145,8 @@ function Poligono(centro, angulo) {
 			}
 		}
 	};
+
+    this.getArea = function(){
+        return this.getQuadradoCircunscrito().getArea();
+    };
 }

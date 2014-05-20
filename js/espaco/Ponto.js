@@ -51,18 +51,13 @@ function Ponto(x, y) {
 		return this.dono;
 	};
 
-	this.girar = function(graus) {
+	this.girar = function(graus,centro) {
 		var radianos = converterParaRadianos(graus);
-		var centro = new Ponto(0, 0);
-		if (this.dono instanceof FormaGeometrica) {
+		if (this.dono instanceof FormaGeometrica || !(centro instanceof Ponto)){
 			centro = this.dono.getCentro();
 		}
-		var xf = (((this.x - centro.getX()) * Math.cos(radianos)) - ((this.y - centro
-				.getY()) * Math.sin(radianos)))
-				+ centro.getX();
-		var yf = (((this.y - centro.getY()) * Math.cos(radianos)) + ((this.x - centro
-				.getX()) * Math.sin(radianos)))
-				+ centro.getY();
+		var xf = (((this.x - centro.getX()) * Math.cos(radianos)) - ((this.y - centro.getY()) * Math.sin(radianos)))+ centro.getX();
+		var yf = (((this.y - centro.getY()) * Math.cos(radianos)) + ((this.x - centro.getX()) * Math.sin(radianos)))+ centro.getY();
 		this.x = xf;
 		this.y = yf;
 	};
