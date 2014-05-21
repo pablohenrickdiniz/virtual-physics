@@ -51,13 +51,17 @@ function Ponto(x, y) {
 		return this.dono;
 	};
 
-	this.girar = function(graus,centro) {
+	this.girar = function(graus, centro) {
 		var radianos = converterParaRadianos(graus);
-		if (this.dono instanceof FormaGeometrica || !(centro instanceof Ponto)){
+		if (this.dono instanceof FormaGeometrica || !(centro instanceof Ponto)) {
 			centro = this.dono.getCentro();
 		}
-		var xf = (((this.x - centro.getX()) * Math.cos(radianos)) - ((this.y - centro.getY()) * Math.sin(radianos)))+ centro.getX();
-		var yf = (((this.y - centro.getY()) * Math.cos(radianos)) + ((this.x - centro.getX()) * Math.sin(radianos)))+ centro.getY();
+		var xf = (((this.x - centro.getX()) * Math.cos(radianos)) - ((this.y - centro
+				.getY()) * Math.sin(radianos)))
+				+ centro.getX();
+		var yf = (((this.y - centro.getY()) * Math.cos(radianos)) + ((this.x - centro
+				.getX()) * Math.sin(radianos)))
+				+ centro.getY();
 		this.x = xf;
 		this.y = yf;
 	};
@@ -84,7 +88,11 @@ function Ponto(x, y) {
 }
 
 function obterPontoMedio(pontoA, pontoB) {
-	return new Ponto((pontoA.getX() + pontoB.getX()) / 2, (pontoA.getY() + pontoB.getY()) / 2);
+	var pax = pontoA.getX();
+	var pay = pontoA.getY();
+	var pbx = pontoB.getX();
+	var pby = pontoB.getY();
+	return new Ponto((pax + pbx) / 2, (pay + pby) / 2);
 }
 
 function obterDistancia(pontoA, pontoB) {

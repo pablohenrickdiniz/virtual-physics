@@ -31,25 +31,51 @@ function Vetor(x, y) {
 	this.normalizar = function() {
 		var comprimento = this.obterNorma();
 		this.x = this.x / comprimento;
-		this.y = his.y / comprimento;
+		this.y = this.y / comprimento;
 	};
 
 	this.obterNorma = function() {
-		if (isNaN(this.norma)) {
+		if (this.norma == null) {
 			this.norma = Math.sqrt(Math.pow(this.x, 2) + Math.pow(this.y, 2));
 		}
 		return this.norma;
 	};
+
+	this.obterAngulo = function() {
+		var x = Math.abs(this.x);
+		var y = Math.abs(this.y);
+
+		if (this.x < 0 && this.y > 0) {
+			return converterParaGraus(Math.atan(x / y));
+		} else if (this.x < 0 && this.y < 0) {
+			return 90 + converterParaGraus(Math.atan(y / x));
+		} else if (this.x > 0 && this.y < 0) {
+			return 180 + converterParaGraus(Math.atan(x / y));
+		} else if (this.x > 0 && this.y > 0) {
+			return 270 + converterParaGraus(Math.atan(y / x));
+		}
+	};
 }
 
 function obterAnguloVetores(vetorA, vetorB) {
-	return converterParaGraus(Math.acos(obterProdutoEscalar(vetorA, vetorB)/ vetorA.obterNorma() * vetorB.obterNorma()));
+	var pe = obterProdutoEscalar(vetorA, vetorB);
+	var na = vetorA.obterNorma();
+	var nb = vetorB.obterNorma();
+	return converterParaGraus(Math.acos(pe / (na * nb)));
 }
 
 function obterProdutoEscalar(vetorA, vetorB) {
-	return vetorA.getX() * vetorB.getX() + vetorA.getY() * vetorB.getY();
+	var vax = vetorA.getX();
+	var vbx = vetorB.getX();
+	var vay = vetorA.getY();
+	var vby = vetorB.getY();
+	return (vax * vbx) + (vay * vby);
 }
 
 function somaVetor(vetorA, vetorB) {
-	return new Vetor(vetorA.getX() + vetorB.getX(), vetorA.getY() + vetorB.getY());
+	var vax = vetorA.getX();
+	var vbx = vetorB.getX();
+	var vay = vetorA.getY();
+	var vby = vetorB.getY();
+	return new Vetor(vax + vbx, vay + vby);
 }

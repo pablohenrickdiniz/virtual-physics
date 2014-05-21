@@ -31,11 +31,11 @@ function toInt(px) {
 }
 
 function converterParaRadianos(graus) {
-	return (Math.PI / 180) * graus;
+	return graus * (Math.PI / 180);
 }
 
 function converterParaGraus(radianos) {
-	return (180 / Math.PI) * radianos;
+	return radianos * (180 / Math.PI);
 }
 
 function colisaoCaixa(retanguloA, retanguloB) {
@@ -119,7 +119,7 @@ function colisaoProjecao(projecaoA, projecaoB) {
 
 function buscaSeparador(poligonoA, poligonoB) {
 	var pontos = poligonoA.getPontos();
-	for (var i = 0; i < pontos.length; i++) {
+	for ( var i = 0; i < pontos.length; i++) {
 		var pontoA = pontos[i];
 		var pontoB = pontos[i + 1 < pontos.length ? i + 1 : 0];
 
@@ -142,7 +142,7 @@ function projetarPoligono(poligono, vetor) {
 	var produtoEscalar = (vetor.getX() * pontoAtual.getX())
 			+ (vetor.getY() * pontoAtual.getY());
 	var projecao = new Ponto(produtoEscalar, produtoEscalar);
-	for (var i = 1; i < pontos.length; i++) {
+	for ( var i = 1; i < pontos.length; i++) {
 		pontoAtual = pontos[i];
 		produtoEscalar = (vetor.getX() * pontoAtual.getX())
 				+ (vetor.getY() * pontoAtual.getY());
@@ -186,7 +186,7 @@ Array.prototype.remove = remove;
 (function() {
 	var lastTime = 0;
 	var vendors = [ 'ms', 'moz', 'webkit', 'o' ];
-	for (var x = 0; x < vendors.length && !window.requestAnimationFrame; ++x) {
+	for ( var x = 0; x < vendors.length && !window.requestAnimationFrame; ++x) {
 		window.requestAnimationFrame = window[vendors[x]
 				+ 'RequestAnimationFrame'];
 		window.cancelAnimationFrame = window[vendors[x]

@@ -66,10 +66,8 @@ function Poligono(centro, angulo) {
 	};
 
 	this.atualizarCentro = function() {
-		this.centro
-				.setX((this.pontoMinimo.getX() + this.pontoMaximo.getX()) * 0.5);
-		this.centro
-				.setY((this.pontoMinimo.getY() + this.pontoMaximo.getY()) * 0.5);
+		this.centro.setX((this.pontoMinimo.getX() + this.pontoMaximo.getX()) * 0.5);
+		this.centro.setY((this.pontoMinimo.getY() + this.pontoMaximo.getY()) * 0.5);
 	};
 
 	this.girar = function(graus) {
@@ -115,15 +113,12 @@ function Poligono(centro, angulo) {
 
 	this.setAngulo = function(angulo) {
 		if (!isNaN(angulo)) {
-			angulo = Math.abs(angulo);
-			while (angulo > 360) {
+			while (angulo > 360 || angulo < -360) {
 				angulo = angulo % 360;
 			}
-			if (this.angulo > angulo) {
-				this.girar((this.angulo - angulo) * -1);
-			} else if (angulo > this.angulo) {
-				this.girar(angulo - this.angulo);
-			}
+			this.girar(this.angulo*-1);
+			this.girar(angulo);
+			this.angulo = angulo;
 		}
 	};
 
