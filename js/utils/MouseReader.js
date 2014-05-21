@@ -1,40 +1,43 @@
 function MouseReader(element) {
-
 	this.element = element;
 	this.x = 0;
 	this.y = 0;
-	this.click = false;
+	this.lastPressedX = 0;
+	this.lastPressedY = 0;
+	this.pressed = false;
 
 	this.startRead = function() {
 		var reader = this;
 		var read = $(this.element).mousemove(
 				function(event) {
-
-					var verticalDiff = 0;
-					var horizontalDiff = 0;
+					var vd = 0;
+					var hd = 0;
 
 					$(this).parents().each(function() {
-						verticalDiff += $(this).scrollTop();
-						horizontalDiff += $(this).scrollLeft();
+						vd += $(this).scrollTop();
+						hd += $(this).scrollLeft();
 					});
 
-					verticalDiff -= $(this).scrollTop();
-					horizontalDiff -= $(this).scrollLeft();
+					vd -= $(this).scrollTop();
+					hd -= $(this).scrollLeft();
 
 					reader.setX((event.pageX - (document.getElementById($(this)
 							.prop('id')).offsetLeft - pageXOffset))
-							- horizontalDiff);
+							- hd);
 					reader.setY((event.pageY - (document.getElementById($(this)
 							.prop('id')).offsetTop - pageYOffset))
-							- verticalDiff);
+							- vd);
 				});
+
 		$(this.element).mousemove();
 		$(this.element).mousedown(function() {
-			reader.click = true;
+			reader.lastPressedX = reader.x;
+			reader.lastPressedY = reader.y;
+			reader.pressed = true;
 		});
 
 		$(this.element).mouseup(function() {
-			reader.click = false;
+			reader.pressed = false;
 		});
 	};
 
@@ -49,6 +52,14 @@ function MouseReader(element) {
 
 	this.getY = function() {
 		return this.y;
+	};
+
+	this.getLastPressedX = function() {
+		return this.lastPressedX;
+	};
+
+	this.getLastPressedY = function() {
+		return this.lastPressedY;
 	};
 
 	this.setX = function(x) {
@@ -68,7 +79,7 @@ function MouseReader(element) {
 		this.element = element;
 	};
 
-	this.pressed = function() {
-		return this.click;
+	this.isPressed = function() {
+		return this.pressed;
 	};
 }

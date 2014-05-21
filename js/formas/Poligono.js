@@ -65,11 +65,6 @@ function Poligono(centro, angulo) {
 		}
 	};
 
-	this.atualizarCentro = function() {
-		this.centro.setX((this.pontoMinimo.getX() + this.pontoMaximo.getX()) * 0.5);
-		this.centro.setY((this.pontoMinimo.getY() + this.pontoMaximo.getY()) * 0.5);
-	};
-
 	this.girar = function(graus) {
 		if (!isNaN(graus)) {
 			while (graus > 360) {
@@ -79,11 +74,42 @@ function Poligono(centro, angulo) {
 			this.pontoMinimo = null;
 			this.pontoMaximo = null;
 			for (var i = 0; i < this.pontos.length; i++) {
-				this.pontos[i].girar(graus);
+				this.pontos[i].girar(graus,this.centro);
 				this.setMinAndMaxValues(this.pontos[i]);
 			}
 		}
 	};
+
+    this.transladar = function(x,y){
+        x = isNaN(x)?0:x;
+        y = isNaN(y)?0:y;
+
+        for(var i = 0; i < this.pontos.length;i++){
+            this.pontos[i].setX(this.pontos[i].getX()+x);
+            this.pontos[i].setY(this.pontos[i].getY()+y);
+        }
+        this.centro.setX(this.centro.getX()+x);
+        this.centro.setY(this.centro.getY()+y);
+    };
+
+    this.moverPara = function(x,y){
+        var xd = 0;
+        var yd = 0;
+        if(!isNaN(x)){
+            xd = this.centro.getX()-x;
+            this.centro.setX(x);
+        }
+
+        if(!isNaN(y)){
+            yd = this.centro.getY()-y;
+            this.centro.setY(y);
+        }
+
+        for(var i = 0; i < this.pontos.length;i++){
+            this.pontos[i].setX(this.pontos[i].getX()+xd);
+            this.pontos[i].setY(this.pontos[i].getY()+yd);
+        }
+    };
 
 	this.inverterHorizontalMente = function() {
 		for ( var index in this.pontos) {
@@ -122,26 +148,9 @@ function Poligono(centro, angulo) {
 		}
 	};
 
-	this.setCentro = function(centro) {
-		if (centro instanceof Ponto) {
-			if (this.centro.getX() != centro.getX()
-					|| this.centro.getY() != centro.getY()) {
-				var x = this.centro.getX() - centro.getX();
-				var y = this.centro.getY() - centro.getY();
-				for (var i = 0; i < this.pontos.length; i++) {
-					this.pontos[i].setX(this.pontos[i].getX() + x);
-					this.pontos[i].setY(this.pontos[i].getY() + y);
-				}
-				this.pontoMinimo.setX(this.pontoMinimo.getX() + x);
-				this.pontoMinimo.setY(this.pontoMinimo.getY() + y);
-				this.pontoMaximo.setX(this.pontoMaximo.getX() + x);
-				this.pontoMaximo.setY(this.pontoMaximo.getY() + y);
-				this.centro = centro;
-			}
-		}
-	};
-
     this.getArea = function(){
         return this.getQuadradoCircunscrito().getArea();
     };
+
+
 }

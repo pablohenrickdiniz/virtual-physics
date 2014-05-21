@@ -55,9 +55,9 @@ function FormaGeometrica(centro, cor, borda, angulo) {
 
 	this.setCentro = function(centro) {
 		if (centro instanceof Ponto) {
-			if (this.centro.getX() != centro.getX()
-					|| this.centro.getY() != centro.getY()) {
+			if (this.centro.getX() != centro.getX()|| this.centro.getY() != centro.getY()) {
 				this.centro = centro;
+				this.centro.setDono(this);
 			}
 		}
 	};

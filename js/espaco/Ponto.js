@@ -25,9 +25,6 @@ function Ponto(x, y) {
 		if (!isNaN(x) && x != this.x) {
 			this.antigoX = this.x;
 			this.x = x;
-			if (this.dono != null) {
-				this.dono.atualizarPontos();
-			}
 		}
 	};
 
@@ -35,9 +32,6 @@ function Ponto(x, y) {
 		if (!isNaN(y) && y != this.y) {
 			this.antigoY = this.y;
 			this.y = y;
-			if (this.dono != null) {
-				this.dono.atualizarPontos();
-			}
 		}
 	};
 
@@ -53,8 +47,8 @@ function Ponto(x, y) {
 
 	this.girar = function(graus, centro) {
 		var radianos = converterParaRadianos(graus);
-		if (this.dono instanceof FormaGeometrica || !(centro instanceof Ponto)) {
-			centro = this.dono.getCentro();
+		if (!(centro instanceof Ponto)) {
+		    centro = new Ponto(0,0);
 		}
 		var xf = (((this.x - centro.getX()) * Math.cos(radianos)) - ((this.y - centro
 				.getY()) * Math.sin(radianos)))

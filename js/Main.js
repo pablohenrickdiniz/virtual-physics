@@ -5,8 +5,11 @@ $(document).ready(function() {
 	var ladoDireito = new Objeto(new Retangulo(new Ponto(588, 300), 21, 598));
 	var ladoBaixo = new Objeto(new Retangulo(new Ponto(300, 588), 598, 21));
 	var ladoEsquerdo = new Objeto(new Retangulo(new Ponto(12, 300), 21, 598));
-	
-	var tacoForma = new Poligono(bolaBranca.getForma().getCentro());
+
+    var centroBola = bolaBranca.getForma().getCentro();
+
+
+	var tacoForma = new Poligono(new Ponto(centroBola.getX(), centroBola.getY()));
 	tacoForma.addPonto(new Ponto(297, 312));
 	tacoForma.addPonto(new Ponto(303, 312));
 	tacoForma.addPonto(new Ponto(307, 620));
@@ -48,18 +51,30 @@ $(document).ready(function() {
 	var reader = new MouseReader("#canvas");
 	reader.startRead();
 
-	$("#canvas").click(function() {
-
-	});
-
+    var vetorTaco = new Vetor(0,0);
 	$("#canvas").mousemove(function() {
-		var rx = reader.getX();
-		var ry = reader.getY();
-		var mouse = new Ponto(rx, ry);
-		var origem = bolaBranca.getForma().getCentro();
+        if(!reader.isPressed()){
+            var rx = reader.getX();
+            var ry = reader.getY();
+            var mouse = new Ponto(rx, ry);
+            var origem = bolaBranca.getForma().getCentro();
+            vetorTaco = new Vetor(origem.getX() - rx, origem.getY() - ry);
+            taco.getForma().setAngulo(vetorTaco.obterAngulo()+180);
+        }
+        else{
+            var rx =reader.getX();
+            var ry =reader.getY();
+            var origem = taco.getForma().getCentro();
+            var vx = vetorTaco.getX();
+            var vy = vetorTaco.getY();
 
-		var vetorTaco = new Vetor(origem.getX() - rx, origem.getY() - ry);
+            if(rx < Math.max(vx,origem.getX()) && rx > Math.min(vx,origem.getX())){
+                taco.getForma().moverPara(rx,null);
+            }
 
-		taco.getForma().setAngulo(vetorTaco.obterAngulo());
+            if(ry < Math.max(vy,origem.getY()) && ry < Math.min(vy,origem.getY())){
+                taco.getForma().moverPara(null,ry);
+            }
+        }
 	});
 });
