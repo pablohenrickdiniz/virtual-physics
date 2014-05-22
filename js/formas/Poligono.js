@@ -53,28 +53,31 @@ function Poligono(centro, angulo) {
 				this.pontoMinimo = new Ponto(ponto.getX(), ponto.getY());
 				this.pontoMaximo = new Ponto(ponto.getX(), ponto.getY());
 			} else {
-				this.pontoMinimo.setX(Math.min(this.pontoMinimo.getX(), ponto
-						.getX()));
-				this.pontoMinimo.setY(Math.min(this.pontoMinimo.getY(), ponto
-						.getY()));
-				this.pontoMaximo.setX(Math.max(this.pontoMaximo.getX(), ponto
-						.getX()));
-				this.pontoMaximo.setY(Math.max(this.pontoMaximo.getY(), ponto
-						.getY()));
+				this.pontoMinimo.setX(Math.min(this.pontoMinimo.getX(), ponto.getX()));
+				this.pontoMinimo.setY(Math.min(this.pontoMinimo.getY(), ponto.getY()));
+				this.pontoMaximo.setX(Math.max(this.pontoMaximo.getX(), ponto.getX()));
+				this.pontoMaximo.setY(Math.max(this.pontoMaximo.getY(), ponto.getY()));
 			}
 		}
 	};
 
-	this.girar = function(graus) {
+	this.girar = function(graus, origem) {
 		if (!isNaN(graus)) {
 			while (graus > 360) {
 				graus = graus % 360;
 			}
-
+			
+			if(!(origem instanceof Ponto)){
+				origem = this.centro;
+			}
+			else{
+				this.centro.girar(graus,origem);
+			}
+			
 			this.pontoMinimo = null;
 			this.pontoMaximo = null;
 			for (var i = 0; i < this.pontos.length; i++) {
-				this.pontos[i].girar(graus,this.centro);
+				this.pontos[i].girar(graus,origem);
 				this.setMinAndMaxValues(this.pontos[i]);
 			}
 		}
@@ -132,18 +135,23 @@ function Poligono(centro, angulo) {
 		var caixa = new Retangulo(centro, largura, altura);
 		return caixa;
 	};
+	
+	this.atualizarCentro = function(){
+		this.centro.setX((this.pontoMaximo.getX()+this.pontoMinimo.getX())/2);
+		this.centro.setY((this.pontoMaximo.getY()+this.pontoMinimo.getY())/2);
+	};
 
 	this.getCentro = function() {
 		return this.centro;
 	};
 
-	this.setAngulo = function(angulo) {
+	this.setAngulo = function(angulo, origem) {
 		if (!isNaN(angulo)) {
 			while (angulo > 360 || angulo < -360) {
 				angulo = angulo % 360;
 			}
-			this.girar(this.angulo*-1);
-			this.girar(angulo);
+			this.girar(this.angulo*-1, origem);
+			this.girar(angulo, origem);
 			this.angulo = angulo;
 		}
 	};

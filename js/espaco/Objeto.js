@@ -37,6 +37,10 @@ function Objeto(forma) {
 	this.getVelocidadeAngular = function() {
 		return this.velocidadeAngular;
 	};
+	
+	this.getVetor = function(){
+		return this.vetor;
+	};
 
 	this.setForma = function(forma) {
 		if (forma instanceof FormaGeometrica) {
@@ -80,6 +84,12 @@ function Objeto(forma) {
 		}
 	};
 
+	this.setVetor = function(vetor){
+		if(vetor instanceof Vetor){
+			this.vetor = vetor;
+		}
+	};
+	
 	this.getId = function() {
 		return this.id;
 	};

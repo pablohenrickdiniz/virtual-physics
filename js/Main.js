@@ -9,11 +9,12 @@ $(document).ready(function() {
     var centroBola = bolaBranca.getForma().getCentro();
 
 
-	var tacoForma = new Poligono(new Ponto(centroBola.getX(), centroBola.getY()));
+	var tacoForma = new Poligono();
 	tacoForma.addPonto(new Ponto(297, 312));
 	tacoForma.addPonto(new Ponto(303, 312));
 	tacoForma.addPonto(new Ponto(307, 620));
 	tacoForma.addPonto(new Ponto(293, 620));
+	tacoForma.atualizarCentro();
 
 	var taco = new Objeto(tacoForma);
 
@@ -52,14 +53,21 @@ $(document).ready(function() {
 	reader.startRead();
 
     var vetorTaco = new Vetor(0,0);
+    taco.setVetor(vetorTaco);
 	$("#canvas").mousemove(function() {
         if(!reader.isPressed()){
             var rx = reader.getX();
             var ry = reader.getY();
             var mouse = new Ponto(rx, ry);
-            var origem = bolaBranca.getForma().getCentro();
-            vetorTaco = new Vetor(origem.getX() - rx, origem.getY() - ry);
-            taco.getForma().setAngulo(vetorTaco.obterAngulo()+180);
+            var vxd = centroBola.getX()-rx;
+            var vyd = centroBola.getY()-ry;
+         
+            vetorTaco.setX(vxd);
+            vetorTaco.setY(vyd);
+            vetorTaco.inverterSentido();
+            
+           
+            taco.getForma().setAngulo(obterAngulo(vxd, vyd)+180,centroBola);
         }
         else{
             var rx =reader.getX();

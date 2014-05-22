@@ -67,4 +67,14 @@ function Canvas(canvas) {
 		quadrado.getBorda().setCor('transparent');
 		this.desenharPoligono(quadrado);
 	};
+	
+	this.desenharVetor = function(vetor, origem){
+		if(vetor instanceof Vetor){
+			this.contexto.strokeStyle = "black";
+			this.contexto.beginPath();
+			this.contexto.moveTo(origem.getX(), origem.getY());
+			this.contexto.lineTo(origem.getX()+vetor.getX(), origem.getY()+vetor.getY());
+			this.contexto.stroke();
+		}
+	};
 }

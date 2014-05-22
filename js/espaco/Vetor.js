@@ -4,8 +4,9 @@
 function Vetor(x, y) {
 	this.x = x;
 	this.y = y;
-	this.norma = null;
-
+	this.angulo = null;
+	this.norma  = null;
+	
 	this.getX = function() {
 		return this.x;
 	};
@@ -17,14 +18,16 @@ function Vetor(x, y) {
 	this.setX = function(x) {
 		if (!isNaN(x)) {
 			this.x = x;
-			this.norma = null;
+			this.norma  = null;
+			this.angulo = null;
 		}
 	};
 
 	this.setY = function(y) {
 		if (!isNaN(y)) {
 			this.y = y;
-			this.norma = null;
+			this.norma  = null;
+			this.angulo = null;
 		}
 	};
 
@@ -36,25 +39,41 @@ function Vetor(x, y) {
 
 	this.obterNorma = function() {
 		if (this.norma == null) {
-			this.norma = Math.sqrt(Math.pow(this.x, 2) + Math.pow(this.y, 2));
+			this.norma = obterHipotenusa(this.x, this.y);
 		}
 		return this.norma;
 	};
 
-	this.obterAngulo = function() {
-		var x = Math.abs(this.x);
-		var y = Math.abs(this.y);
-
-		if (this.x < 0 && this.y > 0) {
-			return converterParaGraus(Math.atan(x / y));
-		} else if (this.x < 0 && this.y < 0) {
-			return 90 + converterParaGraus(Math.atan(y / x));
-		} else if (this.x > 0 && this.y < 0) {
-			return 180 + converterParaGraus(Math.atan(x / y));
-		} else if (this.x > 0 && this.y > 0) {
-			return 270 + converterParaGraus(Math.atan(y / x));
+	this.obterAnguloVetor = function() {
+		if(this.angulo == null){
+			this.angulo = obterAngulo(this.x, this.y);
 		}
+		return this.angulo;
 	};
+
+	this.inverterSentido = function() {
+		this.x *= -1;
+		this.y *= -1;
+		this.angulo = null;
+	};
+}
+
+function obterAngulo(x, y) {
+	var xabs = Math.abs(x);
+	var yabs = Math.abs(y);
+	if (x < 0 && y > 0) {
+		return converterParaGraus(Math.atan(xabs / yabs));
+	} else if (x < 0 && y < 0) {
+		return 90 + converterParaGraus(Math.atan(yabs / xabs));
+	} else if (x > 0 && y < 0) {
+		return 180 + converterParaGraus(Math.atan(xabs / yabs));
+	} else if (x > 0 && y > 0) {
+		return 270 + converterParaGraus(Math.atan(yabs / xabs));
+	}
+}
+
+function obterHipotenusa(x, y) {
+	return Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
 }
 
 function obterAnguloVetores(vetorA, vetorB) {

@@ -28,6 +28,7 @@ function Universo(centro, largura, altura) {
 				this.arvoreColisao.addForma(this.objetos[i].getForma());
 			}
 			this.canvas.desenharFormaGeometrica(this.objetos[i].getForma());
+			this.canvas.desenharVetor(this.objetos[i].getVetor(),this.objetos[i].getForma().getCentro());
 		}
 
 	};
