@@ -1,8 +1,8 @@
 function FormaGeometrica(centro, cor, borda, angulo) {
 	this.centro = !(centro instanceof Ponto) ? new Ponto(10, 10) : centro;
 	this.centro.setDono(this);
-	this.cor = cor == undefined ? 'white' : cor;
-	this.borda = !(borda instanceof Borda) ? new Borda('black', 1) : borda;
+	this.cor = cor == undefined ? new Color(255,255,255) : cor;
+	this.borda = !(borda instanceof Borda) ? new Borda(new Color(0,0,0), 1) : borda;
 	this.angulo = isNaN(angulo) ? 0 : angulo;
 	this.antigoAngulo = this.angulo;
 	this.dono = null;

@@ -60,20 +60,18 @@ function Ponto(x, y) {
 		this.y = yf;
 	};
 
-	this.inverterHorizontalmente = function() {
-		var centro = new Ponto(0, 0);
-		if (this.dono instanceof FormaGeometrica) {
-			centro = this.dono.getCentro();
+	this.inverterHorizontalmente = function(centro) {
+		if (!(centro instanceof Ponto)) {
+			centro = new Ponto(0, 0);
 		}
 
 		var distance = centro.getX() - this.x;
 		this.x = centro.getX() + distance;
 	};
 
-	this.inverterVerticalmente = function() {
-		var centro = new Ponto(0, 0);
-		if (this.dono instanceof FormaGeometrica) {
-			centro = this.dono.getCentro();
+	this.inverterVerticalmente = function(centro) {
+		if (!(centro instanceof Ponto)) {
+			var centro = new Ponto(0, 0);
 		}
 
 		var distance = centro.getY() - this.y;

@@ -116,14 +116,14 @@ function Poligono(centro, angulo) {
 
 	this.inverterHorizontalMente = function() {
 		for ( var index in this.pontos) {
-			this.pontos[index].inverterHorizontalMente();
+			this.pontos[index].inverterHorizontalMente(this.centro);
 			this.setMinAndMaxValues(this.pontos[index]);
 		}
 	};
 
 	this.inverterVerticalmente = function() {
 		for ( var index in this.pontos) {
-			this.pontos[index].inverterVerticalmente();
+			this.pontos[index].inverterVerticalmente(this.centro);
 			this.setMinAndMaxValues(this.pontos[index]);
 		}
 	};

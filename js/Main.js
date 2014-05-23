@@ -7,24 +7,28 @@ $(document).ready(function() {
 	var ladoEsquerdo = new Objeto(new Retangulo(new Ponto(12, 300), 21, 598));
 
     var centroBola = bolaBranca.getForma().getCentro();
-
-
+    
+    var grdBola = new GradienteRadial(300,300,50,250,250,60);
+    grdBola.addColorStop(0.2,"Grey");
+    grdBola.addColorStop(1,"White");
+    bolaBranca.getForma().setCor(grdBola);
+    bolaBranca.getForma().getBorda().setCor('Grey');
 	var tacoForma = new Poligono();
 	tacoForma.addPonto(new Ponto(297, 312));
 	tacoForma.addPonto(new Ponto(303, 312));
 	tacoForma.addPonto(new Ponto(307, 620));
 	tacoForma.addPonto(new Ponto(293, 620));
 	tacoForma.atualizarCentro();
-
+	
 	var taco = new Objeto(tacoForma);
-
-	ladoCima.getForma().setCor('#00FF00');
+	var color = new Color("MedSpringGreen");
+	ladoCima.getForma().setCor(color);
 	ladoCima.getForma().getBorda().setCor('transparent');
-	ladoDireito.getForma().setCor('#00FF00');
+	ladoDireito.getForma().setCor(color);
 	ladoDireito.getForma().getBorda().setCor('transparent');
-	ladoBaixo.getForma().setCor('#00FF00');
+	ladoBaixo.getForma().setCor(color);
 	ladoBaixo.getForma().getBorda().setCor('transparent');
-	ladoEsquerdo.getForma().setCor('#00FF00');
+	ladoEsquerdo.getForma().setCor(color);
 	ladoEsquerdo.getForma().getBorda().setCor('transparent');
 	
 	universo.addObjeto(ladoCima);
@@ -70,19 +74,7 @@ $(document).ready(function() {
             taco.getForma().setAngulo(obterAngulo(vxd, vyd)+180,centroBola);
         }
         else{
-            var rx =reader.getX();
-            var ry =reader.getY();
-            var origem = taco.getForma().getCentro();
-            var vx = vetorTaco.getX();
-            var vy = vetorTaco.getY();
-
-            if(rx < Math.max(vx,origem.getX()) && rx > Math.min(vx,origem.getX())){
-                taco.getForma().moverPara(rx,null);
-            }
-
-            if(ry < Math.max(vy,origem.getY()) && ry < Math.min(vy,origem.getY())){
-                taco.getForma().moverPara(null,ry);
-            }
+        	
         }
 	});
 });

@@ -6,6 +6,8 @@ function Vetor(x, y) {
 	this.y = y;
 	this.angulo = null;
 	this.norma  = null;
+	this.cor    = new Color(0,0,0);
+	
 	
 	this.getX = function() {
 		return this.x;
@@ -55,6 +57,14 @@ function Vetor(x, y) {
 		this.x *= -1;
 		this.y *= -1;
 		this.angulo = null;
+	};
+	
+	this.setCor = function(cor){
+		this.cor = cor;
+	};
+	
+	this.getCor = function(){
+		return this.cor;
 	};
 }
 
