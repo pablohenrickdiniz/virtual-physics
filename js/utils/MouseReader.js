@@ -2,13 +2,10 @@ function MouseReader(element) {
 	this.element = element;
 	this.x = 0;
 	this.y = 0;
-	this.lastPressedX = 0;
-	this.lastPressedY = 0;
-	this.pressed = false;
-
+	
 	this.startRead = function() {
 		var reader = this;
-		var read = $(this.element).mousemove(
+		$(this.element).mousemove(
 				function(event) {
 					var vd = 0;
 					var hd = 0;
@@ -30,20 +27,6 @@ function MouseReader(element) {
 				});
 
 		$(this.element).mousemove();
-		$(this.element).mousedown(function() {
-			reader.lastPressedX = reader.x;
-			reader.lastPressedY = reader.y;
-			reader.pressed = true;
-		});
-
-		$(this.element).mouseup(function() {
-			reader.pressed = false;
-		});
-	};
-
-	this.stopRead = function() {
-		$(this.element).mousemove(function() {
-		});
 	};
 
 	this.getX = function() {
@@ -52,14 +35,6 @@ function MouseReader(element) {
 
 	this.getY = function() {
 		return this.y;
-	};
-
-	this.getLastPressedX = function() {
-		return this.lastPressedX;
-	};
-
-	this.getLastPressedY = function() {
-		return this.lastPressedY;
 	};
 
 	this.setX = function(x) {
@@ -77,9 +52,5 @@ function MouseReader(element) {
 	this.setElement = function(element) {
 		this.stopRead();
 		this.element = element;
-	};
-
-	this.isPressed = function() {
-		return this.pressed;
 	};
 }

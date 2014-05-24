@@ -6,14 +6,14 @@ function Universo(centro, largura, altura) {
 	this.addObjeto = function(objeto) {
 		if (objeto instanceof Objeto) {
 			this.objetos.push(objeto);
-			this.arvoreColisao.addForma(objeto.getForma());
+			this.arvoreColisao.addContato(objeto.getContato());
 		}
 	};
 
 	this.removerObjeto = function(objeto) {
 		if (objeto instanceof Objeto) {
 			this.objetos.splice(objeto.getId());
-			this.arvoreColisao.removerObjeto(objeto.getForma());
+			this.arvoreColisao.removerContato(objeto.getContato());
 		}
 	};
 
@@ -23,12 +23,12 @@ function Universo(centro, largura, altura) {
 		this.arvoreColisao.testarColisao();
 		for (var i = 0; i < this.objetos.length; i++) {
 		    if (this.objetos[i].dinamico) {
-				this.arvoreColisao.removeForma(this.objetos[i].getForma());
+				this.arvoreColisao.removeContato(this.objetos[i].getContato());
 				this.objetos[i].step();
-				this.arvoreColisao.addForma(this.objetos[i].getForma());
+				this.arvoreColisao.addContato(this.objetos[i].getContato());
 			}
-			this.canvas.desenharFormaGeometrica(this.objetos[i].getForma());
-			this.canvas.desenharVetor(this.objetos[i].getVetor(),this.objetos[i].getForma().getCentro());
+			this.canvas.desenhar(this.objetos[i].getDesenho());
+			//this.canvas.desenharVetor(this.objetos[i].getVetor(),this.objetos[i].getForma().getCentro());
 		}
 
 	};

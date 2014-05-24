@@ -66,6 +66,14 @@ function Vetor(x, y) {
 	this.getCor = function(){
 		return this.cor;
 	};
+	
+	this.obterXProporcional = function(y){
+		return (this.x/this.y)*y;
+	};
+	
+	this.obterYProporcional = function(x){
+		return (this.y/this.x)*x;
+	};
 }
 
 function obterAngulo(x, y) {
@@ -101,10 +109,26 @@ function obterProdutoEscalar(vetorA, vetorB) {
 	return (vax * vbx) + (vay * vby);
 }
 
+function multiplicarVetor(vetor, escalar){
+	vetor.setX(vetor.getX()*escalar);
+	vetor.setY(vetor.getY()*escalar);
+}
+
 function somaVetor(vetorA, vetorB) {
 	var vax = vetorA.getX();
 	var vbx = vetorB.getX();
 	var vay = vetorA.getY();
 	var vby = vetorB.getY();
 	return new Vetor(vax + vbx, vay + vby);
+}
+
+function somaComprimento(vetor, comprimento){
+	var vx = vetor.getX();
+	var vy = vetor.getY();
+	
+	var total = vx+vy;
+	var cx = comprimento*(((vx*100)/total)/100);
+	var cy = comprimento*(((vy*100)/total)/100);
+	vetor.setX(vx+cx);
+	vetor.setY(vy+cy);
 }

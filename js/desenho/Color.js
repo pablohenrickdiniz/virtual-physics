@@ -584,7 +584,7 @@ Color.parse = function(str) {
 	var exp = new RegExp(Color.Patterns.HEXADECIMAL);
 	var color = null;
 	if (exp.test(str)) {
-		str = str.substr(str.indexOf("#") + 1, str.length)
+		str = str.substr(str.indexOf("#") + 1, str.length);
 		var r = parseInt(str.substr(0, 2), 16);
 		var g = parseInt(str.substr(2, 2), 16);
 		var b = parseInt(str.substr(4, 2), 16);
@@ -593,7 +593,7 @@ Color.parse = function(str) {
 		exp = new RegExp(Color.Patterns.RGB);
 		if (exp.test(str)) {
 			str = str.replace("rgb(", "").replace(")", "").split(",");
-			var r = parseInt(str[0])
+			var r = parseInt(str[0]);
 			var g = parseInt(str[1]);
 			var b = parseInt(str[2]);
 			color = new Color(r, g, b);
@@ -601,7 +601,7 @@ Color.parse = function(str) {
 			exp = new RegExp(Color.Patterns.RGBA);
 			if (exp.test(str)) {
 				str = str.replace("rgba(", "").replace(")", "").split(",");
-				var r = parseInt(str[0])
+				var r = parseInt(str[0]);
 				var g = parseInt(str[1]);
 				var b = parseInt(str[2]);
 				var a = parseFloat(str[3]);

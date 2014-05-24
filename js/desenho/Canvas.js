@@ -16,6 +16,7 @@ function Canvas(canvas) {
 	};
 
 	this.desenharFormaGeometrica = function(formaGeometrica) {
+	
 		if (formaGeometrica instanceof Poligono) {
 			this.desenharPoligono(formaGeometrica);
 		} else if (formaGeometrica instanceof Circulo) {
@@ -59,6 +60,15 @@ function Canvas(canvas) {
 			this.contexto.stroke();
 		}
 	};
+	
+	this.desenhar = function(desenho){
+		if(desenho instanceof Desenho){
+			var formas = desenho.getFormas();
+			for(var i = 0; i < formas.length;i++){
+				this.desenharFormaGeometrica(formas[i]);
+			}
+		}
+	};
 
 	this.limparTela = function() {
 		var ponto = new Ponto(this.largura * 0.5, this.altura * 0.5);
@@ -99,7 +109,6 @@ function Canvas(canvas) {
 		var y1 = gradiente.getY1();
 		var r0 = gradiente.getR0();
 		var r1 = gradiente.getR1();
-		console.log(x0+":"+y0+":"+x1+":"+y1+":"+r0+":"+r1);
 		var grad = this.contexto.createRadialGradient(x0, y0, r0, x1, y1, r1);
 		var colorsStop = gradiente.getColorsStop();
 		for ( var i = 0; i < colorsStop.length; i++) {

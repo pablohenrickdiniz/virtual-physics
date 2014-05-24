@@ -71,7 +71,7 @@ function Ponto(x, y) {
 
 	this.inverterVerticalmente = function(centro) {
 		if (!(centro instanceof Ponto)) {
-			var centro = new Ponto(0, 0);
+			centro = new Ponto(0, 0);
 		}
 
 		var distance = centro.getY() - this.y;

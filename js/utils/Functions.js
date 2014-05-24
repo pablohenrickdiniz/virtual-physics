@@ -3,10 +3,6 @@ const GRAVITY = new Vetor(0, 10);
 const VELOCIDADETERMINAL = 50;
 const FPS = 60;
 
-function aplicarForcas(objetoA, objetoB) {
-
-}
-
 function IdGenerator() {
 	this.id = 0;
 	this.disponibleIds = new Array();
@@ -170,15 +166,15 @@ function indexOf(value) {
 	return -1;
 }
 
+if (Array.prototype.indexOf == undefined) {
+	Array.prototype.indexOf = indexOf;
+}
+
 function remove(element) {
 	var index = this.indexOf(element);
 	if (index != -1) {
 		this.splice(index, 1);
 	}
-}
-
-if (Array.prototype.indexOf == undefined) {
-	Array.prototype.indexOf = indexOf;
 }
 
 Array.prototype.remove = remove;

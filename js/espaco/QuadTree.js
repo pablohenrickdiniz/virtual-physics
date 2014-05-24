@@ -6,13 +6,13 @@ function ArvoreColisao(nivel, centro, largura, altura) {
 	this.b = null;
 	this.c = null;
 	this.d = null;
-	this.formas = new Array();
+	this.contatos = new Array();
 	this.nivel = nivel;
 
-	this.addForma = function(forma) {
-		this.formas.push(forma);
-		if (this.formas.length > 1 && this.nivel < 5) {
-			var caixa = forma.getQuadradoCircunscrito();
+	this.addContato = function(contato) {
+		this.contatos.push(contato);
+		if (this.contatos.length > 1 && this.nivel < 5) {
+			var caixa = contato.getQuadradoCircunscrito();
 			var cw = this.largura / 2;
 			var ch = this.altura / 2;
 			var cx = this.centro.getX();
@@ -24,7 +24,7 @@ function ArvoreColisao(nivel, centro, largura, altura) {
 							- (cw / 2), cy - (ch / 2)), cw, ch);
 					this.a.setCor('transparent');
 				}
-				this.a.addForma(forma);
+				this.a.addContato(contato);
 			}
 			if (colisaoCaixaB(caixa, cx, cy - ch, cw, ch)) {
 				if (this.b == null) {
@@ -33,7 +33,7 @@ function ArvoreColisao(nivel, centro, largura, altura) {
 					this.b.setCor('transparent');
 				}
 
-				this.b.addForma(forma);
+				this.b.addContato(contato);
 			}
 			if (colisaoCaixaB(caixa, cx - cw, cy, cw, ch)) {
 				if (this.c == null) {
@@ -41,7 +41,7 @@ function ArvoreColisao(nivel, centro, largura, altura) {
 							- (cw / 2), cy + (ch / 2)), cw, ch);
 					this.c.setCor('transparent');
 				}
-				this.c.addForma(forma);
+				this.c.addContato(contato);
 			}
 			if (colisaoCaixaB(caixa, cx, cy, cw, ch)) {
 				if (this.d == null) {
@@ -49,19 +49,19 @@ function ArvoreColisao(nivel, centro, largura, altura) {
 							+ (cw / 2), cy + (ch / 2)), cw, ch);
 					this.d.setCor('transparent');
 				}
-				this.d.addForma(forma);
+				this.d.addContato(contato);
 			}
 		}
 	};
 
 	this.testarColisao = function() {
-		if (this.formas.length > 1) {
-			for (var i = 0; i < this.formas.length; i++) {
-				var objetoA = this.formas[i].getDono();
-				for (var j = i + 1; j < this.formas.length; j++) {
-					var objetoB = this.formas[j].getDono();
+		if (this.contatos.length > 1) {
+			for (var i = 0; i < this.contatos.length; i++) {
+				var objetoA = this.contatos[i].getDono();
+				for (var j = i + 1; j < this.contatos.length; j++) {
+					var objetoB = this.contatos[j].getDono();
 					if (objetoA.isMoving() || objetoB.isMoving()) {
-						var cp = colisaoCaixa(this.formas[i], this.formas[j]);
+						var cp = colisaoCaixa(this.contatos[i], this.contatos[j]);
 						if (cp instanceof Ponto) {
 							aplicarForcas(objetoA, objetoB);
 						}
@@ -71,15 +71,15 @@ function ArvoreColisao(nivel, centro, largura, altura) {
 		}
 	};
 
-	this.removeForma = function(forma) {
-		this.formas.remove(forma);
-		if (this.formas.length < 2) {
+	this.removerContato = function(contato){
+		this.contatos.remove(contato);
+		if (this.contatos.length < 2) {
 			this.a = null;
 			this.b = null;
 			this.c = null;
 			this.d = null;
 		} else {
-			var caixa = forma.getQuadradoCircunscrito();
+			var caixa = contato.getQuadradoCircunscrito();
 			var cw = this.largura / 2;
 			var ch = this.altura / 2;
 			var cx = this.centro.getX();
@@ -87,16 +87,16 @@ function ArvoreColisao(nivel, centro, largura, altura) {
 
 			if (this.a != null
 					&& colisaoCaixaB(caixa, cx - cw, cy - ch, cw, ch)) {
-				this.a.removeForma(forma);
+				this.a.removerContato(contato);
 			}
 			if (this.b != null && colisaoCaixaB(caixa, cx, cy - ch, cw, ch)) {
-				this.b.removeForma(forma);
+				this.b.removerContato(contato);
 			}
 			if (this.c != null && colisaoCaixaB(caixa, cx - cw, cy, cw, ch)) {
-				this.c.removeForma(forma);
+				this.c.removerContato(contato);
 			}
 			if (this.d != null && colisaoCaixaB(caixa, cx, cy, cw, ch)) {
-				this.d.removeForma(forma);
+				this.d.removerContato(contato);
 			}
 		}
 	};
