@@ -58,4 +58,20 @@ function GradienteLinear(x0, y0, x1, y1) {
 	this.getColorsStop = function(){
 		return this.colorsStop;
 	};
+	
+	this.moverPara = function(x,y){
+		var dx = this.x1 - this.x0;
+		var dy = this.y1 - this.y0;
+		this.x0 = x;
+		this.y0 = y;
+		this.x1 = x+dx;
+		this.y1 = y+dy;
+	};
+	
+	this.transladar = function(x,y){
+		this.x0+=x;
+		this.y0+=y;
+		this.x1+=x;
+		this.y1+=y;
+	};
 }

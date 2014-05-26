@@ -2,18 +2,20 @@ Arco.prototype = new FormaGeometrica();
 
 function Arco(centro, raio, anguloInicial, anguloFinal) {
 	FormaGeometrica.call(this, centro, 'white', new Borda('black', 1), 0);
-
 	this.raio = isNaN(raio) ? 10 : raio;
-	this.anguloInicial = isNaN(anguloInicial) ? 0 : anguloInicial;
-	this.anguloFinal = isNaN(anguloFinal) ? 180 : anguloFinal;
+	anguloInicial = isNaN(anguloInicial) ? this.angulo : anguloInicial;
+	anguloFinal = isNaN(anguloFinal) ? this.angulo+180 : anguloFinal;
 
-	while (this.anguloInicial > 360) {
-		this.anguloInicial = this.anguloInicial % 360;
+	while (anguloInicial > 360) {
+		anguloInicial = anguloInicial % 360;
 	}
 
 	while (this.anguloFinal > 360) {
-		this.anguloFinal = this.anguloFinal % 360;
+		anguloFinal = anguloFinal % 360;
 	}
+	
+	this.anguloInicial = anguloInicial;
+	this.anguloFinal   = anguloFinal;
 
 	this.getRaio = function() {
 		return this.raio;
@@ -32,7 +34,7 @@ function Arco(centro, raio, anguloInicial, anguloFinal) {
 			while (anguloInicial > 360) {
 				anguloInicial = anguloInicial % 360;
 			}
-			this.anguloInicial = anguloInicial;
+			this.anguloInicial = this.angulo+anguloInicial;
 		}
 	};
 
@@ -41,7 +43,7 @@ function Arco(centro, raio, anguloInicial, anguloFinal) {
 			while (angulo > 360) {
 				anguloFinal = anguloFinal % 360;
 			}
-			this.anguloFinal = anguloFinal;
+			this.anguloFinal = this.angulo+anguloFinal;
 		}
 	};
 
@@ -50,4 +52,68 @@ function Arco(centro, raio, anguloInicial, anguloFinal) {
 			this.raio = raio;
 		}
 	};
+	
+	this.moverPara = function(x, y){
+		var xd = 0;
+        var yd = 0;
+        if(!isNaN(x)){
+            xd = this.centro.getX()-x;
+            this.centro.setX(x);
+        }
+
+        if(!isNaN(y)){
+            yd = this.centro.getY()-y;
+            this.centro.setY(y);
+        }
+        
+        if(this.cor instanceof GradienteLinear){
+        	var cx = this.cor.getX0()-xd;
+        	var cy = this.cor.getY0()-yd;
+        	this.cor.moverPara(cx,cy);
+        }
+	};
+	
+	this.transladar = function(x,y){
+	    x = isNaN(x)?0:x;
+	    y = isNaN(y)?0:y;
+	    this.centro.setX(this.centro.getX()+x);
+	    this.centro.setY(this.centro.getY()+y);
+	    if(this.cor instanceof GradienteLinear){
+        	this.cor.transladar(x,y);
+        }
+	};
+	
+	this.setAngulo = function(angulo, origem) {
+		if (!isNaN(angulo)) {
+			while (angulo > 360 || angulo < -360) {
+				angulo = angulo % 360;
+			}
+			this.girar(this.angulo*-1, origem);
+			this.girar(angulo, origem);
+			var anguloInicial = this.anguloInicial - this.angulo;
+			var anguloFinal   = this.anguloFinal   - this.angulo;
+			this.angulo = angulo;
+			this.anguloInicial = anguloInicial+this.angulo;
+			this.anguloFinal   = anguloFinal  +this.angulo;
+		}
+	};
+	
+	this.girar = function(graus, origem) {
+		if (!isNaN(graus)) {
+			while (graus > 360) {
+				graus = graus % 360;
+			}
+			if(origem instanceof Ponto){
+				this.centro.girar(graus,origem);
+			}
+		}
+	};
+}
+
+
+function filtrarAngulo(angulo){
+	while(angulo > 360){
+		angulo = angulo % 360;
+	}
+	return angulo;
 }

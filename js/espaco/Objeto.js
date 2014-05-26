@@ -1,6 +1,6 @@
 function Objeto(contato, desenho) {
-	this.contato = !(contato instanceof FormaGeometrica) ? null : contato;
-	this.desenho = !(desenho instanceof Desenho)? new Desenho():desenho;
+	this.contato = !(contato instanceof FormaGeometrica) ?null: contato;
+	this.desenho = !(desenho instanceof Desenho) ? null : desenho;
 	this.contato.setDono(this);
 	this.dinamico = false;
 	this.friccao = false;
@@ -11,12 +11,11 @@ function Objeto(contato, desenho) {
 	this.vetor = new Vetor(0, 0);
 	this.id = idGenerator.getId();
 
-	
 	this.getContato = function() {
 		return this.contato;
 	};
-	
-	this.getDesenho = function(){
+
+	this.getDesenho = function() {
 		return this.desenho;
 	};
 
@@ -43,22 +42,22 @@ function Objeto(contato, desenho) {
 	this.getVelocidadeAngular = function() {
 		return this.velocidadeAngular;
 	};
-	
-	this.getVetor = function(){
+
+	this.getVetor = function() {
 		return this.vetor;
 	};
-	
-	this.getAngulo = function(){
+
+	this.getAngulo = function() {
 		var angulo = 0;
-		if(this.contato != null){
+		if (this.contato != null) {
 			angulo = this.contato.getAngulo();
 		}
 		return angulo;
 	};
-	
-	this.getCentro = function(){
+
+	this.getCentro = function() {
 		var centro = null;
-		if(this.contato != null){
+		if (this.contato != null) {
 			centro = this.contato.getCentro();
 		}
 		return centro;
@@ -106,47 +105,50 @@ function Objeto(contato, desenho) {
 		}
 	};
 
-	this.setVetor = function(vetor){
-		if(vetor instanceof Vetor){
+	this.setVetor = function(vetor) {
+		if (vetor instanceof Vetor) {
 			this.vetor = vetor;
 		}
 	};
-	
-	this.setDesenho = function(desenho){
-		if(desenho instanceof Desenho){
+
+	this.setDesenho = function(desenho) {
+		if (desenho instanceof Desenho) {
 			this.desenho = desenho;
 		}
 	};
-	
-	this.setAngulo = function(angulo, origem){
+
+	this.setAngulo = function(angulo, origem) {
 		this.contato.setAngulo(angulo, origem);
 		this.desenho.setAngulo(angulo, origem);
 	};
-	
+
 	this.getId = function() {
 		return this.id;
 	};
 
 	this.isMoving = function() {
-		return (this.dinamico || this.vetor.getX() != 0 || this.vetor.getX() != 0 || this.velocidadeAngular != 0);
+		return (this.dinamico || this.vetor.getX() != 0
+				|| this.vetor.getX() != 0 || this.velocidadeAngular != 0);
 	};
-	
-	this.moverPara = function(x,y){
-		this.contato.moverPara(x,y);
-		this.desenho.moverPara(x,y);
+
+	this.moverPara = function(x, y) {
+		this.contato.moverPara(x, y);
+		this.desenho.moverPara(x, y);
+		console.log(this.contato.centro+"");
+		console.log(this.desenho.centro+"");
 	};
-	
-	this.transladar = function(x, y){
-		this.contato.transladar(x,y);
-		this.desenho.transladar(x,y);
+
+	this.transladar = function(x, y) {
+		this.contato.transladar(x, y);
+		this.desenho.transladar(x, y);
 	};
 
 	this.step = function() {
 		if (this.vetor.getX() != 0 || this.vetor.getY() != 0) {
-			var x = this.vetor.getX()/METERPIXEL;
-			var y = this.vetor.getY()/METERPIXEL;
-			this.contato.transladar(x,y);
-			this.desenho.transladar(x,y);
+			var x = this.vetor.getX() / METERPIXEL;
+			var y = this.vetor.getY() / METERPIXEL;
+			this.contato.transladar(x, y);
+			this.desenho.transladar(x, y);
 		}
 
 		if (this.velocidadeAngular != 0) {
@@ -154,9 +156,9 @@ function Objeto(contato, desenho) {
 			this.desenho.girar(this.velocidadeAngular);
 		}
 
-	    if(this.vetor.obterNorma() < VELOCIDADETERMINAL){
-            this.vetor = somaVetor(this.vetor, GRAVITY);
-        }
+		if (this.vetor.obterNorma() < VELOCIDADETERMINAL) {
+			this.vetor = somaVetor(this.vetor, GRAVITY);
+		}
 	};
 
 	this.getVetor = function() {

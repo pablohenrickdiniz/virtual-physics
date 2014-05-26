@@ -1,6 +1,7 @@
 $(document).ready(function() {
 	var universo = new Universo(new Ponto(300, 300), 600, 600);
 	var bolaBranca = Fabrica.criarBolaBranca();
+	universo.addObjeto(bolaBranca);
 	var taco = Fabrica.criarTaco();
 	var mesa = Fabrica.criarMesa();
 	var centroBola = bolaBranca.getCentro();
@@ -11,7 +12,13 @@ $(document).ready(function() {
 	universo.addObjeto(mesa.oeste);
 	universo.addObjeto(bolaBranca);
 	universo.addObjeto(taco);
-
+	
+	
+	var tix = taco.getCentro().getX();
+	var tiy = taco.getCentro().getY();
+	var tia = taco.getAngulo();
+	var quad = taco.getContato().getQuadradoCircunscrito();
+	
 	var count = 0;
 	loop();
 	function loop() {
@@ -29,11 +36,13 @@ $(document).ready(function() {
 
 	var reader = new MouseReader("#canvas");
 	reader.startRead();
-
+	
 	var vetorTaco = new Vetor(0, 0);
 	var pontoP = new Ponto(0,0);
 	var tx = 0;
 	var ty = 0;
+	var ex = 0;
+	var ey = 0;
 	taco.setVetor(vetorTaco);
 	
 	var pressed = false;
@@ -43,16 +52,16 @@ $(document).ready(function() {
 		pontoP.setY(reader.getY());
 		tx = taco.getCentro().getX();
 		ty = taco.getCentro().getY();
-		vx = vetorTaco.getX();
-		vy = vetorTaco.getY();
 	});
 	
     $("#canvas").mouseup(function(){
     	pressed = false;
     	vetorTaco.normalizar();
-		taco.moverPara(vetorTaco.getX(), vetorTaco.getY());
+    	taco.moverPara(tix,tiy);
+    	taco.setAngulo(tia);
 	});
 	
+    
 	
 	$("#canvas").mousemove(function() {
 		if (!pressed) {
@@ -72,7 +81,9 @@ $(document).ready(function() {
 			var d = obterDistancia(atual, pontoP);
 			if(d > 10){
 				multiplicarVetor(vetorTaco, d);
-				taco.moverPara(vetorTaco.getX(), vetorTaco.getY());
+				ex = -vetorTaco.getX();
+				ey = -vetorTaco.getY();
+				taco.moverPara(tx+ex,ty+ey);
 			}
 			
 		}

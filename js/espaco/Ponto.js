@@ -77,6 +77,10 @@ function Ponto(x, y) {
 		var distance = centro.getY() - this.y;
 		this.y = centro.getY() + distance;
 	};
+	
+	this.toString = function(){
+		return "ponto("+this.x+","+this.y+")";
+	};
 }
 
 function obterPontoMedio(pontoA, pontoB) {

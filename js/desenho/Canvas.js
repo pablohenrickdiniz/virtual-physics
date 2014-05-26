@@ -8,7 +8,9 @@ function Canvas(canvas) {
 	this.altura = toInt($(canvas).css('height'));
 	this.contexto = $(canvas).get(0).getContext('2d');
 	this.formasGeometricas = new Array();
-
+	if (!this.contexto.setLineDash) {
+	    this.contexto.setLineDash = function () {}
+	}
 	this.addFormaGeometrica = function(forma) {
 		if (forma instanceof FormaGeometrica) {
 			this.formasGeometricas[forma.getId()] = forma;
@@ -39,6 +41,9 @@ function Canvas(canvas) {
 					arco.getRaio(), Math.PI * arco.getAnguloInicial() / 180,
 					Math.PI * arco.getAnguloFinal() / 180);
 			this.contexto.fill();
+			var lineDash = arco.getBorda().getLineDash();
+			this.contexto.setLineDash(lineDash);
+			this.contexto.lineCap = arco.getBorda().getLineCap();
 			this.contexto.lineWidth = arco.getBorda().getEspessura();
 			this.contexto.stroke();
 		}
@@ -55,6 +60,9 @@ function Canvas(canvas) {
 			}
 			this.contexto.closePath();
 			this.contexto.fill();
+			var lineDash = poligono.getBorda().getLineDash();
+			this.contexto.setLineDash(lineDash);
+			this.contexto.lineCap = poligono.getBorda().getLineCap();
 			this.contexto.strokeStyle =  this.preencher(poligono.getBorda().getCor());
 			this.contexto.lineWidth = poligono.getBorda().getEspessura();
 			this.contexto.stroke();
@@ -78,13 +86,13 @@ function Canvas(canvas) {
 		this.desenharPoligono(quadrado);
 	};
 
-	this.desenharVetor = function(vetor, origem) {
-		if (vetor instanceof Vetor) {
-			this.contexto.strokeStyle =  this.preencher(vetor.getCor());
+	this.desenharPonto = function(ponto) {
+		if (ponto instanceof Ponto) {
+			this.contexto.strokeStyle =  'black';
 			this.contexto.beginPath();
-			this.contexto.moveTo(origem.getX(), origem.getY());
-			this.contexto.lineTo(origem.getX() + vetor.getX(), origem.getY()
-					+ vetor.getY());
+			this.contexto.moveTo(ponto.getX(), ponto.getY());
+			this.contexto.lineTo(ponto.getX() + ponto.getX(), ponto.getY()
+					+ ponto.getY());
 			this.contexto.stroke();
 		}
 	};
@@ -119,7 +127,7 @@ function Canvas(canvas) {
 	
 	this.preencher = function(cor){
 		if(cor instanceof Color){
-			return cor.getHex();
+			return cor.getRgba();
 		}
 		else if(cor instanceof GradienteRadial){
 			return this.criarGradienteRadial(cor);

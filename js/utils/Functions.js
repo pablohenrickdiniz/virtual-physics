@@ -1,6 +1,6 @@
 const METERPIXEL = 1000;
 const GRAVITY = new Vetor(0, 10);
-const VELOCIDADETERMINAL = 50;
+const VELOCIDADETERMINAL = 1000;
 const FPS = 60;
 
 function IdGenerator() {
@@ -206,3 +206,4 @@ Array.prototype.remove = remove;
 			clearTimeout(id);
 		};
 }());
+

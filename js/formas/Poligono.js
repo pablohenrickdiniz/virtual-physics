@@ -93,6 +93,9 @@ function Poligono(centro, angulo) {
         }
         this.centro.setX(this.centro.getX()+x);
         this.centro.setY(this.centro.getY()+y);
+        if(this.cor instanceof GradienteLinear){
+        	this.cor.transladar(x,y);
+        }
     };
 
     this.moverPara = function(x,y){
@@ -107,10 +110,15 @@ function Poligono(centro, angulo) {
             yd = this.centro.getY()-y;
             this.centro.setY(y);
         }
-
         for(var i = 0; i < this.pontos.length;i++){
-            this.pontos[i].setX(this.pontos[i].getX()+xd);
-            this.pontos[i].setY(this.pontos[i].getY()+yd);
+            this.pontos[i].setX(this.pontos[i].getX()-xd);
+            this.pontos[i].setY(this.pontos[i].getY()-yd);
+        }
+        
+        if(this.cor instanceof GradienteLinear){
+        	var cx = this.cor.getX0()-xd;
+        	var cy = this.cor.getY0()-yd;
+        	this.cor.moverPara(cx,cy);
         }
     };
 
