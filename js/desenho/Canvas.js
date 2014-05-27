@@ -7,18 +7,12 @@ function Canvas(canvas) {
 	this.largura = toInt($(canvas).css('width'));
 	this.altura = toInt($(canvas).css('height'));
 	this.contexto = $(canvas).get(0).getContext('2d');
-	this.formasGeometricas = new Array();
+	
 	if (!this.contexto.setLineDash) {
 	    this.contexto.setLineDash = function () {}
 	}
-	this.addFormaGeometrica = function(forma) {
-		if (forma instanceof FormaGeometrica) {
-			this.formasGeometricas[forma.getId()] = forma;
-		}
-	};
 
 	this.desenharFormaGeometrica = function(formaGeometrica) {
-	
 		if (formaGeometrica instanceof Poligono) {
 			this.desenharPoligono(formaGeometrica);
 		} else if (formaGeometrica instanceof Circulo) {
@@ -34,8 +28,24 @@ function Canvas(canvas) {
 
 	this.desenharArco = function(arco) {
 		if (arco instanceof Arco) {
+			var sombra = arco.getSombra();
+			if(sombra != null){
+				this.contexto.shadowOffsetX = sombra.getX();
+				this.contexto.shadowOffsetY = sombra.getY();
+				this.contexto.shadowBlur = sombra.getBlur();
+				this.contexto.shadowColor = this.preencher(sombra.getColor());
+				
+			}
+			else{
+				this.contexto.shadowOffsetX = 0;
+				this.contexto.shadowOffsetY = 0;
+				this.contexto.shadowBlur = 0;
+				this.contexto.shadowColor = "#FFFFFF";
+			}
+			this.contexto.fill();
 			this.contexto.fillStyle  =  this.preencher(arco.getCor());
 			this.contexto.strokeStyle =  this.preencher(arco.getBorda().getCor());
+			
 			this.contexto.beginPath();
 			this.contexto.arc(arco.getCentro().getX(), arco.getCentro().getY(),
 					arco.getRaio(), Math.PI * arco.getAnguloInicial() / 180,
@@ -52,6 +62,21 @@ function Canvas(canvas) {
 	this.desenharPoligono = function(poligono) {
 		if (poligono instanceof Poligono) {
 			var pontos = poligono.getPontos();
+			var sombra = poligono.getSombra();
+			if(sombra != null){
+				this.contexto.shadowOffsetX = sombra.getX();
+				this.contexto.shadowOffsetY = sombra.getY();
+				this.contexto.shadowBlur = sombra.getBlur();
+				this.contexto.shadowColor = this.preencher(sombra.getColor());
+				
+			}
+			else{
+				this.contexto.shadowOffsetX = null;
+				this.contexto.shadowOffsetY = null;
+				this.contexto.shadowBlur = null;
+				this.contexto.shadowColor = null;
+			}
+			this.contexto.fill();
 			this.contexto.fillStyle =  this.preencher(poligono.getCor());
 			this.contexto.beginPath();
 			this.contexto.moveTo(pontos[0].getX(), pontos[0].getY());

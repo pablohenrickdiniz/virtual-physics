@@ -1,8 +1,8 @@
 Retangulo.prototype = new Poligono();
 function Retangulo(centro, largura, altura) {
 	Poligono.call(this, centro);
-	this.largura = largura == undefined || isNaN(largura) || largura < 1 ? 10: largura;
-	this.altura = altura == undefined || isNaN(altura) || altura < 1 ? 10: altura;
+	this.largura = isNaN(largura) || largura <= 0 ? 10: largura;
+	this.altura =  isNaN(altura) || altura <= 0 ? 10: altura;
 
 	this.getLargura = function() {
 		return this.largura;
@@ -13,7 +13,7 @@ function Retangulo(centro, largura, altura) {
 	};
 
 	this.setLargura = function(largura) {
-		if (!isNaN(largura)) {
+		if (!isNaN(largura) && largura != this.largura && largura > 0) {
 			this.largura = largura;
 			this.atualizarPontos();
 		}
@@ -21,7 +21,7 @@ function Retangulo(centro, largura, altura) {
 	};
 
 	this.setAltura = function(altura) {
-		if (!isNaN(altura)) {
+		if (!isNaN(altura) && altura != this.altura && largura > 0) {
 			this.altura = altura;
 			this.atualizarPontos();
 		}

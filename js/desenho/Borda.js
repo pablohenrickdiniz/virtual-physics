@@ -41,4 +41,4 @@ function Borda(cor, espessura) {
 
 Borda.BUTT  = 'butt';
 Borda.ROUND = 'round';
-Borda.SQURE = 'square';
+Borda.SQUARE = 'square';

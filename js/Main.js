@@ -6,10 +6,13 @@ $(document).ready(function() {
 	var mesa = Fabrica.criarMesa();
 	var centroBola = bolaBranca.getCentro();
 
-	universo.addObjeto(mesa.norte);
-	universo.addObjeto(mesa.leste);
-	universo.addObjeto(mesa.sul);
-	universo.addObjeto(mesa.oeste);
+	universo.addObjeto(mesa.base);
+    universo.addObjeto(mesa.c1);
+    universo.addObjeto(mesa.c2);
+    universo.addObjeto(mesa.c3);
+    universo.addObjeto(mesa.c4);
+    universo.addObjeto(mesa.c5);
+    universo.addObjeto(mesa.c6);
 	universo.addObjeto(bolaBranca);
 	universo.addObjeto(taco);
 	
@@ -37,7 +40,9 @@ $(document).ready(function() {
 	var reader = new MouseReader("#canvas");
 	reader.startRead();
 	
-	var vetorTaco = new Vetor(0, 0);
+	var vetorTaco  = new Vetor(0, 0);
+	var vetorMouse = new Vetor(0,0);
+	var atual      = new Ponto(0,0);
 	var pontoP = new Ponto(0,0);
 	var tx = 0;
 	var ty = 0;
@@ -64,22 +69,25 @@ $(document).ready(function() {
     
 	
 	$("#canvas").mousemove(function() {
+		var rx = reader.getX();
+		var ry = reader.getY();
+		var vxd = centroBola.getX() - rx;
+		var vyd = centroBola.getY() - ry;
+		vetorMouse.setX(vxd);
+		vetorMouse.setY(vyd);
+		
 		if (!pressed) {
-			var rx = reader.getX();
-			var ry = reader.getY();
-			var vxd = centroBola.getX() - rx;
-			var vyd = centroBola.getY() - ry;
 			vetorTaco.setX(vxd);
 			vetorTaco.setY(vyd);
 			taco.setAngulo(obterAngulo(vxd, vyd) + 180, centroBola);
 		} else {
 			vetorTaco.normalizar();
-			var rx = reader.getX();
-			var ry = reader.getY();
-			var atual = new Ponto(rx, ry);
-			
+			atual.setX(rx);
+			atual.setY(ry);
 			var d = obterDistancia(atual, pontoP);
-			if(d > 10){
+			var am = vetorMouse.obterAnguloVetor();
+			var at = vetorTaco.obterAnguloVetor();
+			if(d > 10 && am > at-20 && am < at+20){
 				multiplicarVetor(vetorTaco, d);
 				ex = -vetorTaco.getX();
 				ey = -vetorTaco.getY();

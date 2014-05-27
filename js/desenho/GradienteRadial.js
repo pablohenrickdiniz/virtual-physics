@@ -23,13 +23,4 @@ function GradienteRadial(x0, y0, r0, x1, y1, r1) {
 			this.r1 = r1;
 		}
 	};
-	
-	this.moverPara = function(x,y){
-		var dx = this.x1 - this.x0;
-		var dy = this.y1 - this.y0;
-		this.x0 = x;
-		this.y0 = y;
-		this.x1 = x+dx;
-		this.y1 = y+dy;
-	};
 }

@@ -3,6 +3,7 @@ function FormaGeometrica(centro, cor, borda, angulo) {
 	this.centro.setDono(this);
 	this.cor = cor == undefined ? new Color(255,255,255) : cor;
 	this.borda = !(borda instanceof Borda) ? new Borda(new Color(0,0,0), 1) : borda;
+	this.sombra = null;
 	this.angulo = isNaN(angulo) ? 0 : angulo;
 	this.antigoAngulo = this.angulo;
 	this.dono = null;
@@ -65,7 +66,17 @@ function FormaGeometrica(centro, cor, borda, angulo) {
 	this.setDono = function(dono) {
 		this.dono = dono;
 	};
-
+	
+	this.setSombra = function(sombra){
+		if(sombra instanceof Sombra){
+			this.sombra = sombra;
+		}
+	};
+	
+	this.getSombra = function(){
+		return this.sombra;
+	};
+	
 	this.getDono = function() {
 		return this.dono;
 	};
@@ -77,7 +88,7 @@ function FormaGeometrica(centro, cor, borda, angulo) {
 	this.setCamada = function(camada) {
 		this.camada = camada;
 	};
-
+	
 	this.getId = function() {
 		return this.id;
 	};
