@@ -69,7 +69,6 @@ function Arco(centro, raio, anguloInicial, anguloFinal) {
         if(this.cor instanceof GradienteLinear){
         	var cx = this.cor.getX0()-xd;
         	var cy = this.cor.getY0()-yd;
-        	this.cor.moverPara(cx,cy);
         }
 	};
 	
@@ -78,9 +77,6 @@ function Arco(centro, raio, anguloInicial, anguloFinal) {
 	    y = isNaN(y)?0:y;
 	    this.centro.setX(this.centro.getX()+x);
 	    this.centro.setY(this.centro.getY()+y);
-	    if(this.cor instanceof GradienteLinear){
-        	this.cor.transladar(x,y);
-        }
 	};
 	
 	this.setAngulo = function(angulo, origem) {

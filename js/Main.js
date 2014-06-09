@@ -1,11 +1,14 @@
 $(document).ready(function() {
+	var circulo = new Circulo(new Ponto(100,100),30);
+	
+
 	var universo = new Universo(new Ponto(300, 300), 600, 600);
 	var bolaBranca = Fabrica.criarBolaBranca();
-	universo.addObjeto(bolaBranca);
 	var taco = Fabrica.criarTaco();
 	var mesa = Fabrica.criarMesa();
 	var centroBola = bolaBranca.getCentro();
-
+	
+	bolaBranca.dinamico = true;
 	universo.addObjeto(mesa.base);
     universo.addObjeto(mesa.c1);
     universo.addObjeto(mesa.c2);
@@ -16,12 +19,18 @@ $(document).ready(function() {
 	universo.addObjeto(bolaBranca);
 	universo.addObjeto(taco);
 	
-	
 	var tix = taco.getCentro().getX();
 	var tiy = taco.getCentro().getY();
 	var tia = taco.getAngulo();
 	var quad = taco.getContato().getQuadradoCircunscrito();
 	
+	/*
+	var linha = Fabrica.criarLinha();
+	var bola  = Fabrica.criarBola();
+	bola.dinamico = true;
+	universo.addObjeto(linha);
+	universo.addObjeto(bola);
+	*/
 	var count = 0;
 	loop();
 	function loop() {
@@ -38,7 +47,9 @@ $(document).ready(function() {
 	}, 1000);
 
 	var reader = new MouseReader("#canvas");
+	var readerSvg = new MouseReader("#svg");
 	reader.startRead();
+	readerSvg.startRead();
 	
 	var vetorTaco  = new Vetor(0, 0);
 	var vetorMouse = new Vetor(0,0);
@@ -59,14 +70,21 @@ $(document).ready(function() {
 		ty = taco.getCentro().getY();
 	});
 	
-    $("#canvas").mouseup(function(){
+	$("#svg").mousedown(function(){
+		pressed = true;
+		pontoP.setX(readerSvg.getX());
+		pontoP.setY(readerSvg.getY());
+		tx = taco.getCentro().getX();
+		ty = taco.getCentro().getY();
+	});
+	
+    $("#canvas,#svg").mouseup(function(){
     	pressed = false;
+    	bolaBranca.setVetor(new Vetor(vetorTaco.getX()*3, vetorTaco.getY()*3));
     	vetorTaco.normalizar();
     	taco.moverPara(tix,tiy);
     	taco.setAngulo(tia);
 	});
-	
-    
 	
 	$("#canvas").mousemove(function() {
 		var rx = reader.getX();
@@ -84,24 +102,47 @@ $(document).ready(function() {
 			vetorTaco.normalizar();
 			atual.setX(rx);
 			atual.setY(ry);
-			var d = obterDistancia(atual, pontoP);
-			var am = vetorMouse.obterAnguloVetor();
-			var at = vetorTaco.obterAnguloVetor();
+			var d = Ponto.distancia(atual, pontoP);
+			var am = vetorMouse.obterAngulo();
+			var at = vetorTaco.obterAngulo();
 			if(d > 10 && am > at-20 && am < at+20){
-				multiplicarVetor(vetorTaco, d);
+				Vetor.multiplicar(vetorTaco, d);
 				ex = -vetorTaco.getX();
 				ey = -vetorTaco.getY();
 				taco.moverPara(tx+ex,ty+ey);
 			}
 			
 		}
+		
 	});
 	
-	var matriz = new Matriz(3,4);
-	matriz.load({
-		0:{0:10,1:20,2:58,3:74},
-		1:{0:33,1:12,2:47,3:36},
-		2:{0:87,1:12,2:11,3:45}
+	$("#svg").mousemove(function() {
+		var rx = readerSvg.getX();
+		var ry = readerSvg.getY();
+		var vxd = centroBola.getX() - rx;
+		var vyd = centroBola.getY() - ry;
+		vetorMouse.setX(vxd);
+		vetorMouse.setY(vyd);
+		
+		if (!pressed) {
+			vetorTaco.setX(vxd);
+			vetorTaco.setY(vyd);
+			taco.setAngulo(obterAngulo(vxd, vyd) + 180, centroBola);
+		} else {
+			vetorTaco.normalizar();
+			atual.setX(rx);
+			atual.setY(ry);
+			var d = Ponto.distancia(atual, pontoP);
+			var am = vetorMouse.obterAngulo();
+			var at = vetorTaco.obterAngulo();
+			if(d > 10 && am > at-20 && am < at+20){
+				Vetor.multiplicar(vetorTaco, d);
+				ex = -vetorTaco.getX();
+				ey = -vetorTaco.getY();
+				taco.moverPara(tx+ex,ty+ey);
+			}
+			
+		}
+		
 	});
-	console.log(matriz+"");
 });

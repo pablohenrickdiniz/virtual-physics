@@ -2,10 +2,8 @@ function Fabrica() {
 }
 
 Fabrica.criarTaco = function() {
-	var sombra = new Sombra(5,5,5,"Gray");
 	var tacoContato = new Poligono();
 	var tacoForma = new Poligono();
-	tacoForma.setSombra(sombra);
 	tacoContato.addPonto(new Ponto(297, 312));
 	tacoContato.addPonto(new Ponto(303, 312));
 	tacoContato.addPonto(new Ponto(304, 850));
@@ -17,8 +15,7 @@ Fabrica.criarTaco = function() {
 	tacoForma.addPonto(new Ponto(304, 850));
 	tacoForma.addPonto(new Ponto(290, 850));
 	tacoForma.atualizarCentro();
-	tacoContato.getBorda().setCor('transparent');
-	tacoContato.setCor('transparent');
+	
 	var ponta = new Retangulo(new Ponto(300, 320), 5, 15);
 	ponta.setCor('black');
 	var desenhoTaco = new Desenho(new Ponto(tacoForma.getCentro().getX(),
@@ -30,32 +27,28 @@ Fabrica.criarTaco = function() {
 };
 
 Fabrica.criarBolaBranca = function() {
-	var sombra = new Sombra(3,3,3,"Gray");
-	var grdBola = new GradienteRadial(300, 300, 50, 250, 250, 60);
-	grdBola.addColorStop(0.2, "Grey");
-	grdBola.addColorStop(1, "White");
+	//var sombra = new Sombra(3,3,3,"Gray");
+	var grdBola = new GradienteRadial(50,50,100,100,100);
+	grdBola.addColorStop(0, "White");
+	grdBola.addColorStop(50, "Grey");
 
 	var bolaForma = new Circulo(new Ponto(300, 300), 10);
-	var quadForma = new Retangulo(new Ponto(300, 320), 20, 20);
-	quadForma.setCor('transparent');
-	// quadForma.getBorda().setLineDash([ 2, 2 ]);
 	bolaForma.setCor(grdBola);
-	bolaForma.setSombra(sombra);
+	//bolaForma.setSombra(sombra);
 	bolaForma.getBorda().setCor('Gray');
+	bolaForma.getBorda().setLineDash([5,3]);
+	bolaForma.getBorda().setLineCap(Borda.ROUND);
 
 	var desenhoBola = new Desenho(new Ponto(bolaForma.getCentro().getX(),
 			bolaForma.getCentro().getY()));
 	desenhoBola.addForma(bolaForma);
 	var bolaContato = new Circulo(new Ponto(300, 300), 10);
-	bolaContato.setCor('transparent');
-	bolaContato.getBorda().setCor('transparent');
 	var bolaBranca = new Objeto(bolaContato, desenhoBola);
 	return bolaBranca;
 };
 
 Fabrica.criarMesa = function() {
 	var basec = new Retangulo(new Ponto(562.5,300),1125,600);
-	basec.setCor('transparent');
 	var basef = new Retangulo(new Ponto(562.5,300),1125,600);
 	basef.setCor('SpringGreen');
 	var based = new Desenho();
@@ -115,37 +108,17 @@ Fabrica.criarMesa = function() {
 	c6d.addForma(c6tf);
 	c6d.addForma(c6qf);
 	
-	
-
-	c1tf.setSombra(new Sombra(3,3,3,"#AABBAA"));
 	c1tf.setCor(tc);
-	c1tf.getBorda().setCor('transparent');
-	c1tc.setCor('transparent');
 	c1qf.setCor('Brown');
-	c2tf.setSombra(new Sombra(3,3,3,"#AABBAA"));
 	c2tf.setCor(tc);
-	c2tf.getBorda().setCor('transparent');
-	c2tc.setCor('transparent');
 	c2qf.setCor('Brown');
-	c3tf.setSombra(new Sombra(-3,3,3,"#AABBAA"));
     c3tf.setCor(tc);
-	c3tf.getBorda().setCor('transparent');
-	c3tc.setCor('transparent');
 	c3qf.setCor('Brown');
-	c4tf.setSombra(new Sombra(-3,-3,3,"#AABBAA"));
 	c4tf.setCor(tc);
-	c4tf.getBorda().setCor('transparent');
-	c4tc.setCor('transparent');
 	c4qf.setCor('Brown');
-	c5tf.setSombra(new Sombra(-3,-3,3,"#AABBAA"));
 	c5tf.setCor(tc);
-	c5tf.getBorda().setCor('transparent');
-	c5tc.setCor('transparent');
 	c5qf.setCor('Brown');
-	c6tf.setSombra(new Sombra(3,3,3,"#AABBAA"));
 	c6tf.setCor(tc);
-	c6tf.getBorda().setCor('transparent');
-	c6tc.setCor('transparent');
 	c6qf.setCor('Brown');
 	
 	var c1 = new Objeto(c1tc, c1d);
@@ -166,4 +139,46 @@ Fabrica.criarMesa = function() {
 	};
 
 	return mesa;
+};
+
+Fabrica.criarLinha = function(){
+	var pontoA = new Ponto(350,350);
+	var pontoB = new Ponto(700,130);
+	var linhaDraw = new Reta(pontoA, pontoB);
+	linhaDraw.getBorda().setEspessura(2);
+	linhaDraw.getBorda().setLineDash([5,5]);
+	var desenho = new Desenho();
+	desenho.addForma(linhaDraw);
+	desenho.setCentro(linhaDraw.getCentro());
+	var linha = new Objeto(linhaDraw, desenho);
+	return linha;
+};
+
+Fabrica.criarBola = function(){
+	var circuloDraw = new Circulo(new Ponto(350,150),30);
+	circuloDraw.getBorda().setLineDash([4,4]);
+	circuloDraw.setCor(new Color(Color.Name.lavender));
+	//circuloDraw.getBorda().setCor('transparent');
+	//var cor = new Color("Red");
+	//cor.setAlpha(0.2);
+	//circuloDraw.setCor(cor);
+	//var starDraw = new FormaRegular(new Ponto(350,150),15,5,2,0);
+	//starDraw.setCor(new Color(Color.Name.Gold1));
+	//starDraw.getBorda().setCor('transparent');
+	var bolaDraw = new Desenho();
+	bolaDraw.addForma(circuloDraw);
+	//bolaDraw.addForma(starDraw);
+	bolaDraw.setCentro(new Ponto(350,150));
+	var bola = new Objeto(circuloDraw, bolaDraw);
+	return bola;
+};
+
+
+Fabrica.animacoes = function(){
+	
+
+
+
+
+
 };

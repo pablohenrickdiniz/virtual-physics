@@ -134,8 +134,6 @@ function Objeto(contato, desenho) {
 	this.moverPara = function(x, y) {
 		this.contato.moverPara(x, y);
 		this.desenho.moverPara(x, y);
-		console.log(this.contato.centro+"");
-		console.log(this.desenho.centro+"");
 	};
 
 	this.transladar = function(x, y) {
@@ -157,7 +155,8 @@ function Objeto(contato, desenho) {
 		}
 
 		if (this.vetor.obterNorma() < VELOCIDADETERMINAL) {
-			this.vetor = somaVetor(this.vetor, GRAVITY);
+			
+			this.vetor = Vetor.somar(this.vetor, GRAVITY);
 		}
 	};
 

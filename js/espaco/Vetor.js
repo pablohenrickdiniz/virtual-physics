@@ -46,7 +46,7 @@ function Vetor(x, y) {
 		return this.norma;
 	};
 
-	this.obterAnguloVetor = function() {
+	this.obterAngulo = function() {
 		if(this.angulo == null){
 			this.angulo = obterAngulo(this.x, this.y);
 		}
@@ -76,59 +76,42 @@ function Vetor(x, y) {
 	};
 }
 
-function obterAngulo(x, y) {
-	var xabs = Math.abs(x);
-	var yabs = Math.abs(y);
-	if (x < 0 && y > 0) {
-		return converterParaGraus(Math.atan(xabs / yabs));
-	} else if (x < 0 && y < 0) {
-		return 90 + converterParaGraus(Math.atan(yabs / xabs));
-	} else if (x > 0 && y < 0) {
-		return 180 + converterParaGraus(Math.atan(xabs / yabs));
-	} else if (x > 0 && y > 0) {
-		return 270 + converterParaGraus(Math.atan(yabs / xabs));
-	}
-}
-
-function obterHipotenusa(x, y) {
-	return Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
-}
-
-function obterAnguloVetores(vetorA, vetorB) {
+Vetor.obterAnguloVetores = function(vetorA, vetorB){
 	var pe = obterProdutoEscalar(vetorA, vetorB);
 	var na = vetorA.obterNorma();
 	var nb = vetorB.obterNorma();
 	return converterParaGraus(Math.acos(pe / (na * nb)));
-}
+};
 
-function obterProdutoEscalar(vetorA, vetorB) {
+Vetor.obterProdutoEscalar = function(vetorA, vetorB){
 	var vax = vetorA.getX();
 	var vbx = vetorB.getX();
 	var vay = vetorA.getY();
 	var vby = vetorB.getY();
 	return (vax * vbx) + (vay * vby);
-}
+};
 
-function multiplicarVetor(vetor, escalar){
+Vetor.multiplicar = function(vetor, escalar){
 	vetor.setX(vetor.getX()*escalar);
 	vetor.setY(vetor.getY()*escalar);
-}
+};
 
-function somaVetor(vetorA, vetorB) {
+Vetor.somar = function(vetorA, vetorB){
 	var vax = vetorA.getX();
 	var vbx = vetorB.getX();
 	var vay = vetorA.getY();
 	var vby = vetorB.getY();
 	return new Vetor(vax + vbx, vay + vby);
-}
+};
 
-function somaComprimento(vetor, comprimento){
+Vetor.somarComprimento = function(vetor, comprimento){
 	var vx = vetor.getX();
 	var vy = vetor.getY();
-	
 	var total = vx+vy;
 	var cx = comprimento*(((vx*100)/total)/100);
 	var cy = comprimento*(((vy*100)/total)/100);
 	vetor.setX(vx+cx);
 	vetor.setY(vy+cy);
-}
+};
+
+

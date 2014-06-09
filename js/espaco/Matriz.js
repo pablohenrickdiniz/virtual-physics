@@ -93,16 +93,6 @@ function Matriz(linhas, colunas){
 		}
 	};
 	
-	this.multiplicarPorEscalar = function(escalar){
-		if(!isNaN(escalar)){
-			for(var i = 0; i < this.linhas;i++){
-				for(var j = 0; j < this.colunas;j++){
-					this.setValor(i,j, this.getValor(i,j)*escalar);
-				}
-			}
-		}
-	};
-	
 	this.obterCofator = function(linha, coluna){
 		if(linha >= 0 && linha < this.linhas && coluna >= 0 && coluna < this.colunas){
 			return Math.pow(-1,linha+coluna)*this.obterSubMatriz(linha,coluna).obterDeterminante()
@@ -181,37 +171,6 @@ function Matriz(linhas, colunas){
 		}
 		return this.inversa;
 	};
-	
-	this.somar = function(matriz){
-		if(matriz instanceof Matriz){
-			if(this.linhas == matriz.getLinhas() && this.colunas == matriz.getColunas()){
-				for(var i = 0; i < this.mat.length;i++){
-					for(var j = 0; j < this.mat[i].length;j++){
-						this.setValor(i,j,this.getValor(i,j)+matriz.getValor(i,j));
-					}
-				}
-			}
-			else{
-				throw new TypeError("As matrizes a serem somadas devem ser de mesma ordem");
-			}
-		}
-	};
-	
-	this.subtrair = function(matriz){
-		if(matriz instanceof Matriz){
-			if(this.linhas == matriz.linhas && this.colunas == matriz.colunas){
-				for(var i = 0; i < this.mat.length;i++){
-					for(var j = 0; j < this.mat[i].length;j++){
-						this.setValor(i,j,this.getValor(i,j)-matriz.getValor(i,j));
-					}
-				}
-			}
-			else{
-				throw new TypeError("As matrizes a serem subtraídas devem ser de mesma ordem");
-			}
-		}
-	};
-	
 	
 	this.obterDeterminante = function(){
 		if(this.determinante == null){
@@ -302,7 +261,8 @@ function Matriz(linhas, colunas){
 }
 
 
-function somarMatrizes(matrizA, matrizB){
+
+Matriz.somar = function(matrizA, matrizB){
 	if(matrizA instanceof Matriz && matrizB instanceof Matriz){
 		if(matrizA.getLinhas() == matrizB.getLinhas() && matrizA.getColunas() == matrizB.getColunas()){
 			var mal = matrizA.getLinhas();
@@ -319,9 +279,9 @@ function somarMatrizes(matrizA, matrizB){
 			throw new TypeError("As matrizes a serem somadas devem ser de mesma ordem");
 		}
 	}
-}
+};
 
-function subtrairMatrizes(matrizA, matrizB){
+Matriz.subtrair = function(matrizA, matrizB){
 	if(matrizA instanceof Matriz && matrizB instanceof Matriz){
 		if(matrizA.getLinhas() == matrizB.getLinhas() && matrizA.getColunas() == matrizB.getColunas()){
 			var mal = matrizA.getLinhas();
@@ -338,10 +298,10 @@ function subtrairMatrizes(matrizA, matrizB){
 			throw new TypeError("As matrizes a serem subtraídas devem ser de mesma ordem");
 		}
 	}
-}
+};
 
 
-function multiplicarPorEscalar(matriz, escalar){
+Matriz.multiplicarPorEscalar = function(matriz, escalar){
 	if(matriz instanceof Matriz && !isNaN(escalar)){
 		var mat = new Matriz(matriz.getLinhas(), matriz.getColunas());
 		for(var i = 0; i < matriz.getLinhas();i++){
@@ -351,9 +311,9 @@ function multiplicarPorEscalar(matriz, escalar){
 		}
 		return mat;
 	}
-}
+};
 
-function multiplicarMatrizes(matrizA, matrizB){
+Matriz.multiplicarMatrizes = function(matrizA, matrizB){
 	if(matrizA instanceof Matriz && matrizB instanceof Matriz){
 		if(matrizA.getColunas() == matrizB.getLinhas()){
 			var mat = new Matriz(matrizA.getLinhas(), matrizB.getColunas());
@@ -374,4 +334,4 @@ function multiplicarMatrizes(matrizA, matrizB){
 			throw new TypeError("O numero de colunas da matriz A deve ser igual o numero de linhas da matriz B");
 		}
 	}
-}
+};

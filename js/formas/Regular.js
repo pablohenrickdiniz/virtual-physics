@@ -59,8 +59,8 @@ function FormaRegular(centro, raio, pontas, espessura, angulo) {
 		var pb = new Ponto(this.centro.getX(), this.centro.getY() - this.raio);
 		pa.setDono(this);
 		pb.setDono(this);
-		pa.girar(this.angulo);
-		pb.girar(this.angulo + gb);
+		pa.girar(this.angulo,this.centro);
+		pb.girar(this.angulo + gb,this.centro);
 
 		pontos.push(pa);
 		pontos.push(pb);
@@ -70,8 +70,8 @@ function FormaRegular(centro, raio, pontas, espessura, angulo) {
 			pb = new Ponto(pb.getX(), pb.getY());
 			pa.setDono(this);
 			pb.setDono(this);
-			pa.girar(ga);
-			pb.girar(ga);
+			pa.girar(ga,this.centro);
+			pb.girar(ga,this.centro);
 			pontos.push(pa);
 			pontos.push(pb);
 		}
@@ -86,5 +86,6 @@ function FormaRegular(centro, raio, pontas, espessura, angulo) {
 	this.getArea = function() {
 		return this.espessura * this.raio;
 	};
+	
 	this.atualizarPontos();
 }

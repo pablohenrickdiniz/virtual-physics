@@ -1,7 +1,7 @@
 function Universo(centro, largura, altura) {
 	this.objetos = new Array();
 	this.arvoreColisao = new ArvoreColisao(1, centro, largura, altura);
-	this.canvas = new Canvas("#canvas");
+	this.canvas = new Canvas("canvas");
 
 	this.addObjeto = function(objeto) {
 		if (objeto instanceof Objeto) {
@@ -12,7 +12,7 @@ function Universo(centro, largura, altura) {
 
 	this.removerObjeto = function(objeto) {
 		if (objeto instanceof Objeto) {
-			this.objetos.splice(objeto.getId());
+			this.objetos.remove(objeto);
 			this.arvoreColisao.removerContato(objeto.getContato());
 		}
 	};
@@ -22,13 +22,13 @@ function Universo(centro, largura, altura) {
 		//this.desenharArvore(this.arvoreColisao);
 		this.arvoreColisao.testarColisao();
 		for (var i = 0; i < this.objetos.length; i++) {
+			
 		    if (this.objetos[i].dinamico) {
 				this.arvoreColisao.removerContato(this.objetos[i].getContato());
 				this.objetos[i].step();
 				this.arvoreColisao.addContato(this.objetos[i].getContato());
 			}
 			this.canvas.desenhar(this.objetos[i].getDesenho());
-			this.canvas.desenharFormaGeometrica(this.objetos[i].getContato());
 		}
 
 	};

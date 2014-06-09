@@ -1,7 +1,6 @@
 ArvoreColisao.prototype = new Retangulo();
 function ArvoreColisao(nivel, centro, largura, altura) {
 	Retangulo.call(this, centro, largura, altura);
-	this.canvas = new Canvas("#canvas");
 	this.a = null;
 	this.b = null;
 	this.c = null;
@@ -18,36 +17,31 @@ function ArvoreColisao(nivel, centro, largura, altura) {
 			var cx = this.centro.getX();
 			var cy = this.centro.getY();
 
-			if (colisaoCaixaB(caixa, cx - cw, cy - ch, cw, ch)) {
+			if (Colisao.colisaoCaixaB(caixa, cx - cw, cy - ch, cw, ch)) {
 				if (this.a == null) {
 					this.a = new ArvoreColisao(this.nivel + 1, new Ponto(cx
 							- (cw / 2), cy - (ch / 2)), cw, ch);
 					this.a.setCor('transparent');
 				}
-				this.a.addContato(contato);
 			}
-			if (colisaoCaixaB(caixa, cx, cy - ch, cw, ch)) {
+			if (Colisao.colisaoCaixaB(caixa, cx, cy - ch, cw, ch)) {
 				if (this.b == null) {
 					this.b = new ArvoreColisao(this.nivel + 1, new Ponto(cx
 							+ (cw / 2), cy - (ch / 2)), cw, ch);
 					this.b.setCor('transparent');
 				}
-
-				this.b.addContato(contato);
 			}
-			if (colisaoCaixaB(caixa, cx - cw, cy, cw, ch)) {
+			if (Colisao.colisaoCaixaB(caixa, cx - cw, cy, cw, ch)) {
 				if (this.c == null) {
 					this.c = new ArvoreColisao(this.nivel + 1, new Ponto(cx
 							- (cw / 2), cy + (ch / 2)), cw, ch);
 					this.c.setCor('transparent');
 				}
-				this.c.addContato(contato);
 			}
-			if (colisaoCaixaB(caixa, cx, cy, cw, ch)) {
+			if (Colisao.colisaoCaixaB(caixa, cx, cy, cw, ch)) {
 				if (this.d == null) {
 					this.d = new ArvoreColisao(this.nivel + 1, new Ponto(cx
 							+ (cw / 2), cy + (ch / 2)), cw, ch);
-					this.d.setCor('transparent');
 				}
 				this.d.addContato(contato);
 			}
@@ -55,15 +49,28 @@ function ArvoreColisao(nivel, centro, largura, altura) {
 	};
 
 	this.testarColisao = function() {
+	
 		if (this.contatos.length > 1) {
+			
 			for (var i = 0; i < this.contatos.length; i++) {
-				var objetoA = this.contatos[i].getDono();
+				var contatoA = this.contatos[i];
 				for (var j = i + 1; j < this.contatos.length; j++) {
-					var objetoB = this.contatos[j].getDono();
-					if (objetoA.isMoving() || objetoB.isMoving()) {
-						var cp = colisaoCaixa(this.contatos[i], this.contatos[j]);
-						if (cp instanceof Ponto) {
-							aplicarForcas(objetoA, objetoB);
+					var contatoB = this.contatos[j];
+					if (contatoA.getDono().isMoving() || contatoB.getDono().isMoving()) {
+						if((contatoA instanceof Circulo && contatoB instanceof Reta)||(contatoA instanceof Reta && contatoB instanceof Circulo)){
+							
+							if(contatoA instanceof Circulo){
+								console.log(Colisao.circuloReta(contatoA, contatoB));
+							}
+							else{
+								console.log(Colisao.circuloReta(contatoB, contatoA));
+							}
+						}
+						else{
+							var cp = Colisao.colisaoCaixa(contatoA, contatoB);
+							if (cp instanceof Ponto) {
+								aplicarForcas(objetoA, objetoB);
+							}
 						}
 					}
 				}
@@ -86,16 +93,16 @@ function ArvoreColisao(nivel, centro, largura, altura) {
 			var cy = this.centro.getY();
 
 			if (this.a != null
-					&& colisaoCaixaB(caixa, cx - cw, cy - ch, cw, ch)) {
+					&& Colisao.colisaoCaixaB(caixa, cx - cw, cy - ch, cw, ch)) {
 				this.a.removerContato(contato);
 			}
-			if (this.b != null && colisaoCaixaB(caixa, cx, cy - ch, cw, ch)) {
+			if (this.b != null && Colisao.colisaoCaixaB(caixa, cx, cy - ch, cw, ch)) {
 				this.b.removerContato(contato);
 			}
-			if (this.c != null && colisaoCaixaB(caixa, cx - cw, cy, cw, ch)) {
+			if (this.c != null && Colisao.colisaoCaixaB(caixa, cx - cw, cy, cw, ch)) {
 				this.c.removerContato(contato);
 			}
-			if (this.d != null && colisaoCaixaB(caixa, cx, cy, cw, ch)) {
+			if (this.d != null && Colisao.colisaoCaixaB(caixa, cx, cy, cw, ch)) {
 				this.d.removerContato(contato);
 			}
 		}

@@ -9,7 +9,8 @@ function FormaGeometrica(centro, cor, borda, angulo) {
 	this.dono = null;
 	this.camada = 1;
 	this.id = idGenerator.getId();
-
+	this.drawType = "CANVAS";
+	
 	this.getCor = function() {
 		return this.cor;
 	};

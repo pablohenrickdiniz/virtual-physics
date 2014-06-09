@@ -1,8 +1,9 @@
-function Sombra(x,y,blur,color){
+function Sombra(x,y,blur,cor){
 	this.x = isNaN(x)?2:x;
 	this.y = isNaN(y)?2:y;
 	this.blur = isNaN(blur)?3:blur;
-	this.color = color;
+	this.cor = cor;
+	this.id  = idGenerator.getId();
 	
 	this.getX = function(){
 		return this.x;
@@ -16,8 +17,8 @@ function Sombra(x,y,blur,color){
 		return this.blur;
 	};
 	
-	this.getColor = function(){
-		return this.color;
+	this.getCor = function(){
+		return this.cor;
 	};
 	
 	this.setX = function(x){
@@ -38,7 +39,11 @@ function Sombra(x,y,blur,color){
 		}
 	};
 	
-	this.setColor = function(color){
-		this.color = color;
+	this.setCor = function(cor){
+		this.cor = cor;
+	};
+	
+	this.getId = function(){
+		return this.id;
 	};
 }

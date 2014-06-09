@@ -48,7 +48,7 @@ function Ponto(x, y) {
 	this.girar = function(graus, centro) {
 		var radianos = converterParaRadianos(graus);
 		if (!(centro instanceof Ponto)) {
-		    centro = new Ponto(0,0);
+			centro = new Ponto(0, 0);
 		}
 		var xf = (((this.x - centro.getX()) * Math.cos(radianos)) - ((this.y - centro
 				.getY()) * Math.sin(radianos)))
@@ -77,21 +77,21 @@ function Ponto(x, y) {
 		var distance = centro.getY() - this.y;
 		this.y = centro.getY() + distance;
 	};
-	
-	this.toString = function(){
-		return "ponto("+this.x+","+this.y+")";
+
+	this.toString = function() {
+		return "ponto(" + this.x + "," + this.y + ")";
 	};
 }
 
-function obterPontoMedio(pontoA, pontoB) {
+Ponto.medio = function(pontoA, pontoB) {
 	var pax = pontoA.getX();
 	var pay = pontoA.getY();
 	var pbx = pontoB.getX();
 	var pby = pontoB.getY();
 	return new Ponto((pax + pbx) / 2, (pay + pby) / 2);
-}
+};
 
-function obterDistancia(pontoA, pontoB) {
+Ponto.distancia = function(pontoA, pontoB) {
 	var xmax = Math.max(pontoA.getX(), pontoB.getX());
 	var ymax = Math.max(pontoA.getY(), pontoB.getY());
 	var xmin = Math.min(pontoA.getX(), pontoB.getX());
@@ -99,4 +99,4 @@ function obterDistancia(pontoA, pontoB) {
 	var catetoA = xmax - xmin;
 	var catetoB = ymax - ymin;
 	return Math.sqrt(Math.pow(catetoA, 2) + Math.pow(catetoB, 2));
-}
+};

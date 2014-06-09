@@ -1,0 +1,18 @@
+<gamedata>
+    <name>nome</name>
+    <version>1.0</version>
+    <resources>
+        <img id="image001" src="img/0045.png"/>
+        <img id="image002" src="img/0052.png"/>
+        <img id="image003" src="img/0078.png"/>
+    </resources>
+    <animations>
+        <animation id="animation001" rows="4" cols="4" direction="horizontal" sentido="proximo" initialRow="0" initialCol="0">
+        </animation>
+    </animations>
+    <maps>
+        <map id="1" width="5000" height="5000">
+           
+        </map>
+    </maps>
+</gamedata>

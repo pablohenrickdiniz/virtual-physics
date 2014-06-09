@@ -1,3 +1,17 @@
-#canvas{
+#canvas,#svg{
 	border:2px solid gray;
+	clear:left;
+}
+
+#resources_bar{
+	width:1125px;
+	height:20px;
+	border:1px solid gray;
+	background-color:rgb(220,220,220);
+}
+
+#progress{
+	height:100%;
+	width:0%;
+	background-color:#FFFF00;
 }
