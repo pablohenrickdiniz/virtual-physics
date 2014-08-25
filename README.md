@@ -20,11 +20,13 @@ OBS:É preciso verificar cada uma dessas fórmulas na implementação para ter c
 (14)       α = arcsin [ d.sin(γx,y-γv) / (r1+r2) ] <br>
 (15)       d = √ [ (x2-x1)2 +(y2-y1)2 ]  <br>
 (16)       γx,y= arctan [ (y2-y1)/((x2-x1) ] <br>
+Tempo de impacto <br>
 (17)   t = { d.cos(γx,y-γv) ± √ [(r1+r2)2- (d.sin(γx,y-γv)) 2] } / √ [ (vx,1-vx,2)2 +(vy,1-vy,2)2 ] <br>
 (18)       x1' = x1 + vx,1.t <br>
 (19)       y1' = y1 + vy,1.t <br>
 (20)       x2' = x2 + vx,2.t <br>
 (21)       y2' = y2 + vy,2.t <br>
+Generalização <br>
 (22)       vx,cm = ( m1.vx,1 + m2.vx,2 )/( m1+ m2)   <br>
 (23)       vy,cm = ( m1.vy,1 + m2.vy,2 )/( m1+ m2)   <br>
 (24)       vx,1'' = (vx,1'-vx,cm).R + vx,cm  <br>
