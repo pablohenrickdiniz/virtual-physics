@@ -2,6 +2,7 @@ Virtual-Physics
 ===============
 
 Desenvolvimento de simulador de física
+OBS:É preciso verificar cada uma dessas fórmulas na implementação para ter certeza se estão retornando o resultado correto, pois ainda assim a simulação está com erros
 
 (1)       m1.vx,1 = m1.vx,1' + m2.Δvx,2'<br>
 (2)       m1.vy,1 = m1.vy,1' + m2.Δvx,2'.tan(θ)<br>
