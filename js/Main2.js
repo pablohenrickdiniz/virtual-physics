@@ -1,18 +1,16 @@
 $(document).ready(function() {
-	var jogo = new Jogo();
-	var universo = jogo.getUniverso();
-	var loader = new ImgLoader();
-	loader.addImages('img/0045.png','img/0052.png','img/0078.png');
-	loader.loadImages();
-	loader.onLoad(function(){
-		var images = loader.getImages();
-		var imagem1 = images[0];
-		var animacao = new Animacao(imagem1,4,4);
-		animacao.setLinhaAtual(1);
-		animacao.execute();
-		setInterval(function(){
-			universo.canvas.limparTela();
-			universo.canvas.desenharImagem(imagem1);
-		},10);
-	});
+	var game = new Game();
+    var mapa = game.getMap();
+    var player = new Player(new Point(50,50));
+    var page = new Page();
+    page.setSprite(sprites.fox);
+    var event = new Event(new Point(200,200));
+    event.object.setVector(new Vector(-200,-200));
+    player.object.setVector(new Vector(200,200));
+    event.addPage('fox',page);
+    mapa.addEvent(player);
+    mapa.addEvent(event);
+    game.start();
+
+
 });

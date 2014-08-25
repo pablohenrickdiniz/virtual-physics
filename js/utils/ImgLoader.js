@@ -3,14 +3,10 @@ function ImgLoader(){
 	this.loaded = 0;
 	this.loading = false;
 	this.action = function(){};
-	
 
-	this.addImages = function(url){
-		for(var i = 0; i < arguments.length;i++){
-			var imagem = new Imagem(arguments[i]);
-			this.images.push(imagem);
-		}
-	};
+    this.addImage = function(name,url){
+        this.images[name] = url;
+    };
 	
 	this.loadImages = function(){
 		if(!this.loading){
@@ -39,4 +35,8 @@ function ImgLoader(){
 	this.getImages = function(){
 		return this.images;
 	};
+
+    this.getImage = function(name){
+        return this.images[name];
+    };
 }

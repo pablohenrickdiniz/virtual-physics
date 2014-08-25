@@ -1,5 +1,5 @@
 function Jogo(){
-	this.universo = new Universo(new Ponto(300, 300), 600, 600);
+	this.mapa = new Mapa(new Ponto(300, 300), 600, 600);
 	this.fps = 0;
 	this.count = 0;
 	this.running = false;
@@ -37,7 +37,7 @@ function Jogo(){
 		if(jogo.running){
 			setTimeout(function(){
 				requestAnimationFrame(function(){jogo.loop(jogo);});
-				jogo.universo.step();
+				jogo.mapa.step();
 				jogo.count++;
 			},1000/FPS);
 		}
@@ -51,14 +51,14 @@ function Jogo(){
 		}, 1000);
 	};
 	
-	this.getUniverso = function(){
-		return this.universo;
+	this.getMapa = function(){
+		return this.mapa;
 	};
 	
-	this.setUniverso = function(universo){
-		if(universo instanceof Universo){
+	this.setMapa = function(mapa){
+		if(mapa instanceof Mapa){
 			this.pause();
-			this.universo = universo;
+			this.mapa = mapa;
 		}
 	};
 }

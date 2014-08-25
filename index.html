@@ -1,49 +1,77 @@
 <!doctype html>
 <html>
 <head>
-<meta charset="utf-8">
-<title>Tcc</title>
-<script type="text/javascript" src="js/utils/Jquery.js"></script>
-<script type="text/javascript" src="js/desenho/Color.js"></script>
-<script type="text/javascript" src="js/espaco/Vetor.js"></script>
-<script type="text/javascript" src="js/utils/Functions.js"></script>
-<script type="text/javascript" src="js/espaco/Matriz.js"></script>
-<script type="text/javascript" src="js/desenho/Imagem.js"></script>
-<script type="text/javascript" src="js/desenho/Animacao.js"></script>
-<script type="text/javascript" src="js/desenho/GradienteLinear.js"></script>
-<script type="text/javascript" src="js/desenho/GradienteRadial.js"></script>
-<script type="text/javascript" src="js/desenho/Sombra.js"></script>
-<script type="text/javascript" src="js/desenho/Borda.js"></script>
-<script type="text/javascript" src="js/desenho/Desenho.js"></script>
-<script type="text/javascript" src="js/formas/Forma.js"></script>
-<script type="text/javascript" src="js/espaco/Ponto.js"></script>
-<script type="text/javascript" src="js/espaco/Reta.js"></script>
-<script type="text/javascript" src="js/formas/Poligono.js"></script>
-<script type="text/javascript" src="js/formas/Retangulo.js"></script>
-<script type="text/javascript" src="js/formas/Trapezio.js"></script>
-<script type="text/javascript" src="js/formas/Arco.js"></script>
-<script type="text/javascript" src="js/formas/Circulo.js"></script>
-<script type="text/javascript" src="js/formas/Regular.js"></script>
-<script type="text/javascript" src="js/espaco/Objeto.js"></script>
-<script type="text/javascript" src="js/utils/Fabrica.js"></script>
-<script type="text/javascript" src="js/desenho/Svg.js"></script>
-<script type="text/javascript" src="js/desenho/Canvas.js"></script>
-<script type="text/javascript" src="js/espaco/Fisica.js"></script>
-<script type="text/javascript" src="js/utils/Colisao.js"></script>
-<script type="text/javascript" src="js/espaco/QuadTree.js"></script>
-<script type="text/javascript" src="js/espaco/Universo.js"></script>
-<script type="text/javascript" src="js/utils/Jogo.js"></script>
-<script type="text/javascript" src="js/utils/ImgLoader.js"></script>
-<script type="text/javascript" src="js/Main2.js"></script>
-<script type="text/javascript" src="js/utils/MouseReader.js"></script>
-<link rel="stylesheet" href="css/style.css" />
+    <meta charset="utf-8">
+    <title>Tcc</title>
+    <link href="bootstrap/css/bootstrap.min.css" media="screen" rel="stylesheet"/>
+    <script src="jquery/Jquery.js" type="text/javascript"></script>
+    <script src="bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
+    <script type="text/javascript" src="js/utils/KeyReader.js"></script>
+    <script type="text/javascript" src="js/drawing/Color.js"></script>
+    <script type="text/javascript" src="js/space/Vector.js"></script>
+    <script type="text/javascript" src="js/utils/Functions.js"></script>
+    <script type="text/javascript" src="js/space/Point.js"></script>
+    <script type="text/javascript" src="js/drawing/Border.js"></script>
+    <script type="text/javascript" src="js/shapes/Shape.js"></script>
+    <script type="text/javascript" src="js/shapes/Text.js"></script>
+    <script type="text/javascript" src="js/shapes/Arc.js"></script>
+    <script type="text/javascript" src="js/shapes/Circle.js"></script>
+    <script type="text/javascript" src="js/space/Line.js"></script>
+    <script type="text/javascript" src="js/shapes/Capsule.js"></script>
+    <script type="text/javascript" src="js/shapes/Polygon.js"></script>
+    <script type="text/javascript" src="js/shapes/Rect.js"></script>
+    <script type="text/javascript" src="js/shapes/Trapezius.js"></script>
+    <script type="text/javascript" src="js/space/Object.js"></script>
+    <script type="text/javascript" src="js/drawing/Frame.js"></script>
+    <script type="text/javascript" src="js/drawing/Sprite.js"></script>
+    <script type="text/javascript" src="js/drawing/Animation.js"></script>
+    <script type="text/javascript" src="js/utils/Resources.js"></script>
+    <script type="text/javascript" src="js/main/Page.js"></script>
+    <script type="text/javascript" src="js/main/Event.js"></script>
+    <script type="text/javascript" src="js/main/Player.js"></script>
+    <script type="text/javascript" src="js/utils/Colision.js"></script>
+    <script type="text/javascript" src="js/space/QuadTree.js"></script>
+    <script type="text/javascript" src="js/Map/Map.js"></script>
+    <script type="text/javascript" src="js/drawing/LinearGradient.js"></script>
+    <script type="text/javascript" src="js/drawing/RadialGradient.js"></script>
+    <script type="text/javascript" src="js/drawing/Canvas.js"></script>
+    <script type="text/javascript" src="js/main/CanvasList.js"></script>
+    <script type="text/javascript" src="js/utils/Graphics.js"></script>
+    <script type="text/javascript" src="js/utils/Game.js"></script>
+    <script src="js/Main2.js"></script>
+    <link rel="stylesheet" href="css/style.css"/>
 </head>
 <body>
-	<div id="resources_bar">
-		<div id="progress">
-		
-		</div>
-	</div>
-	<canvas id="canvas" width="1125px" height="600px"></canvas>
+    <div id="teste">
+    </div>
+    <div class="container" id="gamearea" style="position:relative;">
+        <div class="row">
+            <div id="canvas-area">
+                <canvas class="canvas" id="layer1" width="500px" height="500px"></canvas>
+                <canvas class="canvas" id="layer2" width="500px" height="500px"></canvas>
+                <canvas class="canvas" id="layer3" width="500px" height="500px"></canvas>
+                <canvas class="canvas" id="layer4" width="500px" height="500px"></canvas>
+                <canvas class="canvas" id="layer5" width="500px" height="500px"></canvas>
+            </div>
+            <div class="col-md-5" id="key-area">
+                <table class="table table-bordered" id="keys">
+                    <tr>
+                        <th>up</th>
+                        <th>down</th>
+                        <th>left</th>
+                        <th>right</th>
+                    </tr>
+                    <tr>
+                        <td id="38">false</td>
+                        <td id="40">false</td>
+                        <td id="37">false</td>
+                        <td id="39">false</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
 </body>
 </html>

@@ -1,30 +1,41 @@
 const METERPIXEL = 1000;
-const GRAVITY = new Vetor(0, 10);
-const VELOCIDADETERMINAL = 1000;
+const GRAVITY = new Vector(0, 0);
+const VELOCIDADETERMINAL = 10000;
 const FPS = 60;
 
-function obterAngulo(x, y) {
+
+function filterDegree(degree,aux){
+    if(!isNaN(degree)){
+        while (degree > 360 || degree < -360) {
+            degree = degree % 360;
+        }
+        return degree;
+    }
+    return aux;
+}
+
+function getDegree(x, y) {
 	var xabs = Math.abs(x);
 	var yabs = Math.abs(y);
 	if (x < 0 && y > 0) {
-		return converterParaGraus(Math.atan(xabs / yabs));
+		return radiansToDegree(Math.atan(xabs / yabs));
 	} else if (x < 0 && y < 0) {
-		return 90 + converterParaGraus(Math.atan(yabs / xabs));
+		return 90 + radiansToDegree(Math.atan(yabs / xabs));
 	} else if (x > 0 && y < 0) {
-		return 180 + converterParaGraus(Math.atan(xabs / yabs));
+		return 180 + radiansToDegree(Math.atan(xabs / yabs));
 	} else{
-		return 270 + converterParaGraus(Math.atan(yabs / xabs));
+		return 270 + radiansToDegree(Math.atan(yabs / xabs));
 	}
 }
 
-function obterMenorReta() {
+function obtainMinLine() {
 	var reta = null;
 	if (arguments.length >= 2) {
-		reta = new Reta(arguments[0], arguments[1]);
+		reta = new Line(arguments[0], arguments[1]);
 		for (var i = 0; i < arguments.length; i++) {
 			for (var j = i + 1; j < arguments.length; j++) {
-				var aux = new Reta(arguments[i], arguments[j]);
-				if (aux.getTamanho() < reta.getTamanho()) {
+				var aux = new Line(arguments[i], arguments[j]);
+				if (aux.getLength() < reta.getLength()) {
 					reta = aux;
 				}
 			}
@@ -33,7 +44,7 @@ function obterMenorReta() {
 	return reta;
 }
 
-function obterHipotenusa(x, y) {
+function hypotenuse(x, y) {
 	return Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
 }
 
@@ -60,11 +71,11 @@ function toInt(px) {
 	return parseInt(px.substr(0, px.indexOf('px')));
 }
 
-function converterParaRadianos(graus) {
+function degreeToRadians(graus) {
 	return graus * (Math.PI / 180);
 }
 
-function converterParaGraus(radianos) {
+function radiansToDegree(radianos) {
 	return radianos * (180 / Math.PI);
 }
 
