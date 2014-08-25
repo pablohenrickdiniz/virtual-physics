@@ -3,7 +3,7 @@ Virtual-Physics
 
 Desenvolvimento de simulador de física
 
-(1)       m1.vx,1 = m1.vx,1' + m2.Δvx,2'
+(1)       m1.vx,1 = m1.vx,1' + m2.Δvx,2'<br>
 (2)       m1.vy,1 = m1.vy,1' + m2.Δvx,2'.tan(θ)
 (3)       m1/2.(vx,12+vy,12) = m1/2.(vx,1'2+vy,1'2) + m2/2.Δvx,2'2.(1+tan2(θ))  
 (4)       vx,1' = vx,1 - m2/m1.Δvx,2'
