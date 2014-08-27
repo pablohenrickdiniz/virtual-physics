@@ -1,9 +1,6 @@
 Virtual-Physics
 ===============
 
-Desenvolvimento de simulador de física<br>
-OBS:É preciso verificar cada uma dessas fórmulas na implementação para ter certeza se estão retornando o resultado correto, pois ainda assim a simulação está com erros.Eu acredito que pode estar ocorrendo problemas nas funções Math.sin(), Math.cos(), Math.acos(), etc, pois os valores que essas funções aceitam devem ser em radianos.
-
 (1)       m1.vx,1 = m1.vx,1' + m2.Δvx,2'<br>
 (2)       m1.vy,1 = m1.vy,1' + m2.Δvx,2'.tan(θ)<br>
 (3)       m1/2.(vx,12+vy,12) = m1/2.(vx,1'2+vy,1'2) + m2/2.Δvx,2'2.(1+tan2(θ))  <br>
