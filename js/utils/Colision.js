@@ -153,9 +153,9 @@ Colision.applyForces = function(objA, objB, contA, contB){
     var va2 = objB.getAngularSpeed();
     var r1 = contA.getRadius();
     var r2 = contB.getRadius();
-    var result = Colision.solve('f',0,1,m1,m2,r1,r2,x1,y1,x2,y2,a1,a2,vx1,vy1,vx2,vy2,va1,va2);
+    var result = Colision.solve('a',0,1,m1,m2,r1,r2,x1,y1,x2,y2,a1,a2,vx1,vy1,vx2,vy2,va1,va2);
     console.log(result);
-    if(result != null){
+    if(result != false){
         if(objA.dinamic){
             cA.setX(result.x1);
             cA.setY(result.y1);
@@ -225,7 +225,7 @@ Colision.solve = function(mode,alpha,R,m1,m2,r1,r2,x1,y1,x2,y2,a1,a2,vx1,vy1,vx2
     if (mode != 'f') {
         var d=Math.sqrt(x21*x21 +y21*y21);
         //return if distance between balls smaller than sum of radii ***
-        if (d<r12) {return false}
+        //if (d<r12) {;return false;}
         //calculate relative position angle and normalized impact parameter ***
         var gammaxy=Math.atan2(y21,x21);
         var dgamma=gammaxy-gammav;
