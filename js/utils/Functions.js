@@ -1,6 +1,6 @@
-const METERPIXEL = 1000;
-const GRAVITY = new Vector(0, 0);
-const VELOCIDADETERMINAL = 10000;
+const METERPIXEL = 120;
+const GRAVITY = new Vector(0, 3);
+const VELOCIDADETERMINAL = 1000;
 const FPS = 60;
 
 

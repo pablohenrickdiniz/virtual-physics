@@ -7,6 +7,11 @@ function Event(position) {
     this.layer = 3;
     this.parent = null;
 
+    this.setContact = function(contact){
+        contact.setFather(this);
+        this.contact = contact;
+    };
+
     this.getCenter = function(){
         return this.contact.getCenter();
     };
@@ -101,7 +106,7 @@ function Event(position) {
             this.contact.rotate(this.angularSpeed);
         }
 
-        if (this.object.vector.getNorm() < VELOCIDADETERMINAL) {
+        if (this.object.gravityInfluence && this.object.isDinamic() &&this.object.vector.getNorm() < VELOCIDADETERMINAL) {
             this.object.vector = Vector.sum(this.object.vector, GRAVITY);
         }
     };

@@ -12,17 +12,16 @@ Graphics.render = function (map) {
         CanvasList.canvas[i].clearScreen();
         for(var j = 0; j < eventos[i].length;j++){
             var page =  eventos[i][j].getAtualPage();
+            var contact = eventos[i][j].getContact();
             if(page != null){
                 var layer = eventos[i][j].getLayer();
                 var x = eventos[i][j].getX();
                 var y = eventos[i][j].getY();
-
                 var sprite = page.getSprite();
                 var frame = sprite.getAtualFrame();
-                var contact = eventos[i][j].getContact();
                 CanvasList.canvas[layer].drawFrame(x,y,frame);
-                CanvasList.canvas[0].drawShape(contact);
             }
+            CanvasList.canvas[0].drawShape(contact);
         }
     }
 }

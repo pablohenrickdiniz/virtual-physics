@@ -2,6 +2,7 @@ function Object() {
 	this.dinamic = false;
 	this.friction = false;
 	this.restituition = 0.5;
+    this.gravityInfluence = true;
 	this.mass = 10;
 	this.density = 0;
 	this.angularSpeed = 0;
@@ -10,6 +11,14 @@ function Object() {
 	this.isDinamic = function() {
 		return this.dinamic;
 	};
+
+    this.getGravityInfluence = function(){
+        return true;
+    };
+
+    this.setGravityInfluence = function(influence){
+        this.gravityInfluence = influence;
+    };
 
 	this.getFriction = function() {
 		return this.friction;

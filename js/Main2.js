@@ -1,15 +1,16 @@
 $(document).ready(function() {
 	var game = new Game();
     var mapa = game.getMap();
-    var player = new Player(new Point(50,50));
-    var page = new Page();
-    page.setSprite(sprites.fox);
-    var event = new Event(new Point(200,200));
-    event.object.setVector(new Vector(-200,-200));
-    player.object.setVector(new Vector(200,200));
-    event.addPage('fox',page);
-    mapa.addEvent(player);
-    mapa.addEvent(event);
+    var ball1 = new Event(new Point(100,100));
+    var ball2 =  new Event(new Point(300,300));
+    ball1.object.setVector(new Vector(100,100));
+    ball2.object.setVector(new Vector(-100,-100));
+    ball1.object.dinamic = true;
+    ball1.object.gravityInfluence = false;
+    ball2.object.dinamic = true;
+    ball2.object.gravityInfluence = false;
+    mapa.addEvent(ball1);
+    mapa.addEvent(ball2);
     game.start();
 
 

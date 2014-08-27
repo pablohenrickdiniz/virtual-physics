@@ -1,9 +1,9 @@
 /**
  * Created by Pablo Henrick Diniz on 15/08/14.
  */
-function Page(){
+function Page(sprite){
     this.action = function(){};
-    this.sprite = null;
+    this.sprite = sprite;
     this.playing = false;
 
     this.init = function(){

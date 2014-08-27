@@ -51,12 +51,17 @@ function QuadTree(level, center, width, height) {
     this.testColision = function() {
         if (this.contacts.length > 1) {
             for (var i = 0; i < this.contacts.length; i++) {
-                var contactA = this.contacts[i];
+                var contA = this.contacts[i];
                 for (var j = i + 1; j < this.contacts.length; j++) {
-                    var contactB = this.contacts[j];
-                    if (contactA.getFather().isMoving() || contactB.getFather().isMoving()){
-                        if(Colision.circles(contactA, contactB)){
-                               Colision.circle.applyForces(contactA.getFather(), contactB.getFather());
+                    var contB = this.contacts[j];
+                    var eventA = contA.getFather();
+                    var eventB = contB.getFather();
+                    if (eventA.isMoving() || eventB.isMoving()){
+                        var objA = eventA.getObject();
+                        var objB = eventB.getObject();
+
+                        if(Colision.forms(contA, contB)){
+                            Colision.applyForces(objA, objB, contA, contB);
                         }
                     }
                 }
