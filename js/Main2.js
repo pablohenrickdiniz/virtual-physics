@@ -1,16 +1,26 @@
 $(document).ready(function() {
-	var game = new Game();
-    var mapa = game.getMap();
-    var ball1 = new Event(new Point(100,100));
-    var ball2 =  new Event(new Point(300,300));
-    ball2.object.setVector(new Vector(-150,-100));
-    ball1.object.dinamic = true;
-    ball1.object.gravityInfluence = false;
-    ball2.object.dinamic = true;
-    ball2.object.gravityInfluence = false;
-    mapa.addEvent(ball1);
-    mapa.addEvent(ball2);
-    game.start();
+    function Controller(){};
+    Controller.game =  new Game();;
+    var mapa = Controller.game.getMap();
+    Controller.game.start();
 
+    var chao = new Event();
+    chao.setContact(new Rect(new Point(250,400),420,30));
+    chao.object.dinamic = true;
+    chao.object.gravityInfluence = false;
+    chao.object.dinamic=false;
+    chao.object.setMass(1000);
+    mapa.addEvent(chao);
+
+    var reader = new MouseReader("#canvas-area");
+    reader.startRead();
+    $("#canvas-area").click(function(){
+        var ball = new Event();
+        ball.setContact(new Circle(new Point(reader.getX()-30, reader.getY()-30),30));
+        ball.object.dinamic = true;
+        ball.object.gravityInfluence = true;
+        console.log(ball.object);
+        mapa.addEvent(ball);
+    });
 
 });

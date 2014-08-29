@@ -8,8 +8,9 @@ function Graphics() {
 Graphics.render = function (map) {
     //Graphics.clearAll();
     var eventos = map.getEvents();
+    CanvasList.canvas[0].clearScreen();
     for(var i = 0; i < eventos.length;i++){
-        CanvasList.canvas[i].clearScreen();
+
         for(var j = 0; j < eventos[i].length;j++){
             var page =  eventos[i][j].getAtualPage();
             var contact = eventos[i][j].getContact();

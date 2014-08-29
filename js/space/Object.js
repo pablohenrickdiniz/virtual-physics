@@ -3,6 +3,8 @@ function Object() {
 	this.friction = false;
 	this.restituition = 0.5;
     this.gravityInfluence = true;
+    this.linearInfluence = true;
+    this.angularInfluence = true;
 	this.mass = 10;
 	this.density = 0;
 	this.angularSpeed = 0;

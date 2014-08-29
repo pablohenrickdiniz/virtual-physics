@@ -55,7 +55,7 @@ function Line(pointA, pointB){
 		}
 		return this.degree;
 	};
-	
+
 	this.setDegree = function(degree, origin) {
 		if (!isNaN(degree)) {
             degree = filterDegree(degree);
@@ -138,14 +138,7 @@ function Line(pointA, pointB){
 		}
 	};
 	
-	this.getDegree = function(){
-		if(this.degree == null){
-			var x = pointB.getX()-pointA.getX();
-			var y = pointB.getY()-pointA.getY();
-			this.degree = getDegree(x,y);
-		}
-		return this.degree;
-	};
+
 
     this.getAngularCoeficient = function(){
         var xa = this.pointA.getX();

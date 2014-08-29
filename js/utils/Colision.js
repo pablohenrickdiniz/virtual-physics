@@ -1,4 +1,4 @@
-function Colision(){}
+function Colision(){};
 
 
 
@@ -59,12 +59,21 @@ Colision.circleLine = function(circle, line){
 		var pby = line.getPointB().getY();
 		line.rotate(degree,line.getPointA());
 		circle.rotate(degree,line.getPointA());
-		
-		var minX = Math.min(pax,pbx)-rc;
-		var minY = Math.min(pay,pby)-rc;
-		var maxX = Math.max(pax,pbx)+rc;
-		var maxY = Math.max(pay,pby)+rc;
-	    return (((cx <= pax && cx >= minX)||(cx >=pax && cx <= maxX)) &&(cy <= maxY && cy >= minY));
+
+        var cpMiny =  Math.min(pay,pby);
+        var cpMaxy =  Math.max(pay,pby);
+        var cpMinx = Math.min(pax,pbx);
+        var cpMaxx = Math.max(pax,pbx);
+		var minX = cpMinx-rc;
+		var minY = cpMiny-rc;
+		var maxX = cpMaxx+rc;
+		var maxY = cpMaxy+rc;
+        var cfx = cx>cpMaxx?cpMaxx:cx<cpMinx?cpMinx:cx;
+        var cfy = cy>cpMaxy?cpMaxy:cy<cpMiny?cpMiny:cy;;
+	    if(((cx <= pax && cx >= minX)||(cx >=pax && cx <= maxX)) &&(cy <= maxY && cy >= minY)){
+            return new Point(cfx, cfy);
+        }
+        return null;
 	}
 	else{
 		throw new TypeError('Somente circulo e reta podem ser passados como par�metro');
@@ -72,13 +81,15 @@ Colision.circleLine = function(circle, line){
 };
 
 Colision.circlePolygon = function(circle, polygon){
-	if(polygon instanceof Polygon && circle instanceof Circle){
-		var points = polygon.getPoints();
-		for(var i = 0; i < points.length && i+1 < points.length;i++){
-			var line = new Line(points[i], points[i+1]);
-			if(Colision.circleLine(circle, line)){
-				return true;
-			}
+	var points = polygon.getPoints();
+	for(var i = 0; i < points.length;i++){
+        var pos = i+1;
+        pos = pos == points.length?0:pos;
+		var line = new Line(points[i], points[pos]);
+        var cp = Colision.circleLine(circle, line);
+
+		if(cp != null){
+			return cp;
 		}
 	}
 	return false;
@@ -122,17 +133,17 @@ Colision.forms = function(formA, formB){
     }
     else if(formA instanceof Circle && formB instanceof Polygon){
         return Colision.circlePolygon(formA, formB);
+
     }
     else if(formA instanceof Polygon && formB instanceof Circle){
-        return Colision.circlePolygon(formA, formB);
+        return Colision.circlePolygon(formB, formA);
     }
     else if(formA instanceof Polygon && formB instanceof Polygon){
         return Colision.polygons(formA, formB);
     }
 };
 
-Colision.applyForces = function(objA, objB, contA, contB){
-
+Colision.applyForces = function(objA, objB, contA, contB,cp){
     var cA = contA.getCenter();
     var cB = contB.getCenter();
     var vA = objA.getVector();
@@ -151,29 +162,88 @@ Colision.applyForces = function(objA, objB, contA, contB){
     var vy2 = vB.getY();
     var va1 = objA.getAngularSpeed();
     var va2 = objB.getAngularSpeed();
-    var r1 = contA.getRadius();
-    var r2 = contB.getRadius();
-    var result = Colision.solve('a',0,1,m1,m2,r1,r2,x1,y1,x2,y2,a1,a2,vx1,vy1,vx2,vy2,va1,va2);
-    console.log(result);
+
+    var result = false;
+    if(contA instanceof Circle && contB instanceof Circle){
+        var r1 = contA.getRadius();
+        var r2 = contB.getRadius();
+        result = Colision.solve('a',0,0.5,m1,m2,r1,r2,x1,y1,x2,y2,vx1,vy1,vx2,vy2);
+    }
+    else if(contA instanceof Circle && contB instanceof Polygon || contA instanceof Polygon && contB instanceof Circle){
+        var cpx = cp.getX();
+        var cpy = cp.getY();
+
+        var inverse = (contA instanceof Polygon);
+        var angle= 0;
+        if(inverse){
+            var r2 = contB.getRadius();
+            result = Colision.solve('a',0,1,m1,m2,0,r2,cpx,cpy,x2,y2,vx1,vy1,vx2,vy2);
+            angle = getAngle(cA.getX()-cB.getX(),cA.getY()-cB.getY());
+            console.log("angulo:"+angle);
+            angle = angle>45?angle-45:angle;
+            var sgn = angle >45?-1.0:1.0;
+            var percent = (100*angle)/45;
+            var linearForce = ((100-percent)/100)*sgn;
+            var angularForce = (percent/100)*sgn;
+            console.log("linearForece:"+linearForce);
+            console.log("angularForce:"+angularForce);
+
+            result.vx2 *= linearForce;
+            result.vy2 *= linearForce;
+            result.va2 *= angularForce;
+
+        }
+        else{
+            var r1 = contA.getRadius();
+            result = Colision.solve('a',0,1,m1,m2,r1,0,x1,y1,cpx,cpy,vx1,vy1,vx2,vy2);
+            angle = getAngle(cA.getX()-cB.getX(),cA.getY()-cB.getY());
+            console.log(angle);
+            var sgn = angle >45?-1.0:1.0;
+            angle = angle>45?angle-45:angle;
+            var percent = (100*angle)/45;
+            var linearForce = ((100-percent)/100)*sgn;
+            var angularForce = (percent/100)*sgn;
+
+            result.vx1 *= linearForce;
+            result.vy1 *= linearForce;
+            result.va1 *= angularForce;
+
+        }
+
+
+
+
+        var circle = new Circle(cp,2);
+        circle.setColor('Blue');
+        CanvasList.canvas[4].drawCircle(circle);
+        //Controller.game.stop();
+
+    }
+    else if(contA instanceof Polygon && contB instanceof Polygon){
+
+    }
+
+
     if(result != false){
         if(objA.dinamic){
             cA.setX(result.x1);
             cA.setY(result.y1);
-            contA.setDegree(result.a1);
             vA.setX(result.vx1);
             vA.setY(result.vy1);
+            objA.setAngularSpeed(result.va1);
         }
         if(objB.dinamic){
             cB.setX(result.x2);
             cB.setY(result.y2);
-            contB.setDegree(result.a2);
             vB.setX(result.vx2);
             vB.setY(result.vy2);
+            objB.setAngularSpeed(result.va2);
         }
     }
 };
 
-Colision.calcCirclePolygon = function(R,m1,m2,x1,x2,y1,y2,a1,a2,vx1,vx2,vy1,vy2,va1,va2){
+
+Colision.calcCirclePolygon = function(R,m1,m2,x1,x2,y1,y2,vx1,vx2,vy1,vy2){
     var m21=m2/m1;
     var x21=x2-x1;
     var y21=y2-y1;
@@ -205,7 +275,7 @@ Colision.calcCirclePolygon = function(R,m1,m2,x1,x2,y1,y2,a1,a2,vx1,vx2,vy1,vy2,
     return {x1:x1,y1:y1,x2:x2,y2:y2,vx1:vx1,vy1:vy1,vx2:vx2,vy2:vy2};
 };
 
-Colision.solve = function(mode,alpha,R,m1,m2,r1,r2,x1,y1,x2,y2,a1,a2,vx1,vy1,vx2,vy2,va1,va2){
+Colision.solve = function(mode,alpha,R,m1,m2,r1,r2,x1,y1,x2,y2,vx1,vy1,vx2,vy2){
     var pi2=2*Math.acos(-1.0E0);
     var r12=r1+r2;
     var m21=m2/m1;
@@ -254,6 +324,7 @@ Colision.solve = function(mode,alpha,R,m1,m2,r1,r2,x1,y1,x2,y2,a1,a2,vx1,vy1,vx2
     }
     //END 'this block only if initial positions are given' *********
     //update velocities ***
+    alpha= alpha==0?360:alpha;
     var a=Math.tan( gammav +alpha);
     var dvx2=-2*(vx21 +a*vy21) /((1+a*a)*(1+m21));
     vx2=vx2+dvx2;
@@ -265,7 +336,7 @@ Colision.solve = function(mode,alpha,R,m1,m2,r1,r2,x1,y1,x2,y2,a1,a2,vx1,vy1,vx2
     vy1=(vy1-vy_cm)*R + vy_cm;
     vx2=(vx2-vx_cm)*R + vx_cm;
     vy2=(vy2-vy_cm)*R + vy_cm;
-    return {x1:x1,x2:x2,y1:y1,y2:y2,vx1:vx1,vy1:vy1,vx2:vx2,vy2:vy2,a1:a1,a2:a2,va1:va1,va2:va2};
+    return {x1:x1,x2:x2,y1:y1,y2:y2,vx1:vx1,vy1:vy1,vx2:vx2,vy2:vy2,va1:0,va2:0};
 }
 
 

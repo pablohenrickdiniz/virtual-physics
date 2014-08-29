@@ -59,9 +59,9 @@ function QuadTree(level, center, width, height) {
                     if (eventA.isMoving() || eventB.isMoving()){
                         var objA = eventA.getObject();
                         var objB = eventB.getObject();
-
-                        if(Colision.forms(contA, contB)){
-                            Colision.applyForces(objA, objB, contA, contB);
+                        var cp = Colision.forms(contA, contB);
+                        if(cp instanceof Point || cp === true){
+                            Colision.applyForces(objA, objB, contA, contB,cp);
                         }
                     }
                 }

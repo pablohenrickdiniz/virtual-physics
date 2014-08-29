@@ -1,15 +1,13 @@
-function Event(position) {
+function Event() {
     this.object = new Object();
-    this.contact = new Circle(position,30);
-    this.contact.setFather(this);
     this.pages = new Array();
     this.atualPage = null;
     this.layer = 3;
     this.parent = null;
 
     this.setContact = function(contact){
-        contact.setFather(this);
         this.contact = contact;
+        this.contact.setFather(this);
     };
 
     this.getCenter = function(){
@@ -96,18 +94,19 @@ function Event(position) {
     };
 
     this.step = function() {
-        if (this.object.vector.getX() != 0 || this.object.vector.getY() != 0) {
-            var x = this.object.vector.getX() / METERPIXEL;
-            var y = this.object.vector.getY() / METERPIXEL;
-            this.contact.translate(x, y);
-        }
+        if(this.object.dinamic){
+            if(this.object.vector.getX() != 0 || this.object.vector.getY() != 0){
+                var x = this.object.vector.getX() / METERPIXEL;
+                var y = this.object.vector.getY() / METERPIXEL;
+                this.contact.translate(x, y);
+            }
 
-        if (this.object.angularSpeed != 0) {
+            if(this.object.vector.getNorm() < VELOCIDADETERMINAL && this.object.gravityInfluence){
+                this.object.vector = Vector.sum(this.object.vector, GRAVITY);
+            }
+        }
+        if(this.object.angularSpeed != 0 && this.object.angularInfluence) {
             this.contact.rotate(this.angularSpeed);
-        }
-
-        if (this.object.gravityInfluence && this.object.isDinamic() &&this.object.vector.getNorm() < VELOCIDADETERMINAL) {
-            this.object.vector = Vector.sum(this.object.vector, GRAVITY);
         }
     };
 }

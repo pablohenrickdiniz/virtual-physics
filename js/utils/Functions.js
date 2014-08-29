@@ -23,10 +23,27 @@ function getDegree(x, y) {
 		return 90 + radiansToDegree(Math.atan(yabs / xabs));
 	} else if (x > 0 && y < 0) {
 		return 180 + radiansToDegree(Math.atan(xabs / yabs));
-	} else{
+	} else if(x > 0 && y >0){
 		return 270 + radiansToDegree(Math.atan(yabs / xabs));
 	}
+    else{
+        return 0;
+    }
 }
+
+function getAngle(x,y){
+    var xabs = Math.abs(x);
+    var yabs = Math.abs(y);
+    if (x < 0 && y > 0) {
+        return radiansToDegree(Math.atan(xabs / yabs));
+    } else if (x < 0 && y < 0) {
+        return radiansToDegree(Math.atan(yabs / xabs));
+    } else if (x > 0 && y < 0) {
+        return radiansToDegree(Math.atan(xabs / yabs));
+    } else{
+        return radiansToDegree(Math.atan(yabs / xabs));
+    }
+};
 
 function obtainMinLine() {
 	var reta = null;
