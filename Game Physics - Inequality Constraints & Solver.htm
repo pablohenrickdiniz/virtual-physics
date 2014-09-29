@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<!-- saved from url=(0043)http://myselph.de/gamePhysics/friction.html -->
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+    <title>Game Physics - Inequality Constraints &amp; Solver</title>
+    <meta name="description"
+          content="Tutorial, derivation and interactive Javascript simulation of 2D rigid body game physics with inequality constraints (collisions) &amp; solver">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Bootstrap -->
+    <link href="http://myselph.de/css/bootstrap.min.css" rel="stylesheet" media="screen">
+    <link href="http://myselph.de/css/wikipediaThumbs.css" rel="stylesheet" media="screen">
+    <script type="text/javascript" src="js/jquery.min.js"></script>
+    <script type="text/javascript" src="js/bootstrap.min.js"></script>
+</head>
+<body style="padding: 5px;">
+<div class="container panel panel-default">
+<h1>Examples</h1>
+<ul class="nav nav-tabs">
+    <li class=""><a href="http://myselph.de/gamePhysics/friction.html#stairs" id="anchorStairs"
+                    data-toggle="tab">Stairs</a>
+    </li>
+    <li class="active"><a href="http://myselph.de/gamePhysics/friction.html#domino" id="anchorDomino"
+                          data-toggle="tab">Domino</a></li>
+    <li class=""><a href="http://myselph.de/gamePhysics/friction.html#boxes" id="anchorBoxes"
+                    data-toggle="tab">Boxes</a>
+    </li>
+</ul>
+<div class="tab-content">
+<div class="tab-pane" id="stairs">
+    <div class="flotPlot" style="width: 640px; height: 480px; float: left; padding: 0px; position: relative;">
+        <canvas class="flot-base" width="640" height="480"
+                style="direction: ltr; position: absolute; left: 0px; top: 0px; width: 640px; height: 480px;"></canvas>
+        <div class="flot-text"
+             style="position: absolute; top: 0px; left: 0px; bottom: 0px; right: 0px; font-size: smaller; color: rgb(84, 84, 84);">
+            <div class="flot-x-axis flot-x1-axis xAxis x1Axis"
+                 style="position: absolute; top: 0px; left: 0px; bottom: 0px; right: 0px; display: block;">
+                <div class="flot-tick-label tickLabel"
+                     style="position: absolute; max-width: 71px; top: 461px; left: 17px; text-align: center;">
+                    -10.0
+                </div>
+                <div class="flot-tick-label tickLabel"
+                     style="position: absolute; max-width: 71px; top: 461px; left: 95px; text-align: center;">
+                    -7.5
+                </div>
+                <div class="flot-tick-label tickLabel"
+                     style="position: absolute; max-width: 71px; top: 461px; left: 169px; text-align: center;">
+                    -5.0
+                </div>
+                <div class="flot-tick-label tickLabel"
+                     style="position: absolute; max-width: 71px; top: 461px; left: 244px; text-align: center;">
+                    -2.5
+                </div>
+                <div class="flot-tick-label tickLabel"
+                     style="position: absolute; max-width: 71px; top: 461px; left: 320px; text-align: center;">
+                    0.0
+                </div>
+                <div class="flot-tick-label tickLabel"
+                     style="position: absolute; max-width: 71px; top: 461px; left: 395px; text-align: center;">
+                    2.5
+                </div>
+                <div class="flot-tick-label tickLabel"
+                     style="position: absolute; max-width: 71px; top: 461px; left: 469px; text-align: center;">
+                    5.0
+                </div>
+                <div class="flot-tick-label tickLabel"
+                     style="position: absolute; max-width: 71px; top: 461px; left: 544px; text-align: center;">
+                    7.5
+                </div>
+                <div class="flot-tick-label tickLabel"
+                     style="position: absolute; max-width: 71px; top: 461px; left: 615px; text-align: center;">
+                    10.0
+                </div>
+            </div>
+            <div class="flot-y-axis flot-y1-axis yAxis y1Axis"
+                 style="position: absolute; top: 0px; left: 0px; bottom: 0px; right: 0px; display: block;">
+                <div class="flot-tick-label tickLabel"
+                     style="position: absolute; top: 395px; left: 9px; text-align: right;">0.0
+                </div>
+                <div class="flot-tick-label tickLabel"
+                     style="position: absolute; top: 329px; left: 9px; text-align: right;">2.5
+                </div>
+                <div class="flot-tick-label tickLabel"
+                     style="position: absolute; top: 263px; left: 9px; text-align: right;">5.0
+                </div>
+                <div class="flot-tick-label tickLabel"
+                     style="position: absolute; top: 198px; left: 9px; text-align: right;">7.5
+                </div>
+                <div class="flot-tick-label tickLabel"
+                     style="position: absolute; top: 132px; left: 2px; text-align: right;">10.0
+                </div>
+                <div class="flot-tick-label tickLabel"
+                     style="position: absolute; top: 66px; left: 2px; text-align: right;">12.5
+                </div>
+                <div class="flot-tick-label tickLabel"
+                     style="position: absolute; top: 1px; left: 2px; text-align: right;">15.0
+                </div>
+            </div>
+        </div>
+        <canvas class="flot-overlay" width="640" height="480"
+                style="direction: ltr; position: absolute; left: 0px; top: 0px; width: 640px; height: 480px;"></canvas>
+    </div>
+    <div class="controlElements" style="float:left;">
+        <table>
+            <tbody>
+            <tr>
+                <td>mass:</td>
+                <td><input type="number" name="mass" min="0.001" max="100" value="1"></td>
+            </tr>
+            <tr>
+                <td>x0:</td>
+                <td><input type="number" name="x0" min="-10" max="10" value="0"></td>
+            </tr>
+            <tr>
+                <td>y0:</td>
+                <td><input type="number" name="y0" min="0" max="15" value="13"></td>
+            </tr>
+            <tr>
+                <td>theta0:</td>
+                <td><input type="number" name="theta0" min="-10" max="10" value="0"></td>
+            </tr>
+            <tr>
+                <td>vx0:</td>
+                <td><input type="number" name="vx0" min="-20" max="20" value="3"></td>
+            </tr>
+            <tr>
+                <td>vy0:</td>
+                <td><input type="number" name="vy0" min="-20" max="20" value="0"></td>
+            </tr>
+            <tr>
+                <td>vAng0:</td>
+                <td><input type="number" name="vAng0" min="-10" max="10" value="-0.8"></td>
+            </tr>
+            <tr>
+                <td>friction:</td>
+                <td><input type="number" name="friction" min="0" max="1" value="0.2"></td>
+            </tr>
+            <tr>
+                <td>tStop:</td>
+                <td><input type="number" name="tStop" min="0" max="100" value="3"></td>
+            </tr>
+            </tbody>
+        </table>
+        <button name="startStopButton">Start</button>
+        <p id="time">t=0s</p>
+    </div>
+</div>
+<div class="tab-pane active" id="domino">
+    <div class="flotPlot" style="width: 640px; height: 480px; float: left; padding: 0px; position: relative;">
+        <canvas class="flot-base" width="640" height="480"
+                style="direction: ltr; position: absolute; left: 0px; top: 0px; width: 640px; height: 480px;"></canvas>
+        <div class="flot-text"
+             style="position: absolute; top: 0px; left: 0px; bottom: 0px; right: 0px; font-size: smaller; color: rgb(84, 84, 84);">
+            <div class="flot-x-axis flot-x1-axis xAxis x1Axis"
+                 style="position: absolute; top: 0px; left: 0px; bottom: 0px; right: 0px; display: block;">
+                <div class="flot-tick-label tickLabel"
+                     style="position: absolute; max-width: 71px; top: 461px; left: 17px; text-align: center;">
+                    -10.0
+                </div>
+                <div class="flot-tick-label tickLabel"
+                     style="position: absolute; max-width: 71px; top: 461px; left: 95px; text-align: center;">
+                    -7.5
+                </div>
+                <div class="flot-tick-label tickLabel"
+                     style="position: absolute; max-width: 71px; top: 461px; left: 169px; text-align: center;">
+                    -5.0
+                </div>
+                <div class="flot-tick-label tickLabel"
+                     style="position: absolute; max-width: 71px; top: 461px; left: 244px; text-align: center;">
+                    -2.5
+                </div>
+                <div class="flot-tick-label tickLabel"
+                     style="position: absolute; max-width: 71px; top: 461px; left: 320px; text-align: center;">
+                    0.0
+                </div>
+                <div class="flot-tick-label tickLabel"
+                     style="position: absolute; max-width: 71px; top: 461px; left: 395px; text-align: center;">
+                    2.5
+                </div>
+                <div class="flot-tick-label tickLabel"
+                     style="position: absolute; max-width: 71px; top: 461px; left: 469px; text-align: center;">
+                    5.0
+                </div>
+                <div class="flot-tick-label tickLabel"
+                     style="position: absolute; max-width: 71px; top: 461px; left: 544px; text-align: center;">
+                    7.5
+                </div>
+                <div class="flot-tick-label tickLabel"
+                     style="position: absolute; max-width: 71px; top: 461px; left: 615px; text-align: center;">
+                    10.0
+                </div>
+            </div>
+            <div class="flot-y-axis flot-y1-axis yAxis y1Axis"
+                 style="position: absolute; top: 0px; left: 0px; bottom: 0px; right: 0px; display: block;">
+                <div class="flot-tick-label tickLabel"
+                     style="position: absolute; top: 395px; left: 9px; text-align: right;">0.0
+                </div>
+                <div class="flot-tick-label tickLabel"
+                     style="position: absolute; top: 329px; left: 9px; text-align: right;">2.5
+                </div>
+                <div class="flot-tick-label tickLabel"
+                     style="position: absolute; top: 263px; left: 9px; text-align: right;">5.0
+                </div>
+                <div class="flot-tick-label tickLabel"
+                     style="position: absolute; top: 198px; left: 9px; text-align: right;">7.5
+                </div>
+                <div class="flot-tick-label tickLabel"
+                     style="position: absolute; top: 132px; left: 2px; text-align: right;">10.0
+                </div>
+                <div class="flot-tick-label tickLabel"
+                     style="position: absolute; top: 66px; left: 2px; text-align: right;">12.5
+                </div>
+                <div class="flot-tick-label tickLabel"
+                     style="position: absolute; top: 1px; left: 2px; text-align: right;">15.0
+                </div>
+            </div>
+        </div>
+        <canvas class="flot-overlay" width="640" height="480"
+                style="direction: ltr; position: absolute; left: 0px; top: 0px; width: 640px; height: 480px;"></canvas>
+    </div>
+    <div class="controlElements" style="float:left;">
+        <table>
+            <tbody>
+            <tr>
+                <td>domino spacing:</td>
+                <td><input type="number" name="dominoSpacing" min="0" max="5" value="1.125"></td>
+            </tr>
+            <tr>
+                <td>vAng0:</td>
+                <td><input type="number" name="vAng0" min="-40" max="40" value="-10"></td>
+            </tr>
+            <tr>
+                <td>friction:</td>
+                <td><input type="number" name="friction" min="0" max="1" value="0.2"></td>
+            </tr>
+            <tr>
+                <td>tStop:</td>
+                <td><input type="number" name="tStop" min="0" max="100" value="10"></td>
+            </tr>
+            </tbody>
+        </table>
+        <button name="startStopButton">Start</button>
+        <p id="time">10.0s (1.00e+3ms/frame)</p>
+    </div>
+</div>
+<div class="tab-pane" id="boxes">
+    <div class="flotPlot" style="width: 640px; height: 480px; float: left; padding: 0px; position: relative;">
+        <canvas class="flot-base" width="640" height="480"
+                style="direction: ltr; position: absolute; left: 0px; top: 0px; width: 640px; height: 480px;"></canvas>
+        <div class="flot-text"
+             style="position: absolute; top: 0px; left: 0px; bottom: 0px; right: 0px; font-size: smaller; color: rgb(84, 84, 84);">
+            <div class="flot-x-axis flot-x1-axis xAxis x1Axis"
+                 style="position: absolute; top: 0px; left: 0px; bottom: 0px; right: 0px; display: block;">
+                <div class="flot-tick-label tickLabel"
+                     style="position: absolute; max-width: 71px; top: 461px; left: 17px; text-align: center;">
+                    -10.0
+                </div>
+                <div class="flot-tick-label tickLabel"
+                     style="position: absolute; max-width: 71px; top: 461px; left: 95px; text-align: center;">
+                    -7.5
+                </div>
+                <div class="flot-tick-label tickLabel"
+                     style="position: absolute; max-width: 71px; top: 461px; left: 169px; text-align: center;">
+                    -5.0
+                </div>
+                <div class="flot-tick-label tickLabel"
+                     style="position: absolute; max-width: 71px; top: 461px; left: 244px; text-align: center;">
+                    -2.5
+                </div>
+                <div class="flot-tick-label tickLabel"
+                     style="position: absolute; max-width: 71px; top: 461px; left: 320px; text-align: center;">
+                    0.0
+                </div>
+                <div class="flot-tick-label tickLabel"
+                     style="position: absolute; max-width: 71px; top: 461px; left: 395px; text-align: center;">
+                    2.5
+                </div>
+                <div class="flot-tick-label tickLabel"
+                     style="position: absolute; max-width: 71px; top: 461px; left: 469px; text-align: center;">
+                    5.0
+                </div>
+                <div class="flot-tick-label tickLabel"
+                     style="position: absolute; max-width: 71px; top: 461px; left: 544px; text-align: center;">
+                    7.5
+                </div>
+                <div class="flot-tick-label tickLabel"
+                     style="position: absolute; max-width: 71px; top: 461px; left: 615px; text-align: center;">
+                    10.0
+                </div>
+            </div>
+            <div class="flot-y-axis flot-y1-axis yAxis y1Axis"
+                 style="position: absolute; top: 0px; left: 0px; bottom: 0px; right: 0px; display: block;">
+                <div class="flot-tick-label tickLabel"
+                     style="position: absolute; top: 395px; left: 9px; text-align: right;">0.0
+                </div>
+                <div class="flot-tick-label tickLabel"
+                     style="position: absolute; top: 329px; left: 9px; text-align: right;">2.5
+                </div>
+                <div class="flot-tick-label tickLabel"
+                     style="position: absolute; top: 263px; left: 9px; text-align: right;">5.0
+                </div>
+                <div class="flot-tick-label tickLabel"
+                     style="position: absolute; top: 198px; left: 9px; text-align: right;">7.5
+                </div>
+                <div class="flot-tick-label tickLabel"
+                     style="position: absolute; top: 132px; left: 2px; text-align: right;">10.0
+                </div>
+                <div class="flot-tick-label tickLabel"
+                     style="position: absolute; top: 66px; left: 2px; text-align: right;">12.5
+                </div>
+                <div class="flot-tick-label tickLabel"
+                     style="position: absolute; top: 1px; left: 2px; text-align: right;">15.0
+                </div>
+            </div>
+        </div>
+        <canvas class="flot-overlay" width="640" height="480"
+                style="direction: ltr; position: absolute; left: 0px; top: 0px; width: 640px; height: 480px;"></canvas>
+    </div>
+    <div class="controlElements" style="float:left;">
+        <table>
+            <tbody>
+            <tr>
+                <td>friction:</td>
+                <td><input type="number" name="friction" min="0" max="1" value="0.2"></td>
+            </tr>
+            <tr>
+                <td>tStop:</td>
+                <td><input type="number" name="tStop" min="0" max="100" value="6"></td>
+            </tr>
+            </tbody>
+        </table>
+        <button name="startStopButton">Start</button>
+        <p id="time">t=0s</p>
+    </div>
+</div>
+</div>
+
+</div>
+<div class="row container-fluid">
+    <div class="col-md-12">
+        <canvas style="border:1px solid green; left:120px;" id="canvas" width="600px" height="500px">
+
+        </canvas>
+    </div>
+</div>
+
+<script type="text/javascript" src="js/jquery.flot.js"></script>
+<script type="text/javascript" src="js/MV.js"></script>
+<script type="text/javascript" src="js/friction_physics.js"></script>
+<script type="text/javascript">
+    function drawWorld(plotObject, world) {
+        var bodiesVertices = [];
+        for (var i = 0; i < world.bodies.length; i++) {
+            var bodyVerts = world.bodies[i].getVerticesInWorldCoords();
+            bodyVerts.push(bodyVerts[0]);
+            bodiesVertices.push(bodyVerts);
+        }
+        plotObject.setData(bodiesVertices);
+        plotObject.draw();
+    }
+</script>
+    <script type="text/javascript" src="js/stairs.js"></script>
+    <script type="text/javascript" src="js/domino.js"></script>
+    <script type="text/javascript" src="js/boxes.js"></script>
+    <script type="text/javascript" src="js/tabs.js"></script>
+</body>
