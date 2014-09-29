@@ -12,52 +12,16 @@ function Color(red, blue, green, alpha) {
 		this.alpha = isNaN(alpha) || alpha < 0 || alpha > 1 ? 1 : alpha;
 	}
 
-	this.getRed = function() {
-		return this.red;
-	};
-
-	this.getBlue = function() {
-		return this.blue;
-	};
-
-	this.getGreen = function() {
-		return this.green;
-	};
-
-	this.setRed = function(red) {
-		if (!isNaN(red) && red >= 0 && red <= 255) {
-			this.red = red;
-		}
-	};
-
-	this.setBlue = function(blue) {
-		if (!isNaN(blue) && blue >= 0 && blue <= 255) {
-			this.blue = blue;
-		}
-	};
-
-	this.setGreen = function(green) {
-		if (!isNaN(green) && green >= 0 && green <= 255) {
-			this.green = green;
-		}
-	};
-
-	this.setAlpha = function(alpha) {
-		if (!isNaN(alpha) && alpha >= 0 && alpha <= 1) {
-			this.alpha = alpha;
-		}
-	};
-
-	this.getRgb = function() {
+	this.toRGB = function() {
 		return "rgb(" + this.red + "," + this.blue + "," + this.green + ")";
 	};
 
-	this.getRgba = function() {
+	this.toRGBA = function() {
 		return "rgba(" + this.red + "," + this.blue + "," + this.green + ","
 				+ this.alpha + ")";
 	};
 
-	this.getHex = function() {
+	this.toHEX = function() {
 		var r = this.red.toString(16);
 		var g = this.blue.toString(16);
 		var b = this.green.toString(16);
@@ -68,10 +32,10 @@ function Color(red, blue, green, alpha) {
 	};
 
 	this.toString = function() {
-		return this.getRgba();
+		return this.toRGBA();
 	};
 
-	this.invert = function() {
+	this.reverse = function() {
 		this.red = this.red < 128 ? 128 + (128 - this.red)
 				: 128 - (this.red - 128);
 		this.blue = this.blue < 128 ? 128 + (128 - this.blue)
@@ -80,9 +44,9 @@ function Color(red, blue, green, alpha) {
 				: 128 - (this.green - 128);
 	};
 
-	this.getName = function() {
-		for (index in Color.Name) {
-			if (Color.Name[index] == this.getHex()) {
+	this.asName = function() {
+		for (var index in Color.Name) {
+			if (Color.Name[index] == this.toHEX()) {
 				return index;
 			}
 		}

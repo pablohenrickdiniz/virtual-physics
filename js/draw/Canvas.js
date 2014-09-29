@@ -20,8 +20,6 @@ function Canvas(canvas) {
 			this.drawPolygon(shape);
 		} else if (shape instanceof Circle) {
 			this.drawCircle(shape);
-		} else if (shape instanceof Line) {
-			this.drawLine(shape);
 		}
 	};
 
@@ -33,8 +31,8 @@ function Canvas(canvas) {
 
 	this.drawArc = function(arc) {
 		if (arc instanceof Arc) {
-			this.preencherSombra(arc.shadow);
-			this.preencherForma(arc);
+			this.fillShadow(arc.shadow);
+			this.fillShape(arc);
 			this.context.beginPath();
 			this.context.arc(arc.center[0], arc.center[1],
 					arc.radius, Math.PI * arc.start / 180,
@@ -46,8 +44,8 @@ function Canvas(canvas) {
 
 	this.drawPolygon = function(polygon) {
 		if (polygon instanceof Polygon) {
-			this.preencherSombra(polygon.shadow);
-			this.preencherForma(polygon);
+			this.fillShadow(polygon.shadow);
+			this.fillShape(polygon);
 			this.context.beginPath();
 			this.context.moveTo(polygon.vertices[0][0],polygon.vertices[0][1]);
 			for ( var i = 1; i < polygon.vertices.length; i++) {
@@ -66,99 +64,98 @@ function Canvas(canvas) {
         document.getElementById(this.canvas).width = this.width;
         document.getElementById(this.canvas).width = this.height;
 	};
-    /*
-	this.fillGradient = function(shape) {
-		var gradiente = shape.color;
-		var grad = null;
-		var quad = shape.getQuadradoCircunscrito();
-		var cx = quad.getCentro().getX();
-		var cy = quad.getCentro().getY();
-		var w = quad.getLargura();
-		var h = quad.getAltura();
-		if (gradiente instanceof GradienteRadial) {
-			var r = gradiente.getR();
-			var gcx = gradiente.getCx();
-			var gcy = gradiente.getCy();
-			var fx = gradiente.getFx();
-			var fy = gradiente.getFy();
 
-			var gxp = (cx - w / 2) + w * (gcx / 100);
-			var gyp = (cy - h / 2) + h * (gcy / 100);
-			var fxp = (cx - w / 2) + w * (fx / 100);
-			var fyp = (cy - h / 2) + h * (fy / 100);
-			var rp = w * (r / 100);
-			grad = this.context
-					.createRadialGradient(fxp, fyp, 0, gxp, gyp, rp);
+	this.fillGradient = function(shape) {
+		var gradient = shape.color;
+		var grad = null;
+		var quad = shape.updateMinAndMax()
+        var width  = quad.max[0]-quad.min[0];
+        var height = quad.max[1]-quad.min[1];
+        var wm = width/2;
+        var hm = height/2;
+		var cx = quad.min[0]+(wm);
+		var cy = quad.min[1]+(hm);
+
+		if (gradient instanceof RadialGradient) {
+			var r = gradient.r;
+			var cx = gradient.cx;
+			var cy = gradient.cy;
+			var fx = gradient.fx;
+			var fy = gradient.fy;
+
+			var gxp = (cx - wm) + width * (cx / 100);
+			var gyp = (cy - hm) + height * (cy / 100);
+			var fxp = (cx - wm) + width * (fx / 100);
+			var fyp = (cy - hm) + height * (fy / 100);
+			var rp = width * (r / 100);
+			grad = this.context.createRadialGradient(fxp, fyp, 0, gxp, gyp, rp);
 		} else {
-			var px0 = gradiente.getPx0();
-			var py0 = gradiente.getPy0();
-			var px1 = gradiente.getPx1();
-			var py1 = gradiente.getPy1();
-			var x0 = (cx - w / 2) + w * (px0 / 100);
-			var y0 = (cy - h / 2) + h * (py0 / 100);
-			var x1 = (cx - w / 2) + w * (px1 / 100);
-			var y1 = (cy - h / 2) + h * (py1 / 100);
+			var px0 = gradient.px0;
+			var py0 = gradient.py0;
+			var px1 = gradient.px1;
+			var py1 = gradient.py1;
+			var x0 = (cx - wm) + width*(px0 / 100);
+			var y0 = (cy - hm) + height*(py0 / 100);
+			var x1 = (cx - wm) + width*(px1 / 100);
+			var y1 = (cy - hm) + height*(py1 / 100);
 			grad = this.context.createLinearGradient(x0, y0, x1, y1);
 		}
 
-		var colorsStop = gradiente.getColorsStop();
-		for ( var i = 0; i < colorsStop.length; i++) {
-			grad.addColorStop(colorsStop[i][0] / 100, this
-					.preencherCor(colorsStop[i][1]));
+		for ( var i = 0; i < gradient.colorsStop.length; i++) {
+			grad.addColorStop(gradient.colorsStop[i][0] / 100, this.fillColor(gradient.colorsStop[i][1]));
 		}
 		return grad;
-	};*/
-
-	this.preencherCor = function(cor) {
-		if (cor instanceof Color) {
-			return cor.getRgba();
-		}
-		return cor;
 	};
 
-	this.preencherSombra = function(sombra) {
+	this.fillColor = function(color) {
+		if (color instanceof Color) {
+			return color.toRGBA();
+		}
+		return color;
+	};
+
+	this.fillShadow = function(shadow) {
 		this.context.save();
-		if (sombra != null) {
-			this.context.shadowOffsetX = sombra.getX();
-			this.context.shadowOffsetY = sombra.getY();
-			this.context.shadowBlur = sombra.getBlur();
-			this.context.shadowColor = this.preencherCor(sombra.getCor());
+		if (shadow != null) {
+			this.context.shadowOffsetX = shadow.x;
+			this.context.shadowOffsetY = shadow.y;
+			this.context.shadowBlur = shadow.blur;
+			this.context.shadowColor = this.fillColor(shadow.color);
 		}
 		this.context.fill();
 		this.context.restore();
 	};
 
-	this.preencherBorda = function(borda) {
-		this.context.setLineDash(borda.getLineDash());
-		this.context.lineCap = borda.getLineCap();
-		this.context.strokeStyle = this.preencherCor(borda.getCor());
-		this.context.lineWidth = borda.getEspessura();
+	this.preencherBorda = function(border) {
+		this.context.setLineDash(border.lineDash);
+		this.context.lineCap = border.lineCap;
+		this.context.strokeStyle = this.fillColor(border.color);
+		this.context.lineWidth = border.thickness;
 		this.context.stroke();
 	};
 
-	this.preencherForma = function(forma) {
-		var cor = forma.getCor();
-		if (cor instanceof GradienteLinear || cor instanceof GradienteRadial) {
-			this.context.fillStyle = this.fillGradient(forma);
-		} else if (cor instanceof Imagem) {
-			this.context.fillStyle = cor.getFillPattern(this.context);
+	this.fillShape = function(shape){
+		var color = shape.color;
+		if (color instanceof LinearGradient || color instanceof RadialGradient) {
+			this.context.fillStyle = this.fillGradient(shape);
+		} else if (color instanceof Image) {
+			this.context.fillStyle = color.getFillPattern(this.context);
 		} else {
 
-			this.context.fillStyle = this.preencherCor(cor);
+			this.context.fillStyle = this.fillColor(color);
 		}
 	};
 
-	this.desenharImagem = function(imagem) {
-		if (imagem instanceof Imagem) {
-			var id = imagem.getId();
-			if (imagem.isCarregada()) {
-				var img = imagem.getElement();
-				var w = imagem.getWidth();
-				var h = imagem.getHeight();
-				var sx = imagem.getSx();
-				var sy = imagem.getSy();
-				var x = imagem.getX();
-				var y = imagem.getY();
+	this.drawImage = function(image) {
+		if (image instanceof Image) {
+			if (image.loaded) {
+				var img = image.getElement();
+				var w = image.width;
+				var h = image.height;
+				var sx = image.sx;
+				var sy = image.sy;
+				var x = image.x;
+				var y = image.y;
 				console.log(" w: "+w+"\n h:"+h+"\n x:"+x+"\n y:"+y);
 				this.context.drawImage(img,sx,sy,w,h,x, y,w,h);
 				return true;
