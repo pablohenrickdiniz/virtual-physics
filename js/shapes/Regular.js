@@ -3,7 +3,7 @@ function Regular(center, radius, tips, thickness, theta) {
 	Polygon.call(this, center, theta);
 	this.radius = isNaN(radius) || radius < 0 ? 10 : radius;
 	this.tips = isNaN(tips) || tips < 3 ? 3 : tips;
-	this.espessura = isNaN(thickness) || thickness < 1 ? 1 : thickness;
+	this.thickness = isNaN(thickness) || thickness < 1 ? 1 : thickness;
 
 	this.updateVertices = function() {
 		var ga = (360 / this.tips);
