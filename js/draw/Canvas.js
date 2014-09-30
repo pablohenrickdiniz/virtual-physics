@@ -52,13 +52,14 @@ function Canvas(canvas) {
 
     this.drawPolygon = function (polygon) {
         if (polygon instanceof Polygon) {
+            this.context.moveTo(polygon.center[0],polygon.center[1]);
             this.fillShadow(polygon.shadow);
             this.fillShape(polygon);
             this.context.beginPath();
-            var y = polygon.center[1];
-            this.context.moveTo(polygon.vertices[0][0]+100, polygon.vertices[0][1]+100+y);
+            var center = polygon.center;
+            this.context.moveTo(polygon.vertices[0][0]+center[0], polygon.vertices[0][1]+center[1]);
             for (var i = 1; i < polygon.vertices.length; i++) {
-                this.context.lineTo(polygon.vertices[i][0]+100, polygon.vertices[i][1]+100+y);
+                this.context.lineTo(polygon.vertices[i][0]+center[0], polygon.vertices[i][1]+center[1]);
             }
             this.context.closePath();
             this.context.fill();

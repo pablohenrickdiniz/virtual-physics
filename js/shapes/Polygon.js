@@ -18,12 +18,6 @@ function Polygon(center, theta) {
         }
     };
 
-    this.setTheta = function(theta){
-        this.rotate(-this.theta,this.center);
-        this.theta = theta;
-        this.rotate(this.theta,this.center);
-    };
-
     this.updateMinAndMax = function () {
         var min = this.vertices[0];
         var max = this.vertices[0];
