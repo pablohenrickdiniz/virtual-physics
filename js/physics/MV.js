@@ -71,6 +71,7 @@ var MV = {
         return Math.sqrt(MV.dot(x, x));
     },
     normalize: function (x) { //normalize a vector
+
         return MV.SxV(1 / MV.norm(x), x);
     },
     min: function (x, dim) { // min of vector (or matrix along dimension dim)
@@ -106,26 +107,26 @@ var MV = {
             }, 0);
         }
     },
-    rotate:function(vertice,theta, center) {
+    rotate: function (vertice, theta, center) {
         var rad = MV.toRadians(theta);
-        center = center == undefined?[0,0]:center;
+        center = center == undefined ? [0, 0] : center;
         var cx = center[0];
         var cy = center[1];
         var vx = vertice[0];
         var vy = vertice[1];
         var radc = Math.cos(rad);
         var rads = Math.sin(rad);
-        var suba = vx-cx;
-        var subb = vy-cy;
-        return [(suba*radc-subb*rads)+cx,(subb*radc+suba*rads)+cy];
+        var suba = vx - cx;
+        var subb = vy - cy;
+        return [(suba * radc - subb * rads) + cx, (subb * radc + suba * rads) + cy];
     },
-    toRadians: function(theta) {
+    toRadians: function (theta) {
         return theta * (Math.PI / 180);
     },
-    toDegree:function(theta){
+    toDegree: function (theta) {
         return theta * (180 / Math.PI);
     },
-    toInt:function(px){
-        return parseInt(px.substr(0,px.indexOf('px')));
+    toInt: function (px) {
+        return parseInt(px.substr(0, px.indexOf('px')));
     }
 };

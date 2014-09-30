@@ -1,4 +1,5 @@
-function KeyReader() {};
+function KeyReader() {
+};
 KeyReader.pressedKeys = new Array();
 KeyReader.keyDownAction = new Array();
 KeyReader.keyUpAction = new Array();

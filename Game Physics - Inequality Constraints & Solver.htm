@@ -10,8 +10,8 @@
     <!-- Bootstrap -->
     <link href="http://myselph.de/css/bootstrap.min.css" rel="stylesheet" media="screen">
     <link href="http://myselph.de/css/wikipediaThumbs.css" rel="stylesheet" media="screen">
-    <script type="text/javascript" src="js/jquery.min.js"></script>
-    <script type="text/javascript" src="js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="js/utils/jquery.min.js"></script>
+    <script type="text/javascript" src="js/utils/bootstrap.min.js"></script>
 </head>
 <body style="padding: 5px;">
 <div class="container panel panel-default">
@@ -343,10 +343,21 @@
         </canvas>
     </div>
 </div>
-
-<script type="text/javascript" src="js/jquery.flot.js"></script>
-<script type="text/javascript" src="js/MV.js"></script>
-<script type="text/javascript" src="js/friction_physics.js"></script>
+<script type="text/javascript" src="js/draw/Color.js"></script>
+<script type="text/javascript" src="js/draw/RadialGradient.js"></script>
+<script type="text/javascript" src="js/draw/LinearGradient.js"></script>
+<script type="text/javascript" src="js/draw/Canvas.js"></script>
+<script type="text/javascript" src="js/draw/Border.js"></script>
+<script type="text/javascript" src="js/shapes/Shape.js"></script>
+<script type="text/javascript" src="js/shapes/Polygon.js"></script>
+<script type="text/javascript" src="js/shapes/Rect.js"></script>
+<script type="text/javascript" src="js/utils/jquery.flot.js"></script>
+<script type="text/javascript" src="js/physics/MV.js"></script>
+<script type="text/javascript" src="js/physics/Body.js"></script>
+<script type="text/javascript" src="js/physics/World.js"></script>
+<script type="text/javascript" src="js/physics/friction_physics.js"></script>
+<script type="text/javascript" src="js/main/Game.js"></script>
+<script type="text/javascript" src="js/main/domino_forms.js"></script>
 <script type="text/javascript">
     function drawWorld(plotObject, world) {
         var bodiesVertices = [];
@@ -359,8 +370,8 @@
         plotObject.draw();
     }
 </script>
-    <script type="text/javascript" src="js/stairs.js"></script>
-    <script type="text/javascript" src="js/domino.js"></script>
-    <script type="text/javascript" src="js/boxes.js"></script>
-    <script type="text/javascript" src="js/tabs.js"></script>
+    <script type="text/javascript" src="js/main/stairs.js"></script>
+    <script type="text/javascript" src="js/main/domino.js"></script>
+    <script type="text/javascript" src="js/main/boxes.js"></script>
+    <script type="text/javascript" src="js/utils/tabs.js"></script>
 </body>
