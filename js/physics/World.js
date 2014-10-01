@@ -8,6 +8,7 @@ var World = function () {
     this.contacts = [];
     this.gravity = 9.81;
     this.step = function () {
+
         /***** 1. collision detection *****/
         computeContacts.apply(this); // call private function computeContacts but give it the right this
 
@@ -55,12 +56,16 @@ var World = function () {
     // private function. Make sure to call with apply() and pass in
     // the right world object.
     function computeContacts() {
+
         // broad phase - compute the axis aligned bounding box for each body and
         // determine overlapping boxes. These list of candidate collisions is then
         // pruned in the narrow phase. Note for an overlap of bodies A and B,
         // [Ai, Bi] and [Bi, Ai] are added to the result.
+
         var collisionCandidates = getCollisionCandidates(this.bodies);
+
         computeFaceNormals(this.bodies, collisionCandidates);
+
         // later, reuse contacts?
         this.contacts = [];
         // narrow phase - for each collision candidate, do some geometry to determine
@@ -82,6 +87,7 @@ var World = function () {
     };
 
     function applyImpulses() {
+
         var bias = [];
         // precompute MInv and bias for each contact - they don't change
         // across iterations

@@ -49,6 +49,7 @@ var MV = {
         });
     },
     MxV: function (M, x) { //matrix-vector multiplication
+
         return M.map(function (mElem) {
             return MV.dot(mElem, x);
         });

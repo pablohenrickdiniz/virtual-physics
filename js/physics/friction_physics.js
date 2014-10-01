@@ -31,6 +31,7 @@ function getAABB(body) {
     AABB[1] = MV.min(verticesWorld, 1);
     AABB[2] = MV.max(verticesWorld, 0);
     AABB[3] = MV.max(verticesWorld, 1);
+
     return AABB;
 }
 
@@ -61,10 +62,14 @@ function getCollisionCandidates(bodies) {
     var AABBs = [];
     // compute axis aligned bounding boxes for each body
     for (var i = 0; i < bodies.length; i++) {
+
         AABBs[i] = getAABB(bodies[i]);
+
     }
+
     // compare them against each other and store
     // potential collisions in collisionCandidates
+
     var collisionCandidates = [];
     for (var i = 0; i < AABBs.length - 1; i++) {
         for (var j = i + 1; j < AABBs.length; j++) {

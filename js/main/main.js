@@ -16,8 +16,17 @@ $(document).ready(function () {
     $("#game").click(function () {
         var x = reader.getX();
         var y = reader.getY()-120;
-        var shape = new Rect([x,y], 50, 200);
+        var shape = new Trapezius([x,y], 120, 1,100);
         var body = new Body(shape, 10, [0, 0], 0);
         game.world.addBody(body);
+    });
+
+    $("#action").click(function(){
+        if(game.running){
+            game.pause();
+        }
+        else{
+            game.continue();
+        }
     });
 });

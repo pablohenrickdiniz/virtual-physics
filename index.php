@@ -2,19 +2,23 @@
 <html lang="pt-br">
 <head>
     <meta charset="utf-8">
-    <title>Simulação</title>
+    <title>SimulaÃ§Ã£o</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="http://myselph.de/css/bootstrap.min.css" rel="stylesheet" media="screen">
-    <link href="http://myselph.de/css/wikipediaThumbs.css" rel="stylesheet" media="screen">
+    <link rel="stylesheet" href="css/bootstrap.min.css"/>
     <script type="text/javascript" src="js/utils/jquery.min.js"></script>
     <script type="text/javascript" src="js/utils/bootstrap.min.js"></script>
 </head>
 <body>
 <div class="row container-fluid">
     <div class="col-md-12">
-        <canvas style="border:1px solid green; left:120px;" id="game" width="640px" height="480px">
+        <canvas id="game" width="640px" height="480px">
         </canvas>
     </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <input id="action" type="button" class="btn btn-info" value="executar/pausar"/>
+     </div>
 </div>
 <script type="text/javascript" src="js/utils/MouseReader.js"></script>
 <script type="text/javascript" src="js/draw/Color.js"></script>
@@ -24,13 +28,12 @@
 <script type="text/javascript" src="js/draw/Border.js"></script>
 <script type="text/javascript" src="js/shapes/Shape.js"></script>
 <script type="text/javascript" src="js/shapes/Polygon.js"></script>
+<script type="text/javascript" src="js/shapes/Trapezius.js"></script>
 <script type="text/javascript" src="js/shapes/Rect.js"></script>
-<script type="text/javascript" src="js/utils/jquery.flot.js"></script>
 <script type="text/javascript" src="js/physics/MV.js"></script>
 <script type="text/javascript" src="js/physics/Body.js"></script>
 <script type="text/javascript" src="js/physics/World.js"></script>
 <script type="text/javascript" src="js/physics/friction_physics.js"></script>
 <script type="text/javascript" src="js/main/Game.js"></script>
-<script type="text/javascript" src="js/main/domino.js"></script>
-<script type="text/javascript" src="js/main/boxes.js"></script>
+<script type="text/javascript" src="js/main/main.js"></script>
 </body>
