@@ -15,8 +15,8 @@ $(document).ready(function () {
     reader.startRead();
     $("#game").click(function () {
         var x = reader.getX();
-        var y = reader.getY()-120;
-        var shape = new Trapezius([x,y], 120, 1,100);
+        var y = reader.getY();
+        var shape = new Regular([x,y], 20, 5,2,0);
         var body = new Body(shape, 10, [0, 0], 0);
         game.world.addBody(body);
     });

@@ -28,6 +28,7 @@
 <script type="text/javascript" src="js/draw/Border.js"></script>
 <script type="text/javascript" src="js/shapes/Shape.js"></script>
 <script type="text/javascript" src="js/shapes/Polygon.js"></script>
+<script type="text/javascript" src="js/shapes/Regular.js"></script>
 <script type="text/javascript" src="js/shapes/Trapezius.js"></script>
 <script type="text/javascript" src="js/shapes/Rect.js"></script>
 <script type="text/javascript" src="js/physics/MV.js"></script>
