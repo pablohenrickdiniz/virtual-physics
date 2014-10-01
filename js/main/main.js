@@ -16,7 +16,7 @@ $(document).ready(function () {
     $("#game").click(function () {
         var x = reader.getX();
         var y = reader.getY();
-        var shape = new Regular([x,y], 20, 20,1,0);
+        var shape = new Regular([x,y], 20, 5,1,0);
         var body = new Body(shape, 10, [0, 0], 0);
         game.world.addBody(body);
     });
