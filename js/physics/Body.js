@@ -30,7 +30,6 @@ function Body(shape, mass, vLin, vAng) {
     this.getVerticesInWorldCoords = function () {
         var vertsAbsolute = [];
         var rotationMatrix = this.getRotationMatrix();
-
         for (var i = 0; i < this.shape.vertices.length; i++) {
             vertsAbsolute.push(MV.VpV(this.shape.center,
                 MV.MxV(rotationMatrix, this.shape.vertices[i])));

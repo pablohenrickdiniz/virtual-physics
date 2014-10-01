@@ -6,6 +6,7 @@ var World = function () {
     this.t = 0;
     this.friction = 0.2;
     this.contacts = [];
+    this.gravity = 9.81;
     this.step = function () {
         /***** 1. collision detection *****/
         computeContacts.apply(this); // call private function computeContacts but give it the right this
@@ -43,6 +44,7 @@ var World = function () {
     };
 
     this.addBody = function (body) {
+        body.addForce([0,this.gravity*body.mass]);
         this.bodies.push(body);
     };
 

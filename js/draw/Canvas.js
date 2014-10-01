@@ -11,8 +11,9 @@ function Canvas(canvas) {
     this.height = MV.toInt($("#" + canvas).css('height'));
     this.context = $("#" + canvas).get(0).getContext('2d');
 
+
     if (!this.context.setLineDash) {
-        this.context.setLineDash = function () {
+        this.context.setLineDash = function (line) {
         };
     }
 
@@ -52,18 +53,21 @@ function Canvas(canvas) {
 
     this.drawPolygon = function (polygon) {
         if (polygon instanceof Polygon) {
-            this.context.moveTo(polygon.center[0],polygon.center[1]);
             this.fillShadow(polygon.shadow);
             this.fillShape(polygon);
-            this.context.beginPath();
             var center = polygon.center;
-            this.context.moveTo(polygon.vertices[0][0]+center[0], polygon.vertices[0][1]+center[1]);
+            this.context.save();
+            this.context.translate(center[0],center[1]);
+            this.context.rotate(polygon.theta);
+            this.context.beginPath();
+            this.context.moveTo(polygon.vertices[0][0], polygon.vertices[0][1]);
             for (var i = 1; i < polygon.vertices.length; i++) {
-                this.context.lineTo(polygon.vertices[i][0]+center[0], polygon.vertices[i][1]+center[1]);
+                this.context.lineTo(polygon.vertices[i][0],polygon.vertices[i][1]);
             }
             this.context.closePath();
             this.context.fill();
             this.preencherBorda(polygon.border);
+            this.context.restore();
         }
     };
 
