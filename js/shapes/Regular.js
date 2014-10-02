@@ -25,6 +25,7 @@ function Regular(center, radius, sides, thickness, theta) {
             this.vertices.push(pa);
             //this.vertices.push(pb);
         }
+        this.updateMinAndMax();
     };
 
     this.updateVertices();

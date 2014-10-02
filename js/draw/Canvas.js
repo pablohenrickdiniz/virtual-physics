@@ -20,11 +20,8 @@ function Canvas(canvas) {
     }
 
     this.setScale = function(x,y){
-        if(x> 0 && y > 0){
-            this.scale = [x,y];
-            this.context.scale(x,y);
-        }
-
+        this.scale = [x,y];
+        this.context.scale(x,y);
     };
 
     this.drawShape = function (shape) {
@@ -83,7 +80,7 @@ function Canvas(canvas) {
 
 
     this.clearScreen = function () {
-        this.context.clearRect(this.x,this.y,this.width,this.height);
+        document.getElementById(this.canvas).width = this.width;
     };
 
     this.move = function(x,y){

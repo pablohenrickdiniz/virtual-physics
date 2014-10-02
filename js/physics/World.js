@@ -99,6 +99,7 @@ var World = function () {
         var Jn = [];
         var Jt = [];
 
+
         for (var i = 0; i < this.contacts.length; i++) {
             // assemble the inverse mass vector (usually a matrix,
             // but a diagonal one, so I can replace it with a vector

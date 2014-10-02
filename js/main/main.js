@@ -19,29 +19,39 @@ $(document).ready(function () {
 
     $("#game").mousedown(function(event){
         if(event.which == 1){
-            var x = reader.x;
-            var y = reader.y;
-            var shape = new Rect([x,y], 100,200);
+            var x = reader.x+game.canvas.x;
+            var y = reader.y+game.canvas.y;
+            var shape = new Regular([x,y], 10,4,1,0);
             var color = new Color('Green');
             color.alpha = 0.5;
-            shape.border.lineDash = [5,5];
+
             shape.color = color;
             var body = new Body(shape, Material.Gold, true,[0, 0], 0);
             game.world.addBody(body);
         }
         else if(event.which == 3){
-            if(active){
-                active = false;
-            }
-            else{
-                active = true;
-                cp = [reader.x+change[0],reader.y+change[1]];
-            }
+            active = true;
+            cp = [reader.x+change[0],reader.y+change[1]];
         }
     });
 
+    $("#game").mouseup(function(event){
+        if(event.which == 3){
+            active = false;
+        }
+    });
+    var scale = 1;
     $("#game").on('mousewheel',function(event){
-
+        var x = reader.x;
+        var y = reader.y;
+        game.canvas.context.translate(x,y);
+        if(event.deltaY > 0){
+            game.canvas.setScale(1.05,1.05);
+        }
+        else{
+            game.canvas.setScale(0.95,0.95);
+        }
+        game.canvas.context.translate(-x,-y);
     });
 
     $("#game").mousemove(function(event){

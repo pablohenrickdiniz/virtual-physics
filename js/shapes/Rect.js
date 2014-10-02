@@ -11,5 +11,6 @@ function Rect(center, width, height) {
     this.moi = function(mass){
         return mass/12 * (this.height*this.height + this.width*this.width);
     };
+    this.updateMinAndMax();
 }
 
