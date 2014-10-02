@@ -10,12 +10,22 @@ function Canvas(canvas) {
     this.width = MV.toInt($("#" + canvas).css('width'));
     this.height = MV.toInt($("#" + canvas).css('height'));
     this.context = $("#" + canvas).get(0).getContext('2d');
-
+    this.scale = [1,1];
+    this.x = 0;
+    this.y=0;
 
     if (!this.context.setLineDash) {
         this.context.setLineDash = function (line) {
         };
     }
+
+    this.setScale = function(x,y){
+        if(x> 0 && y > 0){
+            this.scale = [x,y];
+            this.context.scale(x,y);
+        }
+
+    };
 
     this.drawShape = function (shape) {
         if (shape instanceof Polygon) {
@@ -73,7 +83,15 @@ function Canvas(canvas) {
 
 
     this.clearScreen = function () {
-        this.context.clearRect(0,0,800,800);
+        this.context.clearRect(this.x,this.y,this.width,this.height);
+    };
+
+    this.move = function(x,y){
+        var xa = this.x-x;
+        var xb = this.y-y;
+        this.x = x;
+        this.y = y;
+        this.context.translate(xa,xb);
     };
 
     this.fillGradient = function (shape) {

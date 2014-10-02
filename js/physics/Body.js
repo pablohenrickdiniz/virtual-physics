@@ -1,6 +1,7 @@
-function Body(shape, mass, vLin, vAng) {
+function Body(shape, material, dinamic,vLin, vAng) {
     this.shape = shape;
-    this.mass = mass == undefined?10:mass;
+    this.dinamic = dinamic;
+    this.mass = dinamic?material.density*shape.area:0;
     this.mInv = this.mass == 0?0:1/this.mass; // inverse of the mass
     this.moiInv = this.mass == 0?0:1/this.shape.moi(this.mass); // inverse of the moment of inertia
     this.vLin = vLin ==undefined?[0,0]:vLin; // linear (translational) velocity

@@ -1,56 +1,59 @@
 function MouseReader(element) {
-	this.element = element;
-	this.x = 0;
-	this.y = 0;
-	
-	this.startRead = function() {
-		var reader = this;
-		$(this.element).mousemove(
-				function(event) {
-					var vd = 0;
-					var hd = 0;
+    this.element = element;
+    this.x = 0;
+    this.y = 0;
+    this.left = false;
+    this.right = false;
+    this.middle = false;
 
-					$(this).parents().each(function() {
-						vd += $(this).scrollTop();
-						hd += $(this).scrollLeft();
-					});
+    this.startRead = function () {
+        var reader = this;
+        $(this.element).mousemove(function (event) {
+            var vd = 0;
+            var hd = 0;
 
-					vd -= $(this).scrollTop();
-					hd -= $(this).scrollLeft();
+            $(this).parents().each(function () {
+                vd += $(this).scrollTop();
+                hd += $(this).scrollLeft();
+            });
 
-					reader.setX((event.pageX - (document.getElementById($(this)
-							.prop('id')).offsetLeft - pageXOffset))
-							- hd);
-					reader.setY((event.pageY - (document.getElementById($(this)
-							.prop('id')).offsetTop - pageYOffset))
-							- vd);
-				});
+            vd -= $(this).scrollTop();
+            hd -= $(this).scrollLeft();
 
-		$(this.element).mousemove();
-	};
+            reader.setX((event.pageX - (document.getElementById($(this)
+                .prop('id')).offsetLeft - pageXOffset))
+                - hd);
+            reader.setY((event.pageY - (document.getElementById($(this)
+                .prop('id')).offsetTop - pageYOffset))
+                - vd);
+        });
 
-	this.getX = function() {
-		return this.x;
-	};
 
-	this.getY = function() {
-		return this.y;
-	};
+        $(this.element).mousemove();
+    };
 
-	this.setX = function(x) {
-		this.x = x;
-	};
+    this.getX = function () {
+        return this.x;
+    };
 
-	this.setY = function(y) {
-		this.y = y;
-	};
+    this.getY = function () {
+        return this.y;
+    };
 
-	this.getElement = function() {
-		return this.element;
-	};
+    this.setX = function (x) {
+        this.x = x;
+    };
 
-	this.setElement = function(element) {
-		this.stopRead();
-		this.element = element;
-	};
+    this.setY = function (y) {
+        this.y = y;
+    };
+
+    this.getElement = function () {
+        return this.element;
+    };
+
+    this.setElement = function (element) {
+        this.stopRead();
+        this.element = element;
+    };
 }
