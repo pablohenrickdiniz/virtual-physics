@@ -10,7 +10,9 @@ function Canvas(canvas) {
     this.width = MV.toInt($("#" + canvas).css('width'));
     this.height = MV.toInt($("#" + canvas).css('height'));
     this.context = $("#" + canvas).get(0).getContext('2d');
-    this.scale = [1,1];
+    this.scale = 1;
+    this.frameWidth = this.width;
+    this.frameHeight = this.height;
     this.x = 0;
     this.y=0;
 
@@ -18,11 +20,6 @@ function Canvas(canvas) {
         this.context.setLineDash = function (line) {
         };
     }
-
-    this.setScale = function(x,y){
-        this.scale = [x,y];
-        this.context.scale(x,y);
-    };
 
     this.drawShape = function (shape) {
         if (shape instanceof Polygon) {
@@ -59,17 +56,21 @@ function Canvas(canvas) {
     };
 
     this.drawPolygon = function (polygon) {
+        var xo = polygon.center[0]*this.scale+polygon.min[0]*this.scale;
+        var yo = polygon.center[1]*this.scale+polygon.min[1]*this.scale;
+        var xf = polygon.center[0]*this.scale+polygon.max[0]*this.scale;
+        var yf = polygon.center[1]*this.scale+polygon.max[1]*this.scale;
         if (polygon instanceof Polygon) {
             this.fillShadow(polygon.shadow);
             this.fillShape(polygon);
             var center = polygon.center;
             this.context.save();
-            this.context.translate(center[0],center[1]);
+            this.context.translate(center[0]*this.scale,center[1]*this.scale);
             this.context.rotate(polygon.theta);
             this.context.beginPath();
-            this.context.moveTo(polygon.vertices[0][0], polygon.vertices[0][1]);
+            this.context.moveTo(polygon.vertices[0][0]*this.scale, polygon.vertices[0][1]*this.scale);
             for (var i = 1; i < polygon.vertices.length; i++) {
-                this.context.lineTo(polygon.vertices[i][0],polygon.vertices[i][1]);
+                this.context.lineTo(polygon.vertices[i][0]*this.scale,polygon.vertices[i][1]*this.scale);
             }
             this.context.closePath();
             this.context.fill();
@@ -80,7 +81,7 @@ function Canvas(canvas) {
 
 
     this.clearScreen = function () {
-        document.getElementById(this.canvas).width = this.width;
+        this.context.clearRect(this.x,this.y,this.width,this.height);
     };
 
     this.move = function(x,y){

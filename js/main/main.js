@@ -16,11 +16,12 @@ $(document).ready(function () {
     var active = false;
     var cp = [0,0];
     var change = [0,0];
+    var change2 = [0,0];
 
     $("#game").mousedown(function(event){
         if(event.which == 1){
-            var x = reader.x+game.canvas.x;
-            var y = reader.y+game.canvas.y;
+            var x = (reader.x+game.canvas.x)/game.canvas.scale;
+            var y = (reader.y+game.canvas.y)/game.canvas.scale;
             var shape = new Regular([x,y], 10,4,1,0);
             var color = new Color('Green');
             color.alpha = 0.5;
@@ -31,27 +32,31 @@ $(document).ready(function () {
         }
         else if(event.which == 3){
             active = true;
+            $("#game").css('cursor','move');
             cp = [reader.x+change[0],reader.y+change[1]];
         }
     });
 
     $("#game").mouseup(function(event){
         if(event.which == 3){
+            $("#game").css('cursor','default');
             active = false;
         }
     });
-    var scale = 1;
+
     $("#game").on('mousewheel',function(event){
-        var x = reader.x;
-        var y = reader.y;
-        game.canvas.context.translate(x,y);
-        if(event.deltaY > 0){
-            game.canvas.setScale(1.05,1.05);
+        if(!active){
+            var cw = game.canvas.width;
+            var ch = game.canvas.height;
+            if(event.deltaY > 0 && game.canvas.scale < 20){
+                game.canvas.scale+=0.1;
+            }
+            else if(game.canvas.scale >0.1){
+                game.canvas.scale-=0.1;
+            }
+            console.log('frame:{x:0-'+game.canvas.frameWidth+',y:0-'+game.canvas.frameHeight+'}');
+            console.log('scale:'+game.canvas.scale);
         }
-        else{
-            game.canvas.setScale(0.95,0.95);
-        }
-        game.canvas.context.translate(-x,-y);
     });
 
     $("#game").mousemove(function(event){
