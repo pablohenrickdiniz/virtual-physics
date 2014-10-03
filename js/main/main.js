@@ -43,18 +43,17 @@ $(document).ready(function () {
             active = false;
         }
     });
-
     $("#game").on('mousewheel',function(event){
         if(!active){
-            var cw = game.canvas.width;
-            var ch = game.canvas.height;
             if(event.deltaY > 0 && game.canvas.scale < 20){
                 game.canvas.scale+=0.1;
             }
             else if(game.canvas.scale >0.1){
                 game.canvas.scale-=0.1;
             }
-            console.log('frame:{x:0-'+game.canvas.frameWidth+',y:0-'+game.canvas.frameHeight+'}');
+            game.canvas.frameWidth=game.canvas.width/game.canvas.scale;
+            game.canvas.frameHeight=game.canvas.height/game.canvas.scale;
+            console.log('frame:{x:'+game.canvas.x+'-'+game.canvas.frameWidth+',y:'+game.canvas.y+'-'+game.canvas.frameHeight+'}');
             console.log('scale:'+game.canvas.scale);
         }
     });

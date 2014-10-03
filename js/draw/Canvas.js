@@ -56,11 +56,7 @@ function Canvas(canvas) {
     };
 
     this.drawPolygon = function (polygon) {
-        var xo = polygon.center[0]*this.scale+polygon.min[0]*this.scale;
-        var yo = polygon.center[1]*this.scale+polygon.min[1]*this.scale;
-        var xf = polygon.center[0]*this.scale+polygon.max[0]*this.scale;
-        var yf = polygon.center[1]*this.scale+polygon.max[1]*this.scale;
-        if (polygon instanceof Polygon) {
+        if (polygon instanceof Polygon){
             this.fillShadow(polygon.shadow);
             this.fillShape(polygon);
             var center = polygon.center;

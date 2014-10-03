@@ -56,7 +56,7 @@ function Game(){
 				requestAnimationFrame(function(){game.loop(game);});
 				game.world.step();
                 game.canvas.drawWorld(game.world);
-			},1000*game.world.dt);
+			},game.dt*1000);
 		}
 	};
 }
