@@ -40,13 +40,13 @@ var World = function () {
         /***** 4. update positions *****/
         for (var i = 0; i < this.bodies.length; i++) {
             this.bodies[i].shape.center = MV.VpV(this.bodies[i].shape.center, MV.SxV(this.dt, this.bodies[i].vLin));
-            this.bodies[i].shape.theta +=  this.dt * this.bodies[i].vAng;
+            this.bodies[i].shape.theta += this.dt * this.bodies[i].vAng;
         }
     };
 
     this.addBody = function (body) {
-        if(body.dinamic){
-            body.addForce([0,this.gravity*body.mass]);
+        if (body.dinamic) {
+            body.addForce([0, this.gravity * body.mass]);
         }
         this.bodies.push(body);
     };

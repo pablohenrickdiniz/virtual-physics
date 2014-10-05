@@ -23,7 +23,6 @@
  */
 
 
-
 function getAABB(body) {
     var verticesWorld = body.getVerticesInWorldCoords();
     var AABB = [];

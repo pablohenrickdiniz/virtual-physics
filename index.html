@@ -5,33 +5,189 @@
     <title>Simulação</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="css/index.css"/>
     <script type="text/javascript" src="js/utils/jquery.min.js"></script>
     <script type="text/javascript" src="js/utils/bootstrap.min.js"></script>
+    <script type="text/javascript" src="js/utils/jquery.mousewheel.min.js"></script>
+    <script type="text/javascript" src="js/utils/MouseReader.js"></script>
+    <script type="text/javascript" src="js/draw/Color.js"></script>
+    <script type="text/javascript" src="js/draw/RadialGradient.js"></script>
+    <script type="text/javascript" src="js/draw/LinearGradient.js"></script>
+    <script type="text/javascript" src="js/draw/Canvas.js"></script>
+    <script type="text/javascript" src="js/draw/Border.js"></script>
+    <script type="text/javascript" src="js/shapes/Shape.js"></script>
+    <script type="text/javascript" src="js/shapes/Polygon.js"></script>
+    <script type="text/javascript" src="js/shapes/Regular.js"></script>
+    <script type="text/javascript" src="js/shapes/Trapezius.js"></script>
+    <script type="text/javascript" src="js/shapes/Rect.js"></script>
+    <script type="text/javascript" src="js/physics/Material.js"></script>
+    <script type="text/javascript" src="js/physics/MV.js"></script>
+    <script type="text/javascript" src="js/physics/Body.js"></script>
+    <script type="text/javascript" src="js/physics/World.js"></script>
+    <script type="text/javascript" src="js/physics/friction_physics.js"></script>
+    <script type="text/javascript" src="js/main/Game.js"></script>
+    <script type="text/javascript" src="js/main/main.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('body').on('contextmenu', '#game', function (e) {
+                return false;
+            });
+            var reader = new MouseReader("#game");
+            var game = new Game();
+            game.start();
+            reader.startRead();
+            var active = false;
+            var cp = [0, 0];
+
+            $("#game").mousedown(function (event) {
+
+                if (event.which == 3) {
+                    var center = game.canvas.center;
+                    active = true;
+                    $("#game").css('cursor', 'move');
+                    cp = [reader.x + center[0], reader.y + center[1]];
+                }
+            });
+
+            $("#game").mouseup(function (event) {
+                if (event.which == 3) {
+                    $("#game").css('cursor', 'default');
+                    active = false;
+                }
+            });
+            $("#game").on('mousewheel', function (event) {
+                if (!active) {
+                    if (event.deltaY > 0 && game.canvas.scale < 20) {
+                        game.canvas.scale += 0.1;
+                    }
+                    else if (game.canvas.scale > 0.1) {
+                        game.canvas.scale -= 0.1;
+                    }
+                }
+            });
+
+            $("#game").mousemove(function (event) {
+                if (active) {
+                    var x = cp[0] - reader.x;
+                    var y = cp[1] - reader.y;
+                    var center = [x, y];
+                    game.canvas.move(center);
+                }
+            });
+
+            $("#action").click(function () {
+                if (game.running) {
+                    game.pause();
+                }
+                else {
+                    game.continue();
+                }
+            });
+
+            var drawing = new Canvas('drawing');
+            function Menu() {
+                this.itens = ['quadrado', 'circulo', 'triangulo'];
+                this.selected = null;
+                this.drawing = false;
+                this.drawPoint = null;
+                this.body = null;
+            }
+
+            var aux = null;
+            var menu = new Menu();
+            $("#quadrado").click(function () {
+                menu.selected = 'quadrado';
+                $("#quadrado").css('background-color',"#ddbbdd");
+            });
+
+            $("#game").click(function () {
+                if (!menu.drawing && menu.selected != null) {
+                    var x = (reader.x+game.canvas.min[0])/game.canvas.scale;
+                    var y = (reader.y+game.canvas.min[1])/game.canvas.scale;
+                    menu.drawPoint = [x,y];
+                    switch(menu.selected){
+                        case 'quadrado':
+                            menu.body = new Body(new Rect([0,0],10,10),Material.Iron,true);
+                        break;
+                    }
+                    menu.drawing = true;
+                }
+                else if(menu.selected != null){
+                    menu.drawing = false;
+                    drawing.clearScreen();
+                    game.world.addBody(menu.body);
+                    menu.body = null;
+                    menu.drawPoint = null;
+                }
+            });
+
+            $("#game").mousemove(function(){
+                if(menu.drawing){
+                    console.log(menu.drawPoint);
+                    var x = (reader.x+game.canvas.min[0])/game.canvas.scale;
+                    var y = (reader.y+game.canvas.min[1])/game.canvas.scale;
+                    var w = x-menu.drawPoint[0];
+                    var h = y-menu.drawPoint[1];
+                    var shape = null;
+                    switch(menu.selected){
+                        case 'quadrado':
+                            menu.body.shape.updateDimen(w,h);
+                                console.log(menu.drawPoint);
+                            menu.body.shape.center = [menu.drawPoint[0]+(w/2),menu.drawPoint[1]+(h/2)];
+                        break;
+                    }
+                    drawing.clearScreen();
+                    drawing.drawShape(menu.body.shape);
+                }
+            });
+        });
+    </script>
 </head>
 <body>
 <div class="row container-fluid">
-    <div class="col-md-12">
-        <canvas id="game" width="1000px" height="600px" style="border:1px solid lightgray">
+    <div class="col-md-7" style="position:relative">
+        <canvas id="drawing"  width="600px" height="600px" style="position:absolute;">
+
+        </canvas>
+        <canvas id="game"  width="600px" height="600px"  style="border:1px solid black;position:absolute;">
         </canvas>
     </div>
+    <div class="col-md-5">
+        <div class="row">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    <h4>Formas</h4>
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="img-thumbnail text-center" id="quadrado">
+                                <img src="img/square.png" width="50px"/>
+                                <div class="caption">
+                                   Quadrado
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="img-thumbnail text-center" id="triangulo">
+                                <img src="img/triangle.png" width="50px"/>
+                                <div class="caption">
+                                    Triângulo
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    <h4>Propriedades</h4>
+                </div>
+                <div class="panel-body">
+
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
-<script type="text/javascript" src="js/utils/jquery.mousewheel.min.js"></script>
-<script type="text/javascript" src="js/utils/MouseReader.js"></script>
-<script type="text/javascript" src="js/draw/Color.js"></script>
-<script type="text/javascript" src="js/draw/RadialGradient.js"></script>
-<script type="text/javascript" src="js/draw/LinearGradient.js"></script>
-<script type="text/javascript" src="js/draw/Canvas.js"></script>
-<script type="text/javascript" src="js/draw/Border.js"></script>
-<script type="text/javascript" src="js/shapes/Shape.js"></script>
-<script type="text/javascript" src="js/shapes/Polygon.js"></script>
-<script type="text/javascript" src="js/shapes/Regular.js"></script>
-<script type="text/javascript" src="js/shapes/Trapezius.js"></script>
-<script type="text/javascript" src="js/shapes/Rect.js"></script>
-<script type="text/javascript" src="js/physics/Material.js"></script>
-<script type="text/javascript" src="js/physics/MV.js"></script>
-<script type="text/javascript" src="js/physics/Body.js"></script>
-<script type="text/javascript" src="js/physics/World.js"></script>
-<script type="text/javascript" src="js/physics/friction_physics.js"></script>
-<script type="text/javascript" src="js/main/Game.js"></script>
-<script type="text/javascript" src="js/main/main.js"></script>
 </body>

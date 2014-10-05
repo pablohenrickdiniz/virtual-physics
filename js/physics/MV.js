@@ -130,7 +130,7 @@ var MV = {
     toInt: function (px) {
         return parseInt(px.substr(0, px.indexOf('px')));
     },
-    distance:function(pa,pb){
-        return Math.sqrt(Math.pow(pa[0]-pb[0],2)+Math.pow(pa[1]-pb[1],2));
+    distance: function (pa, pb) {
+        return Math.sqrt(Math.pow(pa[0] - pb[0], 2) + Math.pow(pa[1] - pb[1], 2));
     }
 };

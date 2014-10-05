@@ -13,8 +13,8 @@ function Canvas(canvas) {
     this.scale = 1;
     this.frameWidth = this.width;
     this.frameHeight = this.height;
-    this.center = [this.width/2,this.height/2];
-    this.min = [0,0];
+    this.center = [this.width / 2, this.height / 2];
+    this.min = [0, 0];
 
     if (!this.context.setLineDash) {
         this.context.setLineDash = function (line) {
@@ -29,13 +29,13 @@ function Canvas(canvas) {
         }
     };
 
-    this.getCenter = function(){
-        return [this.center[0]/this.scale,this.center[1]/this.scale];
+    this.getCenter = function () {
+        return [this.center[0] / this.scale, this.center[1] / this.scale];
     };
 
-    this.drawWorld = function(world){
+    this.drawWorld = function (world) {
         this.clearScreen();
-        for(var i = 0; i < world.bodies.length;i++){
+        for (var i = 0; i < world.bodies.length; i++) {
             this.drawPolygon(world.bodies[i].shape);
         }
     };
@@ -60,17 +60,17 @@ function Canvas(canvas) {
     };
 
     this.drawPolygon = function (polygon) {
-        if (polygon instanceof Polygon){
+        if (polygon instanceof Polygon) {
             this.fillShadow(polygon.shadow);
             this.fillShape(polygon);
             var center = polygon.center;
             this.context.save();
-            this.context.translate(center[0]*this.scale,center[1]*this.scale);
+            this.context.translate(center[0] * this.scale, center[1] * this.scale);
             this.context.rotate(polygon.theta);
             this.context.beginPath();
-            this.context.moveTo(polygon.vertices[0][0]*this.scale, polygon.vertices[0][1]*this.scale);
+            this.context.moveTo(polygon.vertices[0][0] * this.scale, polygon.vertices[0][1] * this.scale);
             for (var i = 1; i < polygon.vertices.length; i++) {
-                this.context.lineTo(polygon.vertices[i][0]*this.scale,polygon.vertices[i][1]*this.scale);
+                this.context.lineTo(polygon.vertices[i][0] * this.scale, polygon.vertices[i][1] * this.scale);
             }
             this.context.closePath();
             this.context.fill();
@@ -81,15 +81,15 @@ function Canvas(canvas) {
 
 
     this.clearScreen = function () {
-        this.context.clearRect(this.min[0],this.min[1],this.width,this.height);
+        this.context.clearRect(this.min[0], this.min[1], this.width, this.height);
     };
 
-    this.move = function(center){
-        var xa = this.center[0]-center[0];
-        var xb = this.center[1]-center[1];
+    this.move = function (center) {
+        var xa = this.center[0] - center[0];
+        var xb = this.center[1] - center[1];
         this.center = center;
-        this.min = [center[0]-(this.width/2),center[1]-(this.height/2)];
-        this.context.translate(xa,xb);
+        this.min = [center[0] - (this.width / 2), center[1] - (this.height / 2)];
+        this.context.translate(xa, xb);
     };
 
     this.fillGradient = function (shape) {

@@ -1,17 +1,29 @@
-function Body(shape, material, dinamic,vLin, vAng) {
+function Body(shape, material, dinamic, vLin, vAng) {
     this.shape = shape;
     this.dinamic = dinamic;
-    this.mass = dinamic?material.density*shape.area:0;
-    this.mInv = this.mass == 0?0:1/this.mass; // inverse of the mass
-    this.moiInv = this.mass == 0?0:1/this.shape.moi(this.mass); // inverse of the moment of inertia
-    this.vLin = vLin ==undefined?[0,0]:vLin; // linear (translational) velocity
-    this.vAng = vAng ==undefined?0:vAng; // angular (rotational) velocity
+    this.material = material;
+    this.mass = dinamic ? material.density * shape.area : 0;
+    this.mInv = this.mass == 0 ? 0 : 1 / this.mass; // inverse of the mass
+    this.moiInv = this.mass == 0 ? 0 : 1 / this.shape.moi(this.mass); // inverse of the moment of inertia
+    this.vLin = vLin == undefined ? [0, 0] : vLin; // linear (translational) velocity
+    this.vAng = vAng == undefined ? 0 : vAng; // angular (rotational) velocity
     this.forces = []; // array of forces...
     this.forcePoints = []; // ... and the vertex index of force application.
     // undefined is center of mass.
 
     var rotMatTheta; // used to avoid unnecessary rotation matrix computations
     var rotationMatrix;
+
+    this.setShape = function(shape){
+        this.shape = shape;
+        this.mass = this.dinamic ? this.material.density * this.shape.area : 0;
+        this.moiInv = this.mass == 0 ? 0 : 1 / this.shape.moi(this.mass);
+    };
+
+    this.setMaterial = function(material){
+        this.material = material;
+        this.mass = this.dinamic ? this.material.density * this.shape.area : 0;
+    };
 
     this.addForce = function (force, forcePoint) {
         this.forces.push(force);
