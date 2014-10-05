@@ -16,16 +16,15 @@ $(document).ready(function () {
     var active = false;
     var cp = [0,0];
     var change = [0,0];
-    var change2 = [0,0];
 
     $("#game").mousedown(function(event){
+        var center = game.canvas.center;
         if(event.which == 1){
-            var x = (reader.x+game.canvas.x)/game.canvas.scale;
-            var y = (reader.y+game.canvas.y)/game.canvas.scale;
+            var x = (reader.x+game.canvas.min[0])/game.canvas.scale;
+            var y = (reader.y+game.canvas.min[1])/game.canvas.scale;
             var shape = new Regular([x,y], 10,4,1,0);
             var color = new Color('Green');
             color.alpha = 0.5;
-
             shape.color = color;
             var body = new Body(shape, Material.Gold, true,[0, 0], 0);
             game.world.addBody(body);
@@ -33,7 +32,7 @@ $(document).ready(function () {
         else if(event.which == 3){
             active = true;
             $("#game").css('cursor','move');
-            cp = [reader.x+change[0],reader.y+change[1]];
+            cp = [reader.x+center[0],reader.y+center[1]];
         }
     });
 
@@ -51,10 +50,6 @@ $(document).ready(function () {
             else if(game.canvas.scale >0.1){
                 game.canvas.scale-=0.1;
             }
-            game.canvas.frameWidth=game.canvas.width/game.canvas.scale;
-            game.canvas.frameHeight=game.canvas.height/game.canvas.scale;
-            console.log('frame:{x:'+game.canvas.x+'-'+game.canvas.frameWidth+',y:'+game.canvas.y+'-'+game.canvas.frameHeight+'}');
-            console.log('scale:'+game.canvas.scale);
         }
     });
 
@@ -62,8 +57,8 @@ $(document).ready(function () {
         if(active){
             var x = cp[0]- reader.x;
             var y = cp[1]- reader.y;
-            change = [x,y];
-            game.canvas.move(x,y);
+            var center = [x,y];
+            game.canvas.move(center);
         }
     });
 

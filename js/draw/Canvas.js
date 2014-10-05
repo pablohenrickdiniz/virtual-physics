@@ -13,8 +13,8 @@ function Canvas(canvas) {
     this.scale = 1;
     this.frameWidth = this.width;
     this.frameHeight = this.height;
-    this.x = 0;
-    this.y=0;
+    this.center = [this.width/2,this.height/2];
+    this.min = [0,0];
 
     if (!this.context.setLineDash) {
         this.context.setLineDash = function (line) {
@@ -27,6 +27,10 @@ function Canvas(canvas) {
         } else if (shape instanceof Circle) {
             this.drawCircle(shape);
         }
+    };
+
+    this.getCenter = function(){
+        return [this.center[0]/this.scale,this.center[1]/this.scale];
     };
 
     this.drawWorld = function(world){
@@ -77,14 +81,14 @@ function Canvas(canvas) {
 
 
     this.clearScreen = function () {
-        this.context.clearRect(this.x,this.y,this.width,this.height);
+        this.context.clearRect(this.min[0],this.min[1],this.width,this.height);
     };
 
-    this.move = function(x,y){
-        var xa = this.x-x;
-        var xb = this.y-y;
-        this.x = x;
-        this.y = y;
+    this.move = function(center){
+        var xa = this.center[0]-center[0];
+        var xb = this.center[1]-center[1];
+        this.center = center;
+        this.min = [center[0]-(this.width/2),center[1]-(this.height/2)];
         this.context.translate(xa,xb);
     };
 
