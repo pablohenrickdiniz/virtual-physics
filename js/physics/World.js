@@ -1,12 +1,12 @@
 var World = function () {
     this.dt = 1 / 60;
-    this.nIterations = 4;
+    this.nIterations = 10;
     this.beta = 0.2;
     this.bodies = [];
     this.t = 0;
     this.friction = 0.2;
     this.contacts = [];
-    this.gravity = 9.81;
+    this.gravity = 98.1;
     this.step = function () {
 
         /***** 1. collision detection *****/
@@ -128,12 +128,12 @@ var World = function () {
             Jt[i] = Jt_vLinA.concat(Jt_vAngA).concat(Jt_vLinB).concat(Jt_vAngB);
 
 
-            /* for restitution (bouncing off)
-             var tmp = MV.VmV(contact.pB, contact.bodyB.center);
+
+             var tmp = MV.VmV(contact.pB, contact.bodyB.shape.center);
              var vB = MV.VpV(contact.bodyB.vLin, MV.SxV(contact.bodyB.vAng, [-tmp[1], tmp[0]]));
-             var tmp = MV.VmV(contact.pA, contact.bodyA.center);
+             var tmp = MV.VmV(contact.pA, contact.bodyA.shape.center);
              var vA = MV.VpV(contact.bodyA.vLin, MV.SxV(contact.bodyA.vAng, [-tmp[1], tmp[0]]));
-             */
+
             var vPreNormal = 0; //MV.dot(MV.VmV(vA, vB), contact.normal);
 
             var C = MV.dot(MV.VmV(contact.pA, contact.pB),

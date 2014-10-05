@@ -1,10 +1,8 @@
 function Body(shape, material, dinamic, vLin, vAng) {
     this.shape = shape;
+    this.shape.parent = this;
     this.dinamic = dinamic;
     this.material = material;
-    this.mass = dinamic ? material.density * shape.area : 0;
-    this.mInv = this.mass == 0 ? 0 : 1 / this.mass; // inverse of the mass
-    this.moiInv = this.mass == 0 ? 0 : 1 / this.shape.moi(this.mass); // inverse of the moment of inertia
     this.vLin = vLin == undefined ? [0, 0] : vLin; // linear (translational) velocity
     this.vAng = vAng == undefined ? 0 : vAng; // angular (rotational) velocity
     this.forces = []; // array of forces...
@@ -14,24 +12,37 @@ function Body(shape, material, dinamic, vLin, vAng) {
     var rotMatTheta; // used to avoid unnecessary rotation matrix computations
     var rotationMatrix;
 
+    this.update = function(){
+        this.mass = this.dinamic ? this.material.density * this.shape.area : 0;
+        this.mInv = this.mass == 0 ? 0 : 1 / this.mass; // inverse of the mass
+        this.moiInv = this.mass == 0 ? 0 : 1 / this.shape.moi(this.mass);// inverse of the moment of inertia
+        rotationMatrix = null;
+    };
+
+    this.setDinamic = function(dinamic){
+        this.dinamic = dinamic;
+        this.update();
+    };
+
     this.setShape = function(shape){
         this.shape = shape;
-        this.mass = this.dinamic ? this.material.density * this.shape.area : 0;
-        this.moiInv = this.mass == 0 ? 0 : 1 / this.shape.moi(this.mass);
+        this.shape.parent = this;
+        this.update();
     };
 
     this.setMaterial = function(material){
         this.material = material;
-        this.mass = this.dinamic ? this.material.density * this.shape.area : 0;
+        this.update();
     };
 
     this.addForce = function (force, forcePoint) {
         this.forces.push(force);
         this.forcePoints.push(forcePoint);
     };
+
     this.getRotationMatrix = function () {
         // only recompute if theta has changed since the last call.
-        if (this.shape.theta !== rotMatTheta) {
+        if (this.shape.theta !== rotMatTheta || rotationMatrix == null) {
             rotationMatrix = [
                 [Math.cos(this.shape.theta), -Math.sin(this.shape.theta)],
                 [Math.sin(this.shape.theta), Math.cos(this.shape.theta)]
@@ -40,6 +51,7 @@ function Body(shape, material, dinamic, vLin, vAng) {
         }
         return rotationMatrix;
     };
+
     this.getVerticesInWorldCoords = function () {
         var vertsAbsolute = [];
         var rotationMatrix = this.getRotationMatrix();
@@ -50,5 +62,6 @@ function Body(shape, material, dinamic, vLin, vAng) {
         return vertsAbsolute;
     };
 
+    this.update();
     this.getRotationMatrix();
 };
