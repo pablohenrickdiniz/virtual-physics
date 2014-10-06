@@ -5,15 +5,15 @@ function Rect(center, width, height) {
     this.height = isNaN(height) || height <= 0 ? 100 : height;
     this.parent = null;
 
-    this.setWidth = function(width){
-        this.updateDimen(width,this.height);
+    this.setWidth = function (width) {
+        this.updateDimen(width, this.height);
     };
 
-    this.setHeight = function(height){
-        this.updateDimen(this.width,height);
+    this.setHeight = function (height) {
+        this.updateDimen(this.width, height);
     };
 
-    this.updateDimen = function(width,height){
+    this.updateDimen = function (width, height) {
         this.width = width;
         this.height = height;
         this.area = this.width * this.height;
@@ -26,7 +26,7 @@ function Rect(center, width, height) {
             [mw, mh]
         ];
         this.updateMinAndMax();
-        if(this.parent != null){
+        if (this.parent != null) {
             this.parent.update();
         }
     };
@@ -35,6 +35,6 @@ function Rect(center, width, height) {
         return mass / 12 * (this.height * this.height + this.width * this.width);
     };
 
-    this.updateDimen(this.width,this.height);
+    this.updateDimen(this.width, this.height);
 }
 

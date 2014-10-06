@@ -7,30 +7,38 @@ function Body(shape, material, dinamic, vLin, vAng) {
     this.vAng = vAng == undefined ? 0 : vAng; // angular (rotational) velocity
     this.forces = []; // array of forces...
     this.forcePoints = []; // ... and the vertex index of force application.
+
     // undefined is center of mass.
 
     var rotMatTheta; // used to avoid unnecessary rotation matrix computations
     var rotationMatrix;
 
-    this.update = function(){
+    this.update = function () {
         this.mass = this.dinamic ? this.material.density * this.shape.area : 0;
         this.mInv = this.mass == 0 ? 0 : 1 / this.mass; // inverse of the mass
         this.moiInv = this.mass == 0 ? 0 : 1 / this.shape.moi(this.mass);// inverse of the moment of inertia
         rotationMatrix = null;
     };
 
-    this.setDinamic = function(dinamic){
+    this.setDinamic = function (dinamic) {
         this.dinamic = dinamic;
         this.update();
     };
 
-    this.setShape = function(shape){
+    this.setMass = function(mass){
+        this.mass = mass;
+        this.mInv = this.mass == 0 ? 0 : 1 / this.mass; // inverse of the mass
+        this.moiInv = this.mass == 0 ? 0 : 1 / this.shape.moi(this.mass);// inverse of the moment of inertia
+        rotationMatrix = null;
+    };
+
+    this.setShape = function (shape) {
         this.shape = shape;
         this.shape.parent = this;
         this.update();
     };
 
-    this.setMaterial = function(material){
+    this.setMaterial = function (material) {
         this.material = material;
         this.update();
     };

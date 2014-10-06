@@ -128,12 +128,12 @@ var World = function () {
             Jt[i] = Jt_vLinA.concat(Jt_vAngA).concat(Jt_vLinB).concat(Jt_vAngB);
 
 
-
+            /*
              var tmp = MV.VmV(contact.pB, contact.bodyB.shape.center);
              var vB = MV.VpV(contact.bodyB.vLin, MV.SxV(contact.bodyB.vAng, [-tmp[1], tmp[0]]));
              var tmp = MV.VmV(contact.pA, contact.bodyA.shape.center);
              var vA = MV.VpV(contact.bodyA.vLin, MV.SxV(contact.bodyA.vAng, [-tmp[1], tmp[0]]));
-
+*/
             var vPreNormal = 0; //MV.dot(MV.VmV(vA, vB), contact.normal);
 
             var C = MV.dot(MV.VmV(contact.pA, contact.pB),
