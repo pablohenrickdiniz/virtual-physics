@@ -9,6 +9,7 @@
     <script type="text/javascript" src="js/utils/jquery.min.js"></script>
     <script type="text/javascript" src="js/utils/bootstrap.min.js"></script>
     <script type="text/javascript" src="js/utils/jquery.mousewheel.min.js"></script>
+    <script type="text/javascript" src="js/utils/KeyReader.js"></script>
     <script type="text/javascript" src="js/utils/MouseReader.js"></script>
     <script type="text/javascript" src="js/draw/Color.js"></script>
     <script type="text/javascript" src="js/draw/RadialGradient.js"></script>
@@ -41,13 +42,18 @@
             var active = false;
             var cp = [0, 0];
 
-
-            $(document).keyup(function (event) {
-                if (event.which == 13) {
+            KeyReader.onkeydown(KeyReader.KEY_ENTER, function () {
+                if(menu.selected = 'poligono'){
+                    menu.body.shape.updateCenter();
+                    //menu.body.shape.updateRelative();
+                    game.world.addBody(menu.body);
+                    menu.body = null;
+                    menu.drawing = false;
+                    menu.drawPoints=[];
+                    drawing.clearScreen();
 
                 }
             });
-
 
             $("#game").mousedown(function (event) {
                 if (event.which == 3) {
@@ -57,7 +63,6 @@
                     cp = [reader.x + center[0], reader.y + center[1]];
                 }
             });
-
 
             $("#game").mouseup(function (event) {
                 if (event.which == 3) {
@@ -173,8 +178,8 @@
                     var shape = null;
                     switch (menu.selected) {
                         case 'quadrado':
-                            var w = x-menu.drawPoint[0];
-                            var h = y-menu.drawPoint[1];
+                            var w = x - menu.drawPoint[0];
+                            var h = y - menu.drawPoint[1];
                             if (w > 0 && h > 0) {
                                 menu.body.shape.updateDimen(w, h);
                                 menu.body.shape.center = [menu.drawPoint[0] + (w / 2), menu.drawPoint[1] + (h / 2)];

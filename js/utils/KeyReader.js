@@ -1,68 +1,49 @@
-function KeyReader() {
-};
-KeyReader.pressedKeys = new Array();
-KeyReader.keyDownAction = new Array();
-KeyReader.keyUpAction = new Array();
+/**
+ * Created by Pablo Henrick Diniz on 07/10/14.
+ */
 
-KeyReader.isPressed = function (keyName) {
-    var index = KeyReader.keys[keyName];
-    if (KeyReader.pressedKeys[index] != undefined) {
-        return KeyReader.pressedKeys[index];
-    }
-    return false;
-};
+var KeyReader = {
+    pressed:[],
+    keydownaction:[],
+    keyupaction:[],
+    isPressed:function (keyName) {
+        var index = this.keys[keyName];
+        if (this.pressedKeys[index] != undefined) {
+            return this.pressedKeys[index];
+        }
+        return false;
+    },
+    onkeydown:function (key, action) {
 
-
-KeyReader.onKeyDown = function (key, action) {
-    if (KeyReader.keyDownAction[key] == undefined) {
-        KeyReader.keyDownAction[key] = new Array();
-    }
-    KeyReader.keyDownAction[key].push(action);
-};
-
-KeyReader.onKeyUp = function (key, action) {
-    if (KeyReader.keyUpAction[key] == undefined) {
-        KeyReader.keyUpAction[key] = new Array();
-    }
-    KeyReader.keyUpAction[key].push(action);
-};
-
-KeyReader.keyDown = function (keyCode) {
-    if (KeyReader.keyDownAction[keyCode] != undefined) {
-        if (KeyReader.keyDownAction[keyCode] != undefined) {
-            for (var i = 0; i < KeyReader.keyDownAction[keyCode].length; i++) {
-                KeyReader.keyDownAction[keyCode][i].call();
+        if (this.keydownaction[key] == undefined) {
+            this.keydownaction[key] = [];
+        }
+        this.keydownaction[key].push(action);
+    },
+    onkeyup:function (key, action) {
+        if (this.keyupaction[key] == undefined) {
+            this.keyupaction[key] = [];
+        }
+        this.keyupaction[key].push(action);
+    },
+    keydown:function (keyCode) {
+        if (this.keydownaction[keyCode] != undefined) {
+            if (this.keydownaction[keyCode] != undefined) {
+                for (var i = 0; i < this.keydownaction[keyCode].length; i++) {
+                    this.keydownaction[keyCode][i].call();
+                }
             }
         }
-    }
-};
-
-KeyReader.keyUp = function (keyCode) {
-    if (KeyReader.keyUpAction[keyCode] != undefined) {
-        if (KeyReader.keyUpAction[keyCode] != undefined) {
-            for (var i = 0; i < KeyReader.keyUpAction[keyCode].length; i++) {
-                KeyReader.keyUpAction[keyCode][i].call();
+    },
+    keyup:function (keyCode) {
+        if (this.keyupaction[keyCode] != undefined) {
+            if (this.keyupaction[keyCode] != undefined) {
+                for (var i = 0; i < this.keyupaction[keyCode].length; i++) {
+                    this.keyupaction[keyCode][i].call();
+                }
             }
         }
-    }
-}
-
-$(document).keydown(function (event) {
-    console.log('keyPressed');
-    var keyCode = event.which;
-    KeyReader.pressedKeys[keyCode] = true;
-    $("#" + keyCode).html('true');
-    KeyReader.keyDown(keyCode);
-});
-
-$(document).keyup(function (event) {
-    var keyCode = event.which;
-    KeyReader.pressedKeys[keyCode] = false;
-    $("#" + keyCode).html('false');
-    KeyReader.keyUp(keyCode);
-});
-
-KeyReader.keys = {
+    },
     KEY_DOWN: 40,
     KEY_UP: 38,
     KEY_LEFT: 37,
@@ -111,3 +92,19 @@ KeyReader.keys = {
     KEY_PF7: 118,
     KEY_PF8: 119
 };
+
+$(document).keydown(function (event) {
+    console.log('keyPressed');
+    var keyCode = event.which;
+    KeyReader.pressed[keyCode] = true;
+    $("#" + keyCode).html('true');
+    KeyReader.keydown(keyCode);
+});
+
+$(document).keyup(function (event) {
+    var keyCode = event.which;
+    KeyReader.pressed[keyCode] = false;
+    $("#" + keyCode).html('false');
+    KeyReader.keyup(keyCode);
+});
+

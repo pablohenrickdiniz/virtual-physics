@@ -48,6 +48,7 @@ var World = function () {
         if (body.dinamic) {
             body.addForce([0, this.gravity * body.mass]);
         }
+
         this.bodies.push(body);
     };
 
