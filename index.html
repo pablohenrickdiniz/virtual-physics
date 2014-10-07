@@ -123,64 +123,77 @@
                 if (!menu.drawing && menu.selected != null) {
                     var x = (reader.x + game.canvas.min[0]) / game.canvas.scale;
                     var y = (reader.y + game.canvas.min[1]) / game.canvas.scale;
-
+                    menu.drawPoint = [x, y];
+                    menu.drawing = true;
                     switch (menu.selected) {
                         case 'quadrado':
-                            menu.drawPoint = [x, y];
+
                             menu.body = new Body(new Rect([0, 0], 10, 10), Material.Iron, $("#tipo").val() == 'true');
                             break;
                         case 'poligono':
                             if (menu.body == null) {
                                 menu.body = new Body(new Polygon([0, 0], 0), Material.Iron, $("#tipo").val() == 'true');
-                                menu.drawPoints = [];
+                                menu.body.shape.vertices.push([x, y]);
+                                menu.body.shape.vertices.push(menu.drawPoint);
                             }
-                            else {
-
-                            }
-                            menu.body.vertices.push();
                             break;
                     }
 
                     menu.body.shape.color = new Color(document.getElementById("preenchimento").value);
                     menu.body.shape.border.color = new Color(document.getElementById("cor-borda").value);
                     menu.body.shape.border.thickness = document.getElementById("espessura-borda").value;
-                    menu.drawing = true;
+
                 }
                 else if (menu.selected != null) {
-                    console.log(menu.body);
-                    menu.drawing = false;
-                    drawing.clearScreen();
-                    game.world.addBody(menu.body);
-                    menu.body = null;
-                    menu.drawPoint = null;
+                    switch (menu.selected) {
+                        case 'quadrado':
+                            console.log(menu.body);
+                            menu.drawing = false;
+                            drawing.clearScreen();
+                            game.world.addBody(menu.body);
+                            menu.body = null;
+                            menu.drawPoint = null;
+                            break;
+                        case 'poligono':
+                            var x = (reader.x + game.canvas.min[0]) / game.canvas.scale;
+                            var y = (reader.y + game.canvas.min[1]) / game.canvas.scale;
+                            menu.body.shape.vertices.splice(menu.body.shape.vertices.length - 1, 1);
+                            menu.body.shape.vertices.push([x, y]);
+                            menu.body.shape.vertices.push(menu.drawPoint);
+                            break;
+                    }
                 }
 
             });
 
             $("#game").mousemove(function () {
                 if (menu.drawing) {
-                    console.log(menu.drawPoint);
                     var x = (reader.x + game.canvas.min[0]) / game.canvas.scale;
                     var y = (reader.y + game.canvas.min[1]) / game.canvas.scale;
-                    var w = x - menu.drawPoint[0];
-                    var h = y - menu.drawPoint[1];
-                    if (w > 0 && h > 0) {
-                        var shape = null;
-                        switch (menu.selected) {
-                            case 'quadrado':
+                    var shape = null;
+                    switch (menu.selected) {
+                        case 'quadrado':
+                            var w = x-menu.drawPoint[0];
+                            var h = y-menu.drawPoint[1];
+                            if (w > 0 && h > 0) {
                                 menu.body.shape.updateDimen(w, h);
                                 menu.body.shape.center = [menu.drawPoint[0] + (w / 2), menu.drawPoint[1] + (h / 2)];
                                 menu.body.setDinamic($("#tipo").val() == 'true');
-                                break;
-                        }
-                        drawing.clearScreen();
-                        drawing.drawShape(menu.body.shape);
+                            }
+                            break;
+                        case 'poligono':
+                            menu.drawPoint[0] = x;
+                            menu.drawPoint[1] = y;
+
                     }
+                    drawing.clearScreen();
+                    drawing.drawShape(menu.body.shape);
                 }
             });
 
 
-        });
+        })
+        ;
     </script>
 </head>
 <body>
@@ -252,20 +265,24 @@
                                     </select>
                                 </td>
                                 <td>
-                                    <input type="number" class="form-control" id="massa" name="massa" step="0.1" value="1" min="0.1"/>
+                                    <input type="number" class="form-control" id="massa" name="massa" step="0.1"
+                                           value="1" min="0.1"/>
                                 </td>
                                 <td>
                                     <div class="row">
                                         <div class="col-md-6">
-                                            <input type="number" class="form-control" id="linear-x" name="linear" step="0.1" value="0"/>
+                                            <input type="number" class="form-control" id="linear-x" name="linear"
+                                                   step="0.1" value="0"/>
                                         </div>
                                         <div class="col-md-6">
-                                            <input type="number"  class="form-control" id="linear-y" name="linear" step="0.1" value="0"/>
+                                            <input type="number" class="form-control" id="linear-y" name="linear"
+                                                   step="0.1" value="0"/>
                                         </div>
                                     </div>
                                 </td>
                                 <td>
-                                    <input type="number"  class="form-control" id="angular" name="angular" step="0.1" value="0"/>
+                                    <input type="number" class="form-control" id="angular" name="angular" step="0.1"
+                                           value="0"/>
                                 </td>
                             </tr>
                         </table>
@@ -280,7 +297,8 @@
                             </tr>
                             <tr>
                                 <td>
-                                    <input class="form-control" name="preenchimento" id="preenchimento" type="color" value="#ffffff"/>
+                                    <input class="form-control" name="preenchimento" id="preenchimento" type="color"
+                                           value="#ffffff"/>
                                 </td>
                                 <td>
                                     <input class="form-control" name="cor-borda" id="cor-borda" type="color"/>

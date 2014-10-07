@@ -18,6 +18,24 @@ function Polygon(center, theta) {
         }
     };
 
+    this.updateCenter = function () {
+        var centroid = [0, 0];
+        var a = 0;
+        for (var i = 0; i < this.vertices.length - 1; i++) {
+            var va = this.vertices[i];
+            var vb = this.vertices[i + 1];
+            var mult = va[i][0] * vb[i][1] - vb[i][0] * va[i][1];
+            centroid[0] += (va[i][0] + vb[i][0]) * mult;
+            centroid[1] += (va[i][1] + vb[i][1]) * mult;
+            a += mult;
+        }
+        a *= 0.5;
+        var m = 1 / (6 * a);
+        centroid[0] *= m;
+        centroid[1] *= m;
+        this.center = centroid;
+    };
+
     this.moi = function (mass) {
         switch (this.vertices.length) {
             case 3:
