@@ -31,11 +31,22 @@ function Polygon(center, theta) {
             a += mult;
         }
         a *= 0.5;
+        this.area = a;
         var m = 1 / (6 * a);
         centroid[0] *= m;
         centroid[1] *= m;
         this.center = centroid;
     };
+
+    this.updateRelative = function(){
+        for(var i = 0; i < this.vertices.length;i++){
+            this.vertices[i][0] = this.center[0]-this.vertices[i][0];
+            this.vertices[i][1] = this.center[1]-this.vertices[i][1];
+        }
+
+    };
+
+
 
     this.moi = function (mass) {
         switch (this.vertices.length) {

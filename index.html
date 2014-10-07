@@ -44,10 +44,11 @@
 
             KeyReader.onkeydown(KeyReader.KEY_ENTER, function () {
                 if(menu.selected = 'poligono'){
-                    menu.body.shape.updateCenter();
-                    //menu.body.shape.updateRelative();
-                    game.world.addBody(menu.body);
-                    menu.body = null;
+                    menu.shape.updateCenter();
+                    menu.shape.updateRelative();
+                    var body = new Body(menu.shape,Material.Gold,$("#tipo").val()=='true');
+                    game.world.addBody(body);
+                    menu.shape = null;
                     menu.drawing = false;
                     menu.drawPoints=[];
                     drawing.clearScreen();
@@ -110,6 +111,7 @@
                 this.drawing = false;
                 this.drawPoints = null;
                 this.body = null;
+                this.shape = null;
             }
 
             var aux = null;
@@ -134,20 +136,21 @@
                         case 'quadrado':
 
                             menu.body = new Body(new Rect([0, 0], 10, 10), Material.Iron, $("#tipo").val() == 'true');
+                            menu.body.shape.color = new Color(document.getElementById("preenchimento").value);
+                            menu.body.shape.border.color = new Color(document.getElementById("cor-borda").value);
+                            menu.body.shape.border.thickness = document.getElementById("espessura-borda").value;
                             break;
                         case 'poligono':
-                            if (menu.body == null) {
-                                menu.body = new Body(new Polygon([0, 0], 0), Material.Iron, $("#tipo").val() == 'true');
-                                menu.body.shape.vertices.push([x, y]);
-                                menu.body.shape.vertices.push(menu.drawPoint);
+                            if (menu.shape == null) {
+                                menu.shape = new Polygon([0, 0], 0);
+                                menu.shape.vertices.push([x, y]);
+                                menu.shape.vertices.push(menu.drawPoint);
+                                menu.shape.color = new Color(document.getElementById("preenchimento").value);
+                                menu.shape.border.color = new Color(document.getElementById("cor-borda").value);
+                                menu.shape.border.thickness = document.getElementById("espessura-borda").value;
                             }
                             break;
                     }
-
-                    menu.body.shape.color = new Color(document.getElementById("preenchimento").value);
-                    menu.body.shape.border.color = new Color(document.getElementById("cor-borda").value);
-                    menu.body.shape.border.thickness = document.getElementById("espessura-borda").value;
-
                 }
                 else if (menu.selected != null) {
                     switch (menu.selected) {
@@ -162,9 +165,9 @@
                         case 'poligono':
                             var x = (reader.x + game.canvas.min[0]) / game.canvas.scale;
                             var y = (reader.y + game.canvas.min[1]) / game.canvas.scale;
-                            menu.body.shape.vertices.splice(menu.body.shape.vertices.length - 1, 1);
-                            menu.body.shape.vertices.push([x, y]);
-                            menu.body.shape.vertices.push(menu.drawPoint);
+                            menu.shape.vertices.splice(menu.shape.vertices.length - 1, 1);
+                            menu.shape.vertices.push([x, y]);
+                            menu.shape.vertices.push(menu.drawPoint);
                             break;
                     }
                 }
@@ -176,6 +179,7 @@
                     var x = (reader.x + game.canvas.min[0]) / game.canvas.scale;
                     var y = (reader.y + game.canvas.min[1]) / game.canvas.scale;
                     var shape = null;
+                    drawing.clearScreen();
                     switch (menu.selected) {
                         case 'quadrado':
                             var w = x - menu.drawPoint[0];
@@ -184,15 +188,16 @@
                                 menu.body.shape.updateDimen(w, h);
                                 menu.body.shape.center = [menu.drawPoint[0] + (w / 2), menu.drawPoint[1] + (h / 2)];
                                 menu.body.setDinamic($("#tipo").val() == 'true');
+                                drawing.drawShape(menu.body.shape);
                             }
                             break;
                         case 'poligono':
                             menu.drawPoint[0] = x;
                             menu.drawPoint[1] = y;
-
+                            drawing.drawShape(menu.shape);
                     }
-                    drawing.clearScreen();
-                    drawing.drawShape(menu.body.shape);
+
+
                 }
             });
 
