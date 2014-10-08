@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="css/index.css"/>
     <script type="text/javascript" src="js/utils/jquery.min.js"></script>
     <script type="text/javascript" src="js/utils/bootstrap.min.js"></script>
+    <script type="text/javascript" src="js/utils/delaunay.js"></script>
     <script type="text/javascript" src="js/utils/jquery.mousewheel.min.js"></script>
     <script type="text/javascript" src="js/utils/KeyReader.js"></script>
     <script type="text/javascript" src="js/utils/MouseReader.js"></script>
@@ -142,8 +143,8 @@
                         case 'poligono':
                             if (menu.shape == null) {
                                 menu.shape = new Polygon([0, 0], 0);
-                                menu.shape.vertices.push([x, y]);
-                                menu.shape.vertices.push(menu.drawPoint);
+                                menu.shape.vertices.unshift([x, y]);
+                                menu.shape.vertices.unshift(menu.drawPoint);
                                 menu.shape.color = new Color(document.getElementById("preenchimento").value);
                                 menu.shape.border.color = new Color(document.getElementById("cor-borda").value);
                                 menu.shape.border.thickness = document.getElementById("espessura-borda").value;
@@ -164,9 +165,9 @@
                         case 'poligono':
                             var x = (reader.x + game.canvas.min[0]) / game.canvas.scale;
                             var y = (reader.y + game.canvas.min[1]) / game.canvas.scale;
-                            menu.shape.vertices.splice(menu.shape.vertices.length - 1, 1);
-                            menu.shape.vertices.push([x, y]);
-                            menu.shape.vertices.push(menu.drawPoint);
+                            menu.shape.vertices.splice(0, 1);
+                            menu.shape.vertices.unshift([x, y]);
+                            menu.shape.vertices.unshift(menu.drawPoint);
                             break;
                     }
                 }
