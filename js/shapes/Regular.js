@@ -29,4 +29,17 @@ function Regular(center, radius, sides, thickness, theta) {
     };
 
     this.updateVertices();
+
+    this.moi = function(mass){
+        var sum1 = 0;
+        var sum2 = 0;
+        for (var n = 0; n < this.vertices.length - 1; n++) {
+            var pn = this.vertices[n];
+            var pn1 = this.vertices[n + 1];
+            var norm = MV.norm(MV.VxV(pn, pn1));
+            sum1 += norm * MV.dot(pn1, pn1) + MV.dot(pn1, pn) + MV.dot(pn, pn);
+            sum2 += norm;
+        }
+        return (mass / 6) * (sum1 / sum2);
+    }
 }

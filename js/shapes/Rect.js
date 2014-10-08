@@ -32,7 +32,8 @@ function Rect(center, width, height) {
     };
 
     this.moi = function (mass) {
-        return mass / 12 * (this.height * this.height + this.width * this.width);
+        var moi = mass / 12 * (this.height * this.height + this.width * this.width)
+        return moi;
     };
 
     this.updateDimen(this.width, this.height);
