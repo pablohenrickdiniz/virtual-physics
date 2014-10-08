@@ -33,7 +33,6 @@ function Regular(center, radius, sides, thickness, theta) {
     this.moi = function(mass){
         var sum1 = 0;
         var sum2 = 0;
-
         for (var n = 0; n < this.vertices.length; n++) {
             var pos = n+1==this.vertices.length?0:n+1;
             var pn = this.vertices[n];

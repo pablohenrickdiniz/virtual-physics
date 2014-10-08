@@ -48,6 +48,7 @@
                     menu.shape.updateCenter();
                     menu.shape.updateRelative();
                     var body = new Body(menu.shape,Material.Gold,$("#tipo").val()=='true');
+                    drawing.drawShape(new Rect(menu.shape.center,2,2));
                     game.world.addBody(body);
                     menu.shape = null;
                     menu.drawing = false;
@@ -207,14 +208,7 @@
     </script>
 </head>
 <body>
-<div class="row container-fluid">
-    <div class="col-md-7" style="position:relative">
-        <canvas id="drawing" width="600px" height="600px" style="position:absolute;">
-
-        </canvas>
-        <canvas id="game" width="600px" height="600px" style="border:1px solid black;position:absolute;">
-        </canvas>
-    </div>
+<div class="row">
     <div class="col-md-5">
         <div class="row">
             <div class="panel panel-info">
@@ -322,6 +316,13 @@
                 </div>
             </div>
         </div>
+    </div>
+    <div class="col-md-7">
+        <canvas id="drawing" width="600px" height="600px" style="position:absolute;">
+
+        </canvas>
+        <canvas id="game" width="600px" height="600px" style="border:1px solid black;position:absolute;">
+        </canvas>
     </div>
 </div>
 </body>

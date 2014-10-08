@@ -35,15 +35,11 @@ function getAABB(body) {
 }
 
 function AABBoverlap(b1, b2, threshold) {
-    if (threshold === undefined)
+    if (threshold === undefined){
         threshold = 0;
-    if (b1[0] + threshold >= b2[2] ||
-        b1[2] <= b2[0] + threshold ||
-        b1[1] + threshold >= b2[3] ||
-        b1[3] <= b2[1] + threshold) {
-        return false;
     }
-    return true;
+
+    return !((b1[0] + threshold) >= b2[2] || b1[2] <= (b2[0] + threshold) || (b1[1] + threshold) >= b2[3] || b1[3] <= (b2[1] + threshold));
 }
 
 function getFaceNormals(vertices) {
