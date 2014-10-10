@@ -124,6 +124,13 @@ var MV = {
     toRadians: function (theta) {
         return theta * (Math.PI / 180);
     },
+    getDegree: function (va,vb) {
+        var pe = MV.dot(va,vb);
+        var na = MV.norm(va);
+        var nb = MV.norm(vb);
+        return MV.toDegree(Math.acos(pe / (na * nb)));
+    },
+
     toDegree: function (theta) {
         return theta * (180 / Math.PI);
     },
