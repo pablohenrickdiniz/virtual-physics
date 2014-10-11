@@ -83,6 +83,8 @@ var KeyReader = {
     KEY_X: 88,
     KEY_Y: 89,
     KEY_Z: 90,
+    KEY_PLUS:107,
+    KEY_MINUS:109,
     KEY_PF1: 112,
     KEY_PF2: 113,
     KEY_PF3: 114,
@@ -94,7 +96,7 @@ var KeyReader = {
 };
 
 $(document).keydown(function (event) {
-    console.log('keyPressed');
+    console.log('key:'+event.which);
     var keyCode = event.which;
     KeyReader.pressed[keyCode] = true;
     $("#" + keyCode).html('true');

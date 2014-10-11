@@ -60,9 +60,7 @@ function Canvas(canvas) {
     };
 
     this.drawPolygon = function (polygon) {
-        if (polygon instanceof Polygon) {
-            this.fillShadow(polygon.shadow);
-            this.fillShape(polygon);
+        if (polygon instanceof Polygon){
             var center = polygon.center;
             this.context.save();
             this.context.translate(center[0] * this.scale, center[1] * this.scale);
@@ -73,7 +71,9 @@ function Canvas(canvas) {
                 this.context.lineTo(polygon.vertices[i][0] * this.scale, polygon.vertices[i][1] * this.scale);
             }
             this.context.closePath();
+            this.fillShape(polygon);
             this.context.fill();
+            this.fillShadow(polygon.shadow);
             this.preencherBorda(polygon.border);
             this.context.restore();
         }

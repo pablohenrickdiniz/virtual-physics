@@ -79,18 +79,20 @@ var World = function () {
             // will return a different result than getContactFromBodyPair([B,A]) -
             // a returned contact presents a point of body A penetrating a face of
             // body B in the first example, and vice versa for the second invocation.
-            var cs = getContactsFromBodyPair(this.bodies[collisionCandidates[i][0]],
-                this.bodies[collisionCandidates[i][1]]);
-            this.contacts = this.contacts.concat(cs);
+            var bodyA = this.bodies[collisionCandidates[i][0]];
+            var bodyB =  this.bodies[collisionCandidates[i][1]];
+            if(bodyA.dinamic || bodyB.dinamic){
+                var cs = getContactsFromBodyPair(bodyA,bodyB);
+                this.contacts = this.contacts.concat(cs);
+            }
         }
-
+        /*
         for (var i = 0; i < this.contacts.length; i++) {
             var c = this.contacts[i];
-        }
+        }*/
     };
 
     function applyImpulses() {
-
         var bias = [];
         // precompute MInv and bias for each contact - they don't change
         // across iterations
@@ -99,7 +101,6 @@ var World = function () {
         var lambdaAccumulated = [];
         var Jn = [];
         var Jt = [];
-
 
         for (var i = 0; i < this.contacts.length; i++) {
             // assemble the inverse mass vector (usually a matrix,
@@ -128,13 +129,12 @@ var World = function () {
             var Jt_vAngB = -MV.cross2(MV.VmV(contact.pB, contact.bodyB.shape.center), tangent);
             Jt[i] = Jt_vLinA.concat(Jt_vAngA).concat(Jt_vLinB).concat(Jt_vAngB);
 
-
             /*
              var tmp = MV.VmV(contact.pB, contact.bodyB.shape.center);
              var vB = MV.VpV(contact.bodyB.vLin, MV.SxV(contact.bodyB.vAng, [-tmp[1], tmp[0]]));
              var tmp = MV.VmV(contact.pA, contact.bodyA.shape.center);
              var vA = MV.VpV(contact.bodyA.vLin, MV.SxV(contact.bodyA.vAng, [-tmp[1], tmp[0]]));
-*/
+            */
             var vPreNormal = 0; //MV.dot(MV.VmV(vA, vB), contact.normal);
 
             var C = MV.dot(MV.VmV(contact.pA, contact.pB),

@@ -1,4 +1,5 @@
 function Body(shape, material, dinamic, vLin, vAng) {
+    this.group = 'A';
     this.shape = shape;
     this.shape.parent = this;
     this.dinamic = dinamic;

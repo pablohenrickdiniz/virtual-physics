@@ -125,12 +125,14 @@ var MV = {
         return theta * (Math.PI / 180);
     },
     getDegree: function (va,vb) {
+        return MV.toDegree(MV.getRadians(va,vb));
+    },
+    getRadians:function(va,vb){
         var pe = MV.dot(va,vb);
         var na = MV.norm(va);
         var nb = MV.norm(vb);
-        return MV.toDegree(Math.acos(pe / (na * nb)));
+        return Math.acos(pe / (na * nb));
     },
-
     toDegree: function (theta) {
         return theta * (180 / Math.PI);
     },
