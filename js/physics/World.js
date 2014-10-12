@@ -6,7 +6,7 @@ var World = function () {
     this.t = 0;
     this.friction = 0.8;
     this.contacts = [];
-    this.gravity = 9.81;
+    this.gravity = 98.1;
     this.width = 5000;
     this.height = 5000;
     this.joints = [];
@@ -47,7 +47,7 @@ var World = function () {
     };
 
 
-    function move(){
+    function move() {
         var remove = [];
         for (var i = 0; i < this.bodies.length; i++) {
             var body = this.bodies[i];

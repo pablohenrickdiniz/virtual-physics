@@ -61,7 +61,7 @@ function Canvas(canvas) {
     };
 
     this.drawPolygon = function (polygon) {
-        if (polygon instanceof Polygon){
+        if (polygon instanceof Polygon) {
             var center = polygon.center;
             this.context.save();
             this.context.translate(center[0] * this.scale, center[1] * this.scale);

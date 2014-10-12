@@ -6,7 +6,7 @@ function Regular(center, radius, sides, thickness, theta) {
     this.thickness = isNaN(thickness) || thickness < 1 ? 1 : thickness;
     this.area = 0.5 * this.sides * (2 * this.radius * Math.sin(MV.toRadians(180 / this.sides))) * this.radius;
 
-    this.setRadius = function(radius){
+    this.setRadius = function (radius) {
         this.radius = radius;
         this.updateVertices();
     };
@@ -36,13 +36,13 @@ function Regular(center, radius, sides, thickness, theta) {
     this.updateVertices();
 
     this.moi = function (mass) {
-        if(this.vertices.length == 4){
-            var width = this.max[0]-this.min[0];
-            var height = this.max[1]-this.min[1];
-            var moi = mass / 12 * (height*height + width*width)
+        if (this.vertices.length == 4) {
+            var width = this.max[0] - this.min[0];
+            var height = this.max[1] - this.min[1];
+            var moi = mass / 12 * (height * height + width * width)
             return moi;
         }
-        else{
+        else {
             var sum1 = 0;
             var sum2 = 0;
 

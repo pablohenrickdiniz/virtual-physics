@@ -97,7 +97,7 @@ function Polygon(center, theta) {
                 if (this.vertices[i][j] < min[j]) {
                     min[j] = this.vertices[i][j];
                 }
-                else if (this.vertices[i][0] > max[0]) {
+                else if (this.vertices[i][0] > max[j]) {
                     max[j] = this.vertices[i][j];
                 }
             }
@@ -106,33 +106,33 @@ function Polygon(center, theta) {
         this.max = max;
     };
 
-    this.isClockWise = function(){
+    this.isClockWise = function () {
         var sum = 0;
-        for(var i = 0; i < this.vertices.length;i++){
-            var j = i+1==this.vertices.length?0:i+1;
+        for (var i = 0; i < this.vertices.length; i++) {
+            var j = i + 1 == this.vertices.length ? 0 : i + 1;
             var va = this.vertices[i];
             var vb = this.vertices[j];
-            sum+=((vb[0]-va[0])*(vb[1] + va[1]))
+            sum += ((vb[0] - va[0]) * (vb[1] + va[1]))
         }
-        return sum<0;
+        return sum < 0;
     };
 
-    this.sumAngles = function(){
+    this.sumAngles = function () {
         var sum = 0;
-        for(var i = 0; i < this.vertices.length;i++){
-            var j = i+1==this.vertices.length?0:i+1;
-            var k = j+1==this.vertices.length?0:j+1;
+        for (var i = 0; i < this.vertices.length; i++) {
+            var j = i + 1 == this.vertices.length ? 0 : i + 1;
+            var k = j + 1 == this.vertices.length ? 0 : j + 1;
             var va = this.vertices[i];
             var vb = this.vertices[j];
             var vc = this.vertices[k];
-            var v1 = MV.VmV(vb,va);
-            var v2 = MV.VmV(vc,vb);
-            sum+=MV.getDegree(v1,v2);
+            var v1 = MV.VmV(vb, va);
+            var v2 = MV.VmV(vc, vb);
+            sum += MV.getDegree(v1, v2);
         }
         return sum;
     }
 
     this.isConvex = function () {
-        return this.sumAngles()>360;
+        return this.sumAngles() > 360;
     };
 }
