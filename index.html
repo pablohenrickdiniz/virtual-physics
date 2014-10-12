@@ -17,16 +17,17 @@
     <script type="text/javascript" src="js/draw/LinearGradient.js"></script>
     <script type="text/javascript" src="js/draw/Canvas.js"></script>
     <script type="text/javascript" src="js/draw/Border.js"></script>
+    <script type="text/javascript" src="js/physics/MV.js"></script>
     <script type="text/javascript" src="js/shapes/Shape.js"></script>
     <script type="text/javascript" src="js/shapes/Polygon.js"></script>
+    <script type="text/javascript" src="js/shapes/Regular.js"></script>
     <script type="text/javascript" src="js/shapes/Arc.js"></script>
     <script type="text/javascript" src="js/shapes/Circle.js"></script>
-    <script type="text/javascript" src="js/shapes/Regular.js"></script>
     <script type="text/javascript" src="js/shapes/Trapezius.js"></script>
     <script type="text/javascript" src="js/shapes/Rect.js"></script>
     <script type="text/javascript" src="js/physics/Material.js"></script>
-    <script type="text/javascript" src="js/physics/MV.js"></script>
     <script type="text/javascript" src="js/physics/Body.js"></script>
+    <script type="text/javascript" src="js/physics/Joint.js"></script>
     <script type="text/javascript" src="js/physics/World.js"></script>
     <script type="text/javascript" src="js/physics/friction_physics.js"></script>
     <script type="text/javascript" src="js/main/Game.js"></script>
@@ -51,7 +52,7 @@
             }
 
             KeyReader.onkeydown(KeyReader.KEY_ENTER, function () {
-                if(menu.selected = 'poligono'){
+                if(menu.selected == 'poligono'){
                     console.log(menu.shape);
                     if(!menu.shape.isClockWise()){
                         var first = menu.shape.vertices.shift();
@@ -121,6 +122,17 @@
                         game.canvas.scale -= 0.1;
                         drawing.scale -= 0.1;
                     }
+                }
+                if(menu.selected == 'regular'){
+                    var sum = event.deltaY;
+                    if(sum > 0){
+                        menu.shape.sides++;
+                    }
+                    else if(sum < 0 && menu.shape.sides >3){
+                        menu.shape.sides--;
+                    }
+                    menu.shape.updateVertices();
+                    refreshDrawing();
                 }
             });
 
@@ -210,6 +222,14 @@
                                 menu.shape.border.color = new Color(document.getElementById("cor-borda").value);
                                 menu.shape.border.thickness = document.getElementById("espessura-borda").value;
                             }
+                        break;
+                        case 'circulo':
+                            if(menu.shape == null){
+                                menu.shape = new Circle([x,y],10);
+                                menu.shape.color = new Color(document.getElementById("preenchimento").value);
+                                menu.shape.border.color = new Color(document.getElementById("cor-borda").value);
+                                menu.shape.border.thickness = document.getElementById("espessura-borda").value;
+                            }
                     }
                 }
                 else if (menu.selected != null) {
@@ -236,6 +256,14 @@
                             game.world.addBody(body);
                             menu.shape = null;
                             menu.drawPoint = null;
+                            break;
+                        case 'circulo':
+                            menu.drawing = false;
+                            drawing.clearScreen();
+                            var body = new Body(menu.shape,Material.Iron,$("#tipo").val()=='true');
+                            game.world.addBody(body);
+                            menu.shape = null;
+                            menu.drawPoint = null;
                     }
                 }
 
@@ -251,13 +279,11 @@
                         case 'quadrado':
                             var w = x - menu.drawPoint[0];
                             var h = y - menu.drawPoint[1];
-                            if (w > 0 && h > 0) {
-                                menu.body.shape.updateDimen(w, h);
-                                menu.body.shape.center = [menu.drawPoint[0] + (w / 2), menu.drawPoint[1] + (h / 2)];
-                                menu.body.setDinamic($("#tipo").val() == 'true');
-                                drawing.drawShape(menu.body.shape);
-                            }
-                            break;
+                            menu.body.shape.updateDimen(Math.abs(w), Math.abs(h));
+                            menu.body.shape.center = [menu.drawPoint[0] + (w / 2), menu.drawPoint[1] + (h / 2)];
+                            menu.body.setDinamic($("#tipo").val() == 'true');
+                            drawing.drawShape(menu.body.shape);
+                        break;
                         case 'poligono':
                             menu.drawPoint[0] = x;
                             menu.drawPoint[1] = y;
@@ -268,12 +294,26 @@
                             menu.shape.setRadius(r);
                            // menu.shape.theta = MV.getDegree([x,y],menu.drawPoint);
                             drawing.drawShape(menu.shape);
+                            break;
+                        case 'circulo':
+                            var r = Math.abs(MV.distance([x,y],menu.drawPoint));
+                            menu.shape.setRadius(r);
+                            drawing.drawShape(menu.shape);
                     }
 
 
                 }
             });
 
+            var shape1 = new Rect([300,300],25,25);
+            var bodyA =  new Body(shape1,Material.Iron,true);
+            game.world.addBody(bodyA);
+            var shape2 = new Rect([300,400],100,100);
+            var bodyB =  new Body(shape2,Material.Iron,true);
+
+            game.world.addBody(bodyB);
+            var joint = new Joint(bodyA,3,bodyB,1);
+            game.world.addJoint(joint);
         });
     </script>
 </head>
@@ -305,10 +345,10 @@
                         </div>
                         <div class="col-md-3">
                             <div class="img-thumbnail text-center" id="circulo">
-                                <img src="img/triangle.png" width="50px"/>
+                                <img src="img/circle.png" width="50px"/>
 
                                 <div class="caption">
-                                    Triângulo
+                                    Circulo
                                 </div>
                             </div>
                         </div>

@@ -24,7 +24,8 @@
 
 
 function getAABB(body) {
-    var verticesWorld = body.getVerticesInWorldCoords();
+    //var verticesWorld = body.getVerticesInWorldCoords();
+    var verticesWorld = body.getVerticesInWorldCoords2();
     var AABB = [];
     AABB[0] = MV.min(verticesWorld, 0);
     AABB[1] = MV.min(verticesWorld, 1);
@@ -46,6 +47,23 @@ function AABBoverlap(b1, b2, threshold) {
     return true;
 }
 
+function circleIntersectLine(cc, r, va, vb) {
+    var med = MV.med(va, vb);
+    var degree = MV.getDegree(va, vb)
+    va = MV.rotate(va, -degree, med);
+    vb = MV.rotate(vb, -degree, med);
+    cc = MV.rotate(cc, -degree, med);
+    var cpMiny = Math.min(va[1], vb[1]);
+    var cpMaxy = Math.max(va[1], vb[1]);
+    var cpMinx = Math.min(va[0], vb[0]);
+    var cpMaxx = Math.max(va[0], vb[0]);
+    var minX = cpMinx - r;
+    var minY = cpMiny - r;
+    var maxX = cpMaxx + r;
+    var maxY = cpMaxy + r;
+    return (((cc[0] <= va[0] && cc[0] >= minX) || (cc[0] >= va[0] && cc[0] <= maxX)) && (cc[1] <= maxY && cc[1] >= minY));
+}
+
 function getFaceNormals(vertices) {
     var normals = [];
     for (var i = 0; i < vertices.length; i++) {
@@ -63,7 +81,6 @@ function getCollisionCandidates(bodies) {
     for (var i = 0; i < bodies.length; i++) {
 
         AABBs[i] = getAABB(bodies[i]);
-
     }
 
     // compare them against each other and store
@@ -129,6 +146,8 @@ function getContactsFromBodyPair(bodyA, bodyB) {
     var contacts = [];
     var pAs = bodyA.getVerticesInWorldCoords();
     var pBs = bodyB.getVerticesInWorldCoords();
+
+
     var distances = [];
     var normals = bodyB.faceNormals;
     // test for each point of body A whether it lies inside body B

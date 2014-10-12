@@ -22,10 +22,11 @@ function Canvas(canvas) {
     }
 
     this.drawShape = function (shape) {
-        if (shape instanceof Polygon) {
-            this.drawPolygon(shape);
-        } else if (shape instanceof Circle) {
+        if (shape instanceof Circle) {
             this.drawCircle(shape);
+        }
+        else if (shape instanceof Polygon) {
+            this.drawPolygon(shape);
         }
     };
 
@@ -36,7 +37,7 @@ function Canvas(canvas) {
     this.drawWorld = function (world) {
         this.clearScreen();
         for (var i = 0; i < world.bodies.length; i++) {
-            this.drawPolygon(world.bodies[i].shape);
+            this.drawShape(world.bodies[i].shape);
         }
     };
 
