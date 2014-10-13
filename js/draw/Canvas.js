@@ -22,8 +22,8 @@ function Canvas(canvas) {
     }
 
     this.drawShape = function (shape) {
-        if (shape instanceof Circle) {
-            this.drawCircle(shape);
+        if (shape instanceof Body) {
+            this.drawBody(shape);
         }
         else if (shape instanceof Polygon) {
             this.drawPolygon(shape);
@@ -37,7 +37,7 @@ function Canvas(canvas) {
     this.drawWorld = function (world) {
         this.clearScreen();
         for (var i = 0; i < world.bodies.length; i++) {
-            this.drawShape(world.bodies[i].shape);
+            this.drawShape(world.bodies[i]);
         }
     };
 
@@ -61,25 +61,40 @@ function Canvas(canvas) {
     };
 
     this.drawPolygon = function (polygon) {
-        if (polygon instanceof Polygon) {
-            var center = polygon.center;
-            this.context.save();
-            this.context.translate(center[0] * this.scale, center[1] * this.scale);
-            this.context.rotate(polygon.theta);
-            this.context.beginPath();
-            this.context.moveTo(polygon.vertices[0][0] * this.scale, polygon.vertices[0][1] * this.scale);
-            for (var i = 1; i < polygon.vertices.length; i++) {
-                this.context.lineTo(polygon.vertices[i][0] * this.scale, polygon.vertices[i][1] * this.scale);
-            }
-            this.context.closePath();
-            this.fillShape(polygon);
-            this.context.fill();
-            this.fillShadow(polygon.shadow);
-            this.preencherBorda(polygon.border);
-            this.context.restore();
+        var center = polygon.center;
+        this.context.save();
+        this.context.translate(center[0] * this.scale, center[1] * this.scale);
+        this.context.rotate(polygon.theta);
+        this.context.beginPath();
+        this.context.moveTo(polygon.vertices[0][0] * this.scale, polygon.vertices[0][1] * this.scale);
+        for (var i = 1; i < polygon.vertices.length; i++) {
+            this.context.lineTo(polygon.vertices[i][0] * this.scale, polygon.vertices[i][1] * this.scale);
         }
+        this.context.closePath();
+        this.fillShape(polygon);
+        this.context.fill();
+        this.fillShadow(polygon.shadow);
+        this.preencherBorda(polygon.border);
+        this.context.restore();
     };
-
+    this.drawBody = function (body) {
+        var polygon = body.shape;
+        var center = body.center;
+        this.context.save();
+        this.context.translate(center[0] * this.scale, center[1] * this.scale);
+        this.context.rotate(polygon.theta);
+        this.context.beginPath();
+        this.context.moveTo(polygon.vertices[0][0] * this.scale, polygon.vertices[0][1] * this.scale);
+        for (var i = 1; i < polygon.vertices.length; i++) {
+            this.context.lineTo(polygon.vertices[i][0] * this.scale, polygon.vertices[i][1] * this.scale);
+        }
+        this.context.closePath();
+        this.fillShape(polygon);
+        this.context.fill();
+        this.fillShadow(polygon.shadow);
+        this.preencherBorda(polygon.border);
+        this.context.restore();
+    };
 
     this.clearScreen = function () {
         this.context.clearRect(this.min[0], this.min[1], this.width, this.height);

@@ -1,5 +1,6 @@
 function Body(shape, material, dinamic, vLin, vAng) {
     this.shape = shape;
+    this.center = shape.center;
     this.shape.parent = this;
     this.dinamic = dinamic;
     this.material = material;

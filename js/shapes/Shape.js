@@ -4,4 +4,5 @@ function Shape(center, color, border, theta) {
     this.border = border == undefined ? null : border;
     this.shadow = null;
     this.theta = isNaN(theta) ? 0 : theta;
+    this.vertices = [];
 }

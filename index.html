@@ -29,6 +29,7 @@
 <script type="text/javascript" src="js/shapes/Rect.js"></script>
 <script type="text/javascript" src="js/physics/Material.js"></script>
 <script type="text/javascript" src="js/physics/Body.js"></script>
+<script type="text/javascript" src="js/physics/MouseBody.js"></script>
 <script type="text/javascript" src="js/physics/Joint.js"></script>
 <script type="text/javascript" src="js/physics/World.js"></script>
 <script type="text/javascript" src="js/physics/friction_physics.js"></script>
@@ -54,8 +55,7 @@ $(document).ready(function () {
     }
 
     KeyReader.onkeydown(KeyReader.KEY_ENTER, function () {
-        if (menu.selected == 'poligono') {
-            console.log(menu.shape);
+        if (menu.selected == 'convex') {
             if (!menu.shape.isClockWise()) {
                 var first = menu.shape.vertices.shift();
                 menu.shape.vertices.reverse();
@@ -68,7 +68,8 @@ $(document).ready(function () {
             game.world.addBody(body);
             menu.shape = null;
             menu.drawing = false;
-            menu.drawPoints = [];
+            menu.drawPoint = null;
+            menu.auxpoint = null;
             drawing.clearScreen();
         }
     });
@@ -116,6 +117,10 @@ $(document).ready(function () {
             $("#game").css('cursor', 'default');
             active = false;
         }
+        if (menu.mousejoint != null) {
+            game.world.removeJoint(menu.mousejoint);
+            game.world.mouseJoint = null;
+        }
     });
     $("#game").on('mousewheel', function (event) {
         if (!active && !menu.drawing) {
@@ -127,6 +132,9 @@ $(document).ready(function () {
             else if (game.canvas.scale > 0.2) {
                 game.canvas.scale -= 0.1;
                 drawing.scale -= 0.1;
+            }
+            if (!game.running) {
+                game.canvas.drawWorld(game.world);
             }
         }
         if (menu.selected == 'regular' && menu.drawing) {
@@ -149,6 +157,9 @@ $(document).ready(function () {
             var center = [x, y];
             game.canvas.move(center);
             drawing.move(center);
+            if (!game.running) {
+                game.canvas.drawWorld(game.world);
+            }
         }
     });
 
@@ -161,13 +172,15 @@ $(document).ready(function () {
         }
     });
 
-    var menu ={
-        itens:['quadrado', 'regular', 'circulo', 'cursor', 'eraser', 'move'],
-        selected:'cursor',
-        drawing:false,
-        shape:null,
-        selectedBody:null,
-        select:function (item) {
+    var menu = {
+        itens: ['quadrado', 'regular', 'circulo', 'cursor', 'eraser', 'move', 'convex'],
+        selected: 'cursor',
+        drawing: false,
+        shape: null,
+        selectedBody: null,
+        auxpoint: null,
+        mousejoint: null,
+        select: function (item) {
             this.selected = item;
             $("#" + item).addClass('well well-sm');
             for (var i = 0; i < this.itens.length; i++) {
@@ -198,7 +211,7 @@ $(document).ready(function () {
         return null;
     }
 
-    $("#quadrado,#circulo,#regular,#cursor,#eraser,#move").click(function () {
+    $("#quadrado,#circulo,#regular,#cursor,#eraser,#move,#convex").click(function () {
         menu.select($(this).attr('id'));
     });
 
@@ -221,7 +234,7 @@ $(document).ready(function () {
                 menu.shape.color = new Color(document.getElementById("preenchimento").value);
                 menu.drawing = true;
             }
-            else if (menu.selected == 'poligono') {
+            else if (menu.selected == 'convex') {
                 menu.shape = new Polygon([0, 0], 0);
                 menu.shape.vertices.push([x, y]);
                 menu.shape.vertices.push(menu.drawPoint);
@@ -241,7 +254,7 @@ $(document).ready(function () {
                     game.world.removeBody(body);
                 }
             }
-            else if(menu.selected == 'cursor'){
+            else if (menu.selected == 'cursor') {
                 var body = findSelectedBody();
                 if (body != null) {
                     if (menu.selectedBody != null) {
@@ -251,8 +264,21 @@ $(document).ready(function () {
                     menu.selectedBody = body;
                 }
             }
+            else if (menu.selected == 'move') {
+                var bodyB = findSelectedBody();
+                if (bodyB != null) {
+                    var shape = new Shape(menu.drawPoint);
+                    shape.vertices[0] = [0, 0];
+                    shape.center = menu.drawPoint;
+                    var bodyA = new MouseBody(shape);
+                    bodyA.center = menu.drawPoint;
+
+                    menu.mousejoint = new Joint(bodyA, 0, bodyB, 0);
+                    game.world.addJoint(menu.mousejoint);
+                }
+            }
         }
-        else{
+        else {
             switch (menu.selected) {
                 case 'quadrado':
                     menu.drawing = false;
@@ -261,11 +287,18 @@ $(document).ready(function () {
                     game.world.addBody(body);
                     menu.drawPoint = null;
                     break;
-                case 'poligono':
+                case 'convex':
                     var x = (reader.x + game.canvas.min[0]) / game.canvas.scale;
                     var y = (reader.y + game.canvas.min[1]) / game.canvas.scale;
                     menu.shape.vertices.splice(menu.shape.vertices.length - 1, 1);
-                    menu.shape.vertices.push([x, y]);
+                    if (menu.auxpoint != null) {
+                        menu.shape.vertices.push(menu.auxpoint);
+                        menu.auxpoint = null;
+                    }
+                    else {
+                        menu.shape.vertices.push([x, y]);
+                    }
+
                     menu.shape.vertices.push(menu.drawPoint);
                     break;
                 case 'regular':
@@ -282,9 +315,9 @@ $(document).ready(function () {
 
 
     $("#game").mousemove(function () {
+        var x = (reader.x + game.canvas.min[0]) / game.canvas.scale;
+        var y = (reader.y + game.canvas.min[1]) / game.canvas.scale;
         if (menu.drawing && menu.shape != null) {
-            var x = (reader.x + game.canvas.min[0]) / game.canvas.scale;
-            var y = (reader.y + game.canvas.min[1]) / game.canvas.scale;
             drawing.clearScreen();
             switch (menu.selected) {
                 case 'quadrado':
@@ -294,9 +327,16 @@ $(document).ready(function () {
                     menu.shape.center = [menu.drawPoint[0] + (w / 2), menu.drawPoint[1] + (h / 2)];
                     drawing.drawShape(menu.shape);
                     break;
-                case 'poligono':
+                case 'convex':
+                    var xo = menu.drawPoint[0];
+                    var yo = menu.drawPoint[1];
                     menu.drawPoint[0] = x;
                     menu.drawPoint[1] = y;
+                    if (menu.shape.isConvex()) {
+                        menu.drawPoint[0] = xo;
+                        menu.drawPoint[1] = yo;
+                        menu.auxpoint = [xo, yo];
+                    }
                     drawing.drawShape(menu.shape);
                     break;
                 case 'regular':
@@ -309,21 +349,35 @@ $(document).ready(function () {
                     var r = Math.abs(MV.distance([x, y], menu.drawPoint));
                     menu.shape.setRadius(r);
                     drawing.drawShape(menu.shape);
+                    break;
             }
-
-
+        }
+        else if (menu.selected != null) {
+            switch (menu.selected) {
+                case 'move':
+                   menu.drawPoint[0] = x;
+                   menu.drawPoint[1] = y;
+            }
         }
     });
-    /*
-    var shape1 = new Rect([300, 300], 25, 25);
-    var bodyA = new Body(shape1, Material.Iron, true);
-    game.world.addBody(bodyA);
-    var shape2 = new Rect([300, 400], 100, 100);
-    var bodyB = new Body(shape2, Material.Iron, true);
 
-    game.world.addBody(bodyB);
-    var joint = new Joint(bodyA, 3, bodyB, 1);
-    game.world.addJoint(joint);*/
+    $("#play-btn").click(function () {
+        game.continue();
+    });
+
+    $("#pause-btn").click(function () {
+        game.pause();
+    });
+    /*
+     var shape1 = new Rect([300, 300], 25, 25);
+     var bodyA = new Body(shape1, Material.Iron, true);
+     game.world.addBody(bodyA);
+     var shape2 = new Rect([300, 400], 100, 100);
+     var bodyB = new Body(shape2, Material.Iron, true);
+
+     game.world.addBody(bodyB);
+     var joint = new Joint(bodyA, 3, bodyB, 1);
+     game.world.addJoint(joint);*/
 });
 </script>
 </head>
@@ -352,6 +406,9 @@ $(document).ready(function () {
                             <li><a id="circulo" class="fa fa-2x fa-circle"></a></li>
                             <li><a id="regular" class="fa fa-2x fa-star"></a></li>
                         </ul>
+                        <ul class="nav nav-pills">
+                            <li><a id="convex" class="fa fa-2x fa-pencil"></a></li>
+                        </ul>
                     </div>
                 </div>
             </div>
@@ -375,5 +432,20 @@ $(document).ready(function () {
             </div>
         </div>
     </div>
+    <div id="game-controls">
+        <div class="row">
+            <div class="col-md-12 controls">
+                <button id="pause-btn" class="btn btn-default">
+                    <span class="fa fa-2x fa-pause">
+
+                    </span>
+                </button>
+                <button id="play-btn" class="btn btn-default">
+                    <span class="fa fa-2x fa-play">
+
+                    </span>
+                </button>
+            </div>
+        </div>
+    </div>
 </div>
-</body>
