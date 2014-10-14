@@ -1,5 +1,6 @@
 function Body(shape, material, dinamic, vLin, vAng) {
     this.shape = shape;
+    this.center = shape.center;
     this.shape.parent = this;
     this.dinamic = dinamic;
     this.material = material;
@@ -7,7 +8,7 @@ function Body(shape, material, dinamic, vLin, vAng) {
     this.vAng = vAng == undefined ? 0 : vAng; // angular (rotational) velocity
     this.forces = []; // array of forces...
     this.forcePoints = []; // ... and the vertex index of force application.
-
+    this.groups = ['A'];
     // undefined is center of mass.
 
     var rotMatTheta; // used to avoid unnecessary rotation matrix computations
@@ -17,6 +18,14 @@ function Body(shape, material, dinamic, vLin, vAng) {
         this.mass = this.dinamic ? this.material.density * this.shape.area : 0;
         this.mInv = this.mass == 0 ? 0 : 1 / this.mass; // inverse of the mass
         this.moiInv = this.mass == 0 ? 0 : 1 / this.shape.moi(this.mass);// inverse of the moment of inertia
+        this.forces =[];
+        if(this.dinamic){
+            this.forces.push([0,98.81*this.mass]);
+        }
+        else{
+            this.vLin = [0,0];
+            this.vAng = 0;
+        }
         rotationMatrix = null;
     };
 
@@ -25,7 +34,7 @@ function Body(shape, material, dinamic, vLin, vAng) {
         this.update();
     };
 
-    this.setMass = function(mass){
+    this.setMass = function (mass) {
         this.mass = mass;
         this.mInv = this.mass == 0 ? 0 : 1 / this.mass; // inverse of the mass
         this.moiInv = this.mass == 0 ? 0 : 1 / this.shape.moi(this.mass);// inverse of the moment of inertia
@@ -66,6 +75,17 @@ function Body(shape, material, dinamic, vLin, vAng) {
         for (var i = 0; i < this.shape.vertices.length; i++) {
             vertsAbsolute.push(MV.VpV(this.shape.center,
                 MV.MxV(rotationMatrix, this.shape.vertices[i])));
+        }
+        return vertsAbsolute;
+    };
+
+    this.getVerticesInWorldCoords2 = function () {
+        var vertsAbsolute = [];
+        var rotationMatrix = this.getRotationMatrix();
+        var vertices = [this.shape.min[0], this.shape.min[1], this.shape.max[0], this.shape.max[1]];
+        for (var i = 0; i < vertices.length; i++) {
+            vertsAbsolute.push(MV.VpV(this.shape.center,
+                MV.MxV(rotationMatrix, vertices[i])));
         }
         return vertsAbsolute;
     };

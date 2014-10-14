@@ -24,7 +24,8 @@
 
 
 function getAABB(body) {
-    var verticesWorld = body.getVerticesInWorldCoords();
+    //var verticesWorld = body.getVerticesInWorldCoords();
+    var verticesWorld = body.getVerticesInWorldCoords2();
     var AABB = [];
     AABB[0] = MV.min(verticesWorld, 0);
     AABB[1] = MV.min(verticesWorld, 1);
@@ -40,6 +41,23 @@ function AABBoverlap(b1, b2, threshold) {
     }
 
     return !((b1[0] + threshold) >= b2[2] || b1[2] <= (b2[0] + threshold) || (b1[1] + threshold) >= b2[3] || b1[3] <= (b2[1] + threshold));
+}
+
+function circleIntersectLine(cc, r, va, vb) {
+    var med = MV.med(va, vb);
+    var degree = MV.getDegree(va, vb)
+    va = MV.rotate(va, -degree, med);
+    vb = MV.rotate(vb, -degree, med);
+    cc = MV.rotate(cc, -degree, med);
+    var cpMiny = Math.min(va[1], vb[1]);
+    var cpMaxy = Math.max(va[1], vb[1]);
+    var cpMinx = Math.min(va[0], vb[0]);
+    var cpMaxx = Math.max(va[0], vb[0]);
+    var minX = cpMinx - r;
+    var minY = cpMiny - r;
+    var maxX = cpMaxx + r;
+    var maxY = cpMaxy + r;
+    return (((cc[0] <= va[0] && cc[0] >= minX) || (cc[0] >= va[0] && cc[0] <= maxX)) && (cc[1] <= maxY && cc[1] >= minY));
 }
 
 function getFaceNormals(vertices) {
@@ -59,7 +77,6 @@ function getCollisionCandidates(bodies) {
     for (var i = 0; i < bodies.length; i++) {
 
         AABBs[i] = getAABB(bodies[i]);
-
     }
 
     // compare them against each other and store
@@ -68,7 +85,9 @@ function getCollisionCandidates(bodies) {
     var collisionCandidates = [];
     for (var i = 0; i < AABBs.length - 1; i++) {
         for (var j = i + 1; j < AABBs.length; j++) {
-            if (AABBoverlap(AABBs[i], AABBs[j], 0)) {
+            var groupA = bodies[i].groups;
+            var groupB = bodies[j].groups;
+            if (compare(groupA,groupB) && AABBoverlap(AABBs[i], AABBs[j], 0)) {
                 collisionCandidates.push([i, j]);
                 collisionCandidates.push([j, i]);
             }
@@ -76,6 +95,17 @@ function getCollisionCandidates(bodies) {
     }
 
     return collisionCandidates;
+}
+
+function compare(groupA,groupB){
+    for(var i = 0; i < groupA.length;i++){
+        for(var j = 0; j < groupB.length;j++){
+            if(groupA[i] == groupB[j]){
+                return true;
+            }
+        }
+    }
+    return false;
 }
 
 // precompute face normals (once for each body),
@@ -125,6 +155,8 @@ function getContactsFromBodyPair(bodyA, bodyB) {
     var contacts = [];
     var pAs = bodyA.getVerticesInWorldCoords();
     var pBs = bodyB.getVerticesInWorldCoords();
+
+
     var distances = [];
     var normals = bodyB.faceNormals;
     // test for each point of body A whether it lies inside body B

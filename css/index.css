@@ -1,3 +1,58 @@
 .img-thumbnail:hover {
     cursor: pointer;
 }
+
+.img-thumbnail {
+    width: 80px;
+    height: 80px;
+}
+
+#drawing {
+    position: absolute;
+}
+
+#game {
+    position: absolute;
+    border: 1px solid gray;
+}
+
+.canvas-area {
+    width: 600px;
+    height: 600px;
+    position: absolute;
+}
+
+.tools-area {
+    width: 250px;
+    height: 600px;
+    position: absolute;
+    left: 618px;
+    text-align: center;
+}
+
+#game-controls {
+    position: absolute;
+    top: 620px;
+}
+
+.controls {
+    position: relative;
+    left: 230px;
+}
+
+.simulation {
+    position: relative;
+}
+
+.nav a {
+    color: black;
+}
+
+.nav a:hover {
+    cursor: pointer;
+}
+
+.well {
+    margin: 0;
+    padding: 0;
+}

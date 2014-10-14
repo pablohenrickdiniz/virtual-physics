@@ -3,30 +3,30 @@
  */
 
 var KeyReader = {
-    pressed:[],
-    keydownaction:[],
-    keyupaction:[],
-    isPressed:function (keyName) {
+    pressed: [],
+    keydownaction: [],
+    keyupaction: [],
+    isPressed: function (keyName) {
         var index = this.keys[keyName];
         if (this.pressedKeys[index] != undefined) {
             return this.pressedKeys[index];
         }
         return false;
     },
-    onkeydown:function (key, action) {
+    onkeydown: function (key, action) {
 
         if (this.keydownaction[key] == undefined) {
             this.keydownaction[key] = [];
         }
         this.keydownaction[key].push(action);
     },
-    onkeyup:function (key, action) {
+    onkeyup: function (key, action) {
         if (this.keyupaction[key] == undefined) {
             this.keyupaction[key] = [];
         }
         this.keyupaction[key].push(action);
     },
-    keydown:function (keyCode) {
+    keydown: function (keyCode) {
         if (this.keydownaction[keyCode] != undefined) {
             if (this.keydownaction[keyCode] != undefined) {
                 for (var i = 0; i < this.keydownaction[keyCode].length; i++) {
@@ -35,7 +35,7 @@ var KeyReader = {
             }
         }
     },
-    keyup:function (keyCode) {
+    keyup: function (keyCode) {
         if (this.keyupaction[keyCode] != undefined) {
             if (this.keyupaction[keyCode] != undefined) {
                 for (var i = 0; i < this.keyupaction[keyCode].length; i++) {
@@ -83,6 +83,8 @@ var KeyReader = {
     KEY_X: 88,
     KEY_Y: 89,
     KEY_Z: 90,
+    KEY_PLUS: 107,
+    KEY_MINUS: 109,
     KEY_PF1: 112,
     KEY_PF2: 113,
     KEY_PF3: 114,
@@ -94,7 +96,7 @@ var KeyReader = {
 };
 
 $(document).keydown(function (event) {
-    console.log('keyPressed');
+    console.log('key:' + event.which);
     var keyCode = event.which;
     KeyReader.pressed[keyCode] = true;
     $("#" + keyCode).html('true');
