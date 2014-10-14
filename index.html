@@ -219,9 +219,21 @@ $(document).ready(function () {
 
 
     $("#preenchimento").change(function () {
+        var value = document.getElementById('preenchimento').value;
         if (menu.shape != null) {
-            menu.shape.color = new Color(document.getElementById("preenchimento").value);
+            menu.shape.color = new Color(value);
         }
+        else if(menu.selectedBody != null){
+            menu.selectedBody.shape.color = new Color(value);
+        }
+    });
+
+    $("#tipo").change(function(){
+       var value = document.getElementById('tipo').value =='true';
+        console.log(value);
+       if(menu.selectedBody != null){
+            menu.selectedBody.setDinamic(value);
+       }
     });
 
     $("#game").click(function () {
@@ -261,6 +273,8 @@ $(document).ready(function () {
                         menu.selectedBody.shape.border.lineDash = [];
                     }
                     body.shape.border.lineDash = [5, 5];
+                    document.getElementById("preenchimento").value = body.shape.color.toHEX();
+                    document.getElementById("tipo").value = body.dinamic;
                     menu.selectedBody = body;
                 }
             }

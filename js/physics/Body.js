@@ -18,6 +18,14 @@ function Body(shape, material, dinamic, vLin, vAng) {
         this.mass = this.dinamic ? this.material.density * this.shape.area : 0;
         this.mInv = this.mass == 0 ? 0 : 1 / this.mass; // inverse of the mass
         this.moiInv = this.mass == 0 ? 0 : 1 / this.shape.moi(this.mass);// inverse of the moment of inertia
+        this.forces =[];
+        if(this.dinamic){
+            this.forces.push([0,98.81*this.mass]);
+        }
+        else{
+            this.vLin = [0,0];
+            this.vAng = 0;
+        }
         rotationMatrix = null;
     };
 
