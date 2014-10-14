@@ -89,7 +89,9 @@ function getCollisionCandidates(bodies) {
     var collisionCandidates = [];
     for (var i = 0; i < AABBs.length - 1; i++) {
         for (var j = i + 1; j < AABBs.length; j++) {
-            if (AABBoverlap(AABBs[i], AABBs[j], 0)) {
+            var groupA = bodies[i].groups;
+            var groupB = bodies[j].groups;
+            if (compare(groupA,groupB) && AABBoverlap(AABBs[i], AABBs[j], 0)) {
                 collisionCandidates.push([i, j]);
                 collisionCandidates.push([j, i]);
             }
@@ -97,6 +99,17 @@ function getCollisionCandidates(bodies) {
     }
 
     return collisionCandidates;
+}
+
+function compare(groupA,groupB){
+    for(var i = 0; i < groupA.length;i++){
+        for(var j = 0; j < groupB.length;j++){
+            if(groupA[i] == groupB[j]){
+                return true;
+            }
+        }
+    }
+    return false;
 }
 
 // precompute face normals (once for each body),

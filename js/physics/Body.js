@@ -8,7 +8,7 @@ function Body(shape, material, dinamic, vLin, vAng) {
     this.vAng = vAng == undefined ? 0 : vAng; // angular (rotational) velocity
     this.forces = []; // array of forces...
     this.forcePoints = []; // ... and the vertex index of force application.
-
+    this.groups = ['A'];
     // undefined is center of mass.
 
     var rotMatTheta; // used to avoid unnecessary rotation matrix computations

@@ -179,7 +179,7 @@ $(document).ready(function () {
     });
 
     var menu = {
-        itens: ['quadrado', 'regular', 'circulo', 'cursor', 'eraser', 'move', 'convex'],
+        itens: ['quadrado', 'regular', 'circulo', 'cursor', 'eraser', 'move', 'convex','chain'],
         selected: 'cursor',
         drawing: false,
         shape: null,
@@ -217,7 +217,7 @@ $(document).ready(function () {
         return null;
     }
 
-    $("#quadrado,#circulo,#regular,#cursor,#eraser,#move,#convex").click(function () {
+    $("#quadrado,#circulo,#regular,#cursor,#eraser,#move,#convex,#chain").click(function () {
         menu.select($(this).attr('id'));
     });
 
@@ -295,7 +295,7 @@ $(document).ready(function () {
             }
             else if (menu.selected == 'move') {
                 var bodyB = findSelectedBody();
-                if (bodyB != null) {
+                if (bodyB != null && bodyB.dinamic) {
                     var shape = new Shape(menu.drawPoint);
                     shape.vertices[0] = [0, 0];
                     shape.center = menu.drawPoint;
@@ -403,16 +403,33 @@ $(document).ready(function () {
     $("#pause-btn").click(function () {
         game.pause();
     });
-    /*
-     var shape1 = new Rect([300, 300], 25, 25);
-     var bodyA = new Body(shape1, Material.Iron, true);
-     game.world.addBody(bodyA);
-     var shape2 = new Rect([300, 400], 100, 100);
-     var bodyB = new Body(shape2, Material.Iron, true);
 
-     game.world.addBody(bodyB);
-     var joint = new Joint(bodyA, 3, bodyB, 1);
-     game.world.addJoint(joint);*/
+     var shape1 = new Rect([300, 400], 400, 25);
+     var bodyA = new Body(shape1, Material.Iron, false);
+     game.world.addBody(bodyA);
+     bodyA.groups = ['A','B','C','D'];
+
+
+    var shape2 = new Rect([300, 348], 25, 80);
+    var bodyB = new Body(shape2, Material.Iron, false);
+    game.world.addBody(bodyB);
+    bodyB.groups = ['B'];
+
+    var shape3 = new Rect([300, 312], 250, 15);
+    var bodyC = new Body(shape3, Material.Iron, true);
+    game.world.addBody(bodyC);
+    bodyC.groups = ['C','A'];
+
+    var shape4 = new Rect([306, 350], 13, 20);
+    shape4.border.color = 'transparent';
+    shape4.color = 'transparent';
+    var bodyD = new Body(shape4, Material.Iron, false);
+    game.world.addBody(bodyD);
+    bodyD.groups = [];
+
+    var joint = new Joint(bodyD,1,bodyC,bodyC.center);
+    joint.type = 'center';
+    game.world.addJoint(joint);
 });
 </script>
 </head>
@@ -443,6 +460,7 @@ $(document).ready(function () {
                         </ul>
                         <ul class="nav nav-pills">
                             <li><a id="convex" class="fa fa-2x fa-pencil"></a></li>
+                            <li><a id="chain" class="fa fa-2x fa-chain"></a></li>
                         </ul>
                     </div>
                 </div>

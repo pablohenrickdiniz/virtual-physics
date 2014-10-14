@@ -156,9 +156,20 @@ var World = function () {
             //console.log(joint.bodyA.vLin);
             //console.log('MInv[i]--------------------');
             //console.log(MInv[i])
-            var pA = joint.bodyA.getVerticesInWorldCoords()[joint.vertexA];
+            if(joint.type == 'vertex'){
+                var pA = joint.bodyA.getVerticesInWorldCoords()[joint.vertexA];
+                var pB = joint.bodyB.getVerticesInWorldCoords()[joint.vertexB];
+            }
+            else if(joint.type = 'center'){
+                var pA = joint.bodyA.getVerticesInWorldCoords()[joint.vertexA];
+                var pB = joint.bodyB.center;
+            }
+            else if(joint.type == 'surface'){
+                var pA = joint.vertexA;
+                var pB = joint.vertexB;
+            }
+
             var cA = joint.bodyA.center;
-            var pB = joint.bodyB.getVerticesInWorldCoords()[joint.vertexB];
             var cB = joint.bodyB.center;
             //console.log('------------------------------');
             //console.log(pA);

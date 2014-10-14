@@ -6,4 +6,5 @@ function Joint(bodyA, vertexA, bodyB, vertexB) {
     this.vertexA = vertexA;
     this.bodyB = bodyB;
     this.vertexB = vertexB;
+    this.type = 'vertex';
 }
