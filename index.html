@@ -71,6 +71,9 @@ $(document).ready(function () {
             menu.drawPoint = null;
             menu.auxpoint = null;
             drawing.clearScreen();
+            if(!game.running){
+                game.canvas.drawWorld(game.world);
+            }
         }
     });
 
@@ -101,6 +104,9 @@ $(document).ready(function () {
 
     KeyReader.onkeydown(KeyReader.KEY_DEL, function () {
         game.world.removeBody(menu.selectedBody);
+        if(!game.running){
+            game.canvas.drawWorld(game.world);
+        }
     });
 
     $("#game").mousedown(function (event) {
@@ -225,6 +231,9 @@ $(document).ready(function () {
         }
         else if(menu.selectedBody != null){
             menu.selectedBody.shape.color = new Color(value);
+            if(!game.running){
+                game.canvas.drawWorld(game.world);
+            }
         }
     });
 
@@ -265,6 +274,9 @@ $(document).ready(function () {
                 if (body != null) {
                     game.world.removeBody(body);
                 }
+                if(!game.running){
+                    game.canvas.drawWorld(game.world);
+                }
             }
             else if (menu.selected == 'cursor') {
                 var body = findSelectedBody();
@@ -276,6 +288,9 @@ $(document).ready(function () {
                     document.getElementById("preenchimento").value = body.shape.color.toHEX();
                     document.getElementById("tipo").value = body.dinamic;
                     menu.selectedBody = body;
+                    if(!game.running){
+                        game.canvas.drawWorld(game.world);
+                    }
                 }
             }
             else if (menu.selected == 'move') {
@@ -300,6 +315,9 @@ $(document).ready(function () {
                     var body = new Body(menu.shape, Material.Iron, $("#tipo").val() == 'true');
                     game.world.addBody(body);
                     menu.drawPoint = null;
+                    if(!game.running){
+                        game.canvas.drawWorld(game.world);
+                    }
                     break;
                 case 'convex':
                     var x = (reader.x + game.canvas.min[0]) / game.canvas.scale;
@@ -322,6 +340,9 @@ $(document).ready(function () {
                     game.world.addBody(body);
                     menu.shape = null;
                     menu.drawPoint = null;
+                    if(!game.running){
+                        game.canvas.drawWorld(game.world);
+                    }
                     break;
             }
         }
