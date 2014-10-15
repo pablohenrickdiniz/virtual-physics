@@ -1,6 +1,6 @@
 var World = function () {
     this.dt = 1 / 60;
-    this.nIterations = 10;
+    this.nIterations = 4;
     this.beta = 0.2;
     this.bodies = [];
     this.t = 0;
@@ -40,8 +40,8 @@ var World = function () {
 
         /***** 3. correct velocity errors *****/
         applyJoints.apply(this);
-        move.apply(this);
         applyImpulses.apply(this);
+
         /***** 4. update positions *****/
         move.apply(this);
     };
@@ -156,15 +156,15 @@ var World = function () {
             //console.log(joint.bodyA.vLin);
             //console.log('MInv[i]--------------------');
             //console.log(MInv[i])
-            if(joint.type == 'vertex'){
+            if (joint.type == 'vertex') {
                 var pA = joint.bodyA.getVerticesInWorldCoords()[joint.vertexA];
                 var pB = joint.bodyB.getVerticesInWorldCoords()[joint.vertexB];
             }
-            else if(joint.type = 'center'){
+            else if (joint.type = 'center') {
                 var pA = joint.bodyA.getVerticesInWorldCoords()[joint.vertexA];
                 var pB = joint.bodyB.center;
             }
-            else if(joint.type == 'surface'){
+            else if (joint.type == 'surface') {
                 var pA = joint.vertexA;
                 var pB = joint.vertexB;
             }
@@ -241,6 +241,10 @@ var World = function () {
         var lambdaAccumulated = [];
         var Jn = [];
         var Jt = [];
+        /*
+         var MInv2 = [];
+         var bias2 = [];
+         var J = [];*/
 
         for (var i = 0; i < this.contacts.length; i++) {
             // assemble the inverse mass vector (usually a matrix,
@@ -313,7 +317,7 @@ var World = function () {
                 //console.log('bodyA.vLin(contacts)-----------------------------');
                 //console.log(bodyA.vLin);
                 // friction stuff
-                var lambdaFriction = -(MV.dot(Jt[j], v) /*+ *0 * bias1[j]*/) / MV.dot(Jt[j], MV.VxV(MInv[j], Jt[j]));
+                var lambdaFriction = -(MV.dot(Jt[j], v) /*+ bias1[j]*/) / MV.dot(Jt[j], MV.VxV(MInv[j], Jt[j]));
                 if (lambdaFriction > this.friction * lambda) {
                     lambdaFriction = this.friction * lambda;
                 } else if (lambdaFriction < -this.friction * lambda) {
@@ -324,6 +328,7 @@ var World = function () {
                 v = MV.VpV(v, MV.VxV(MInv[j], MV.SxV(lambdaFriction, Jt[j])));
                 //console.log('v(frictions)---------------------------------');
                 //console.log(v);
+
                 bodyA.vLin = v.slice(0, 2);
                 bodyA.vAng = v[2];
                 bodyB.vLin = v.slice(3, 5);

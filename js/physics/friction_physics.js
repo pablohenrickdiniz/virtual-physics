@@ -91,7 +91,7 @@ function getCollisionCandidates(bodies) {
         for (var j = i + 1; j < AABBs.length; j++) {
             var groupA = bodies[i].groups;
             var groupB = bodies[j].groups;
-            if (compare(groupA,groupB) && AABBoverlap(AABBs[i], AABBs[j], 0)) {
+            if (compare(groupA, groupB) && AABBoverlap(AABBs[i], AABBs[j], 0)) {
                 collisionCandidates.push([i, j]);
                 collisionCandidates.push([j, i]);
             }
@@ -101,10 +101,10 @@ function getCollisionCandidates(bodies) {
     return collisionCandidates;
 }
 
-function compare(groupA,groupB){
-    for(var i = 0; i < groupA.length;i++){
-        for(var j = 0; j < groupB.length;j++){
-            if(groupA[i] == groupB[j]){
+function compare(groupA, groupB) {
+    for (var i = 0; i < groupA.length; i++) {
+        for (var j = 0; j < groupB.length; j++) {
+            if (groupA[i] == groupB[j]) {
                 return true;
             }
         }
