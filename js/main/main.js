@@ -95,11 +95,12 @@ $(document).ready(function () {
             if (event.deltaY > 0 && game.canvas.scale < 20) {
                 game.canvas.scale += 0.1;
                 drawing.scale += 0.1;
-
+                game.quad.scale += 0.1;
             }
             else if (game.canvas.scale > 0.2) {
                 game.canvas.scale -= 0.1;
                 drawing.scale -= 0.1;
+                game.quad.scale -= 0.1;
             }
             if (!game.running) {
                 game.canvas.drawWorld(game.world);
@@ -123,6 +124,7 @@ $(document).ready(function () {
             var center = MV.VmV(cp, game.reader.vertex);
             game.canvas.move(center);
             drawing.move(center);
+            game.quad.move(center);
             if (!game.running) {
                 game.canvas.drawWorld(game.world);
             }

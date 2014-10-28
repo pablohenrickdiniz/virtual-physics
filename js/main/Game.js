@@ -29,6 +29,7 @@
 function Game() {
     this.world = new World();
     this.canvas = new Canvas('game');
+    this.quad = new Canvas('quad');
     this.running = false;
     this.readFrame = null;
     this.reader = CanvasMouseReader;
@@ -62,6 +63,7 @@ function Game() {
                 });
                 game.world.step();
                 game.canvas.drawWorld(game.world);
+                //game.quad.drawQuadTree(game.world.quadTree);
             }, game.dt * 1000);
         }
     };

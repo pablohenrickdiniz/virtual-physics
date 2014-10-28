@@ -10,6 +10,7 @@ var World = function () {
     this.width = 5000;
     this.height = 5000;
     this.joints = [];
+    this.quadTree = new QuadTree([0,0,this.width,this.height],1);
 
     this.step = function () {
         /***** 1. collision detection *****/
@@ -50,19 +51,27 @@ var World = function () {
     function move() {
         var remove = [];
         for (var i = 0; i < this.bodies.length; i++) {
-            var body = this.bodies[i];
-            body.center = MV.VpV(body.center, MV.SxV(this.dt, body.vLin));
-            body.shape.center = body.center;
-            body.shape.theta += this.dt * body.vAng;
-            var min = body.shape.min;
-            var max = body.shape.max;
-            var cs = body.center;
-            if (cs[0] - min[0] > this.width || cs[0] + max[0] < -(this.width) || cs[1] - min[1] > this.height || cs[1] + max[1] < -(this.height)) {
-                remove.push(body);
+            if(this.bodies[i].dinamic){
+                var body = this.bodies[i];
+                var nc = MV.VpV(body.center, MV.SxV(this.dt, body.vLin));
+                var r  = this.dt * body.vAng;;
+                body.center = nc;
+                body.shape.center = body.center;
+                body.shape.theta += r;
+                var min = body.shape.min;
+                var max = body.shape.max;
+                var cs = body.center;
+                if (cs[0] - min[0] > this.width || cs[0] + max[0] < -(this.width) || cs[1] - min[1] > this.height || cs[1] + max[1] < -(this.height)) {
+                    remove.push(body);
+                }
             }
         }
         for (var i = 0; i < remove.length; i++) {
-            this.removeBody(remove[i]);
+            this.removeBody(remove[i],true);
+        }
+        this.quadTree.clear();
+        for(var i = 0;  i < this.bodies.length;i++){
+            this.quadTree.addBody(this.bodies[i]);
         }
     }
 
@@ -72,12 +81,19 @@ var World = function () {
         }
 
         this.bodies.push(body);
+        this.quadTree.addBody(body);
+        body.index = this.bodies.length-1;
     };
 
-    this.removeBody = function (body) {
+    this.removeBody = function (body,quad) {
+        quad= quad==undefined?false:quad;
         for (var i = 0; i < this.bodies.length; i++) {
             if (this.bodies[i] == body) {
                 this.bodies.splice(i, 1);
+                this.quadTree.removeBody(body);
+                for(var j = i;j < this.bodies.length;j++){
+                    this.bodies[j].index = j;
+                }
                 break;
             }
         }
@@ -109,7 +125,7 @@ var World = function () {
         // pruned in the narrow phase. Note for an overlap of bodies A and B,
         // [Ai, Bi] and [Bi, Ai] are added to the result.
 
-        var collisionCandidates = getCollisionCandidates(this.bodies);
+        var collisionCandidates = getCollisionCandidates(this);
 
         computeFaceNormals(this.bodies, collisionCandidates);
 

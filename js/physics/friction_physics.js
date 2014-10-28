@@ -24,8 +24,7 @@
 
 
 function getAABB(body) {
-    //var verticesWorld = body.getVerticesInWorldCoords();
-    var verticesWorld = body.getVerticesInWorldCoords2();
+    var verticesWorld = body.getVerticesInWorldCoords();
     var AABB = [];
     AABB[0] = MV.min(verticesWorld, 0);
     AABB[1] = MV.min(verticesWorld, 1);
@@ -75,29 +74,24 @@ function getFaceNormals(vertices) {
     return normals;
 }
 
-function getCollisionCandidates(bodies) {
-    var AABBs = [];
-    // compute axis aligned bounding boxes for each body
-    for (var i = 0; i < bodies.length; i++) {
-
-        AABBs[i] = getAABB(bodies[i]);
-    }
-
-    // compare them against each other and store
-    // potential collisions in collisionCandidates
-
+function getCollisionCandidates(world) {
+    var AABBsGroups = world.quadTree.getAABBsGroups();
     var collisionCandidates = [];
-    for (var i = 0; i < AABBs.length - 1; i++) {
-        for (var j = i + 1; j < AABBs.length; j++) {
-            var groupA = bodies[i].groups;
-            var groupB = bodies[j].groups;
-            if (compare(groupA, groupB) && AABBoverlap(AABBs[i], AABBs[j], 0)) {
-                collisionCandidates.push([i, j]);
-                collisionCandidates.push([j, i]);
+    for(var g = 0; g < AABBsGroups.length;g++){
+        var bodies =  AABBsGroups[g][0];
+        var AABBs  = AABBsGroups[g][1];
+        for (var i = 0; i < AABBs.length - 1; i++) {
+            for (var j = i + 1; j < AABBs.length; j++) {
+                var groupA = bodies[i].groups;
+                var groupB = bodies[j].groups;
+                if (compare(groupA, groupB) && AABBoverlap(AABBs[i], AABBs[j], 0)) {
+                    collisionCandidates.push([bodies[i].index, bodies[j].index]);
+                    collisionCandidates.push([bodies[j].index, bodies[i].index]);
+                }
             }
         }
-    }
 
+    }
     return collisionCandidates;
 }
 
