@@ -77,11 +77,12 @@ function getFaceNormals(vertices) {
 function getCollisionCandidates(world) {
     var AABBsGroups = world.quadTree.getAABBsGroups();
     var collisionCandidates = [];
-    for(var g = 0; g < AABBsGroups.length;g++){
-        var bodies =  AABBsGroups[g][0];
-        var AABBs  = AABBsGroups[g][1];
+    for (var g = 0; g < AABBsGroups.length; g++) {
+        var bodies = AABBsGroups[g][0];
+        var AABBs = AABBsGroups[g][1];
         for (var i = 0; i < AABBs.length - 1; i++) {
             for (var j = i + 1; j < AABBs.length; j++) {
+
                 var groupA = bodies[i].groups;
                 var groupB = bodies[j].groups;
                 if (compare(groupA, groupB) && AABBoverlap(AABBs[i], AABBs[j], 0)) {
@@ -90,7 +91,6 @@ function getCollisionCandidates(world) {
                 }
             }
         }
-
     }
     return collisionCandidates;
 }

@@ -1,14 +1,3 @@
-if (Array.prototype.indexOf == undefined) {
-    Array.prototype.indexOf = function (obj) {
-        for (var index in this) {
-            if (this[index] === obj) {
-                return index;
-            }
-        }
-        return null;
-    }
-}
-
 
 function QuadTree(AABB, l) {
     this.AABB = AABB;
@@ -21,34 +10,34 @@ function QuadTree(AABB, l) {
     this.nodeD = null;
     this.qtd = 0;
 
-    this.clear = function(){
+    this.clear = function () {
         this.nodeA = null;
         this.nodeB = null;
         this.nodeC = null;
         this.nodeD = null;
-        this.bodies =[];
+        this.bodies = [];
         this.AABBs = [];
     };
 
     this.getAABBsGroups = function (AABBsGroups) {
         AABBsGroups = AABBsGroups == undefined ? [] : AABBsGroups;
-            if (this.bodies.length > 0 && this.qtd > 1) {
-                AABBsGroups.push([this.bodies, this.AABBs]);
+        if (this.bodies.length > 0 && this.qtd > 1) {
+            AABBsGroups.push([this.bodies, this.AABBs]);
+        }
+        else {
+            if (this.nodeA != null) {
+                this.nodeA.getAABBsGroups(AABBsGroups);
             }
-            else {
-                if (this.nodeA != null) {
-                    this.nodeA.getAABBsGroups(AABBsGroups);
-                }
-                if (this.nodeB != null) {
-                    this.nodeB.getAABBsGroups(AABBsGroups);
-                }
-                if (this.nodeC != null) {
-                    this.nodeC.getAABBsGroups(AABBsGroups);
-                }
-                if (this.nodeD != null) {
-                    this.nodeD.getAABBsGroups(AABBsGroups);
-                }
+            if (this.nodeB != null) {
+                this.nodeB.getAABBsGroups(AABBsGroups);
             }
+            if (this.nodeC != null) {
+                this.nodeC.getAABBsGroups(AABBsGroups);
+            }
+            if (this.nodeD != null) {
+                this.nodeD.getAABBsGroups(AABBsGroups);
+            }
+        }
 
         return AABBsGroups;
     };
@@ -57,7 +46,7 @@ function QuadTree(AABB, l) {
     this.addBody = function (body, AABB) {
         AABB = AABB == undefined ? getAABB(body) : AABB;
 
-        if (this.qtd <= 5 || this.l == 5) {
+        if (this.qtd <= 5 || this.l == 8) {
             this.bodies.push(body);
             this.AABBs.push(AABB);
         }
@@ -76,11 +65,11 @@ function QuadTree(AABB, l) {
 
     this.removeBody = function (body) {
         var removed = false;
-        if (this.bodies.length > 0) {
+        if (this.bodies.length > 0 && this.qtd > 0) {
             var index = this.bodies.indexOf(body);
-            if (index != null) {
-                this.bodies.splice(index,1);
-                this.AABB.splice(index,1);
+            if (index != -1) {
+                this.bodies.splice(index, 1);
+                this.AABBs.splice(index, 1);
                 removed = true;
             }
         }
@@ -119,7 +108,7 @@ function QuadTree(AABB, l) {
             }
         }
 
-        if(removed){
+        if (removed) {
             this.qtd--;
         }
         return removed;

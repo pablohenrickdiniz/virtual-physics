@@ -34,7 +34,6 @@ function Game() {
     this.readFrame = null;
     this.reader = CanvasMouseReader;
     var game = this;
-    this.cp = [0, 0];
 
     this.start = function () {
         this.reader.start();
@@ -63,7 +62,7 @@ function Game() {
                 });
                 game.world.step();
                 game.canvas.drawWorld(game.world);
-                //game.quad.drawQuadTree(game.world.quadTree);
+                game.quad.drawQuadTree(game.world.quadTree);
             }, game.dt * 1000);
         }
     };
