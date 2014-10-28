@@ -1,7 +1,7 @@
 Polygon.prototype = new Shape();
 
 function Polygon(center, theta) {
-    Shape.call(this, center, 'white', new Border('black', 1), theta);
+    Shape.call(this, center, new Color('White'), new Border('black', 1), theta);
     this.vertices = [];
     this.min = [];
     this.max = [];

@@ -34,6 +34,32 @@ function Canvas(canvas) {
         return [this.center[0] / this.scale, this.center[1] / this.scale];
     };
 
+    this.drawAABB = function(AABB){
+        this.context.fillStyle = 'transparent';
+        this.context.strokeRect(AABB[0]*this.scale,AABB[1]*this.scale,(AABB[2]-AABB[0])*this.scale,(AABB[3]-AABB[1])*this.scale);
+    };
+
+    this.drawQuadTree = function(quad,sub){
+        if(sub != true){
+            this.clearScreen();
+        }
+
+        this.drawAABB(quad.AABB);
+
+        if(quad.nodeA != null){
+            this.drawQuadTree(quad.nodeA,true);
+        }
+        if(quad.nodeB != null){
+            this.drawQuadTree(quad.nodeB,true);
+        }
+        if(quad.nodeC != null){
+            this.drawQuadTree(quad.nodeC,true);
+        }
+        if(quad.nodeD != null){
+            this.drawQuadTree(quad.nodeD,true);
+        }
+    };
+
     this.drawWorld = function (world) {
         this.clearScreen();
         for (var i = 0; i < world.bodies.length; i++) {
@@ -188,6 +214,7 @@ function Canvas(canvas) {
             this.context.fillStyle = this.fillColor(color);
         }
     };
+
 
     this.drawImage = function (image) {
         if (image instanceof Image) {

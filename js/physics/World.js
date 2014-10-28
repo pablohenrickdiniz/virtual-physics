@@ -1,15 +1,84 @@
+if (!Array.prototype.indexOf) {
+    Array.prototype.indexOf = function(searchElement, fromIndex) {
+
+        var k;
+
+        // 1. Let O be the result of calling ToObject passing
+        //    the this value as the argument.
+        if (this == null) {
+            throw new TypeError('"this" is null or not defined');
+        }
+
+        var O = Object(this);
+
+        // 2. Let lenValue be the result of calling the Get
+        //    internal method of O with the argument "length".
+        // 3. Let len be ToUint32(lenValue).
+        var len = O.length >>> 0;
+
+        // 4. If len is 0, return -1.
+        if (len === 0) {
+            return -1;
+        }
+
+        // 5. If argument fromIndex was passed let n be
+        //    ToInteger(fromIndex); else let n be 0.
+        var n = +fromIndex || 0;
+
+        if (Math.abs(n) === Infinity) {
+            n = 0;
+        }
+
+        // 6. If n >= len, return -1.
+        if (n >= len) {
+            return -1;
+        }
+
+        // 7. If n >= 0, then Let k be n.
+        // 8. Else, n<0, Let k be len - abs(n).
+        //    If k is less than 0, then let k be 0.
+        k = Math.max(n >= 0 ? n : len - Math.abs(n), 0);
+
+        // 9. Repeat, while k < len
+        while (k < len) {
+            var kValue;
+            // a. Let Pk be ToString(k).
+            //   This is implicit for LHS operands of the in operator
+            // b. Let kPresent be the result of calling the
+            //    HasProperty internal method of O with argument Pk.
+            //   This step can be combined with c
+            // c. If kPresent is true, then
+            //    i.  Let elementK be the result of calling the Get
+            //        internal method of O with the argument ToString(k).
+            //   ii.  Let same be the result of applying the
+            //        Strict Equality Comparison Algorithm to
+            //        searchElement and elementK.
+            //  iii.  If same is true, return k.
+            if (k in O && O[k] === searchElement) {
+                return k;
+            }
+            k++;
+        }
+        return -1;
+    };
+}
+
+
+
 var World = function () {
     this.dt = 1 / 60;
-    this.nIterations = 10;
+    this.nIterations = 20;
     this.beta = 0.2;
     this.bodies = [];
     this.t = 0;
-    this.friction = 1;
+    this.friction = 0.5;
     this.contacts = [];
-    this.gravity = 98.1;
+    this.gravity = 200;
     this.width = 5000;
     this.height = 5000;
     this.joints = [];
+    this.quadTree = new QuadTree([0, 0, this.width, this.height], 1);
+    this.removes = [];
 
     this.step = function () {
         /***** 1. collision detection *****/
@@ -40,29 +109,33 @@ var World = function () {
 
         /***** 3. correct velocity errors *****/
         applyJoints.apply(this);
-        move.apply(this);
         applyImpulses.apply(this);
+
         /***** 4. update positions *****/
         move.apply(this);
     };
 
 
     function move() {
-        var remove = [];
-        for (var i = 0; i < this.bodies.length; i++) {
-            var body = this.bodies[i];
-            body.center = MV.VpV(body.center, MV.SxV(this.dt, body.vLin));
-            body.shape.center = body.center;
-            body.shape.theta += this.dt * body.vAng;
-            var min = body.shape.min;
-            var max = body.shape.max;
-            var cs = body.center;
-            if (cs[0] - min[0] > this.width || cs[0] + max[0] < -(this.width) || cs[1] - min[1] > this.height || cs[1] + max[1] < -(this.height)) {
-                remove.push(body);
+        this.quadTree.clear();
+        while(this.removes.length > 0){
+            var body = this.removes.pop();
+            var index = this.bodies.indexOf(body);
+            if(index != -1){
+                this.bodies.splice(index,1);
             }
         }
-        for (var i = 0; i < remove.length; i++) {
-            this.removeBody(remove[i]);
+        for (var i = 0; i < this.bodies.length; i++) {
+            this.bodies[i].index = i;
+            if (this.bodies[i].dinamic) {
+                var body = this.bodies[i];
+                var nc = MV.VpV(body.center, MV.SxV(this.dt, body.vLin));
+                var r = this.dt * body.vAng;
+                body.center = nc;
+                body.shape.center = body.center;
+                body.shape.theta += r;
+            }
+            this.quadTree.addBody(this.bodies[i]);
         }
     }
 
@@ -72,15 +145,12 @@ var World = function () {
         }
 
         this.bodies.push(body);
+        this.quadTree.addBody(body);
+        body.index = this.bodies.length - 1;
     };
 
     this.removeBody = function (body) {
-        for (var i = 0; i < this.bodies.length; i++) {
-            if (this.bodies[i] == body) {
-                this.bodies.splice(i, 1);
-                break;
-            }
-        }
+        this.removes.push(body);
     };
 
     this.addJoint = function (joint) {
@@ -109,7 +179,7 @@ var World = function () {
         // pruned in the narrow phase. Note for an overlap of bodies A and B,
         // [Ai, Bi] and [Bi, Ai] are added to the result.
 
-        var collisionCandidates = getCollisionCandidates(this.bodies);
+        var collisionCandidates = getCollisionCandidates(this);
 
         computeFaceNormals(this.bodies, collisionCandidates);
 
@@ -156,15 +226,15 @@ var World = function () {
             //console.log(joint.bodyA.vLin);
             //console.log('MInv[i]--------------------');
             //console.log(MInv[i])
-            if(joint.type == 'vertex'){
+            if (joint.type == 'vertex') {
                 var pA = joint.bodyA.getVerticesInWorldCoords()[joint.vertexA];
                 var pB = joint.bodyB.getVerticesInWorldCoords()[joint.vertexB];
             }
-            else if(joint.type = 'center'){
+            else if (joint.type = 'center') {
                 var pA = joint.bodyA.getVerticesInWorldCoords()[joint.vertexA];
                 var pB = joint.bodyB.center;
             }
-            else if(joint.type == 'surface'){
+            else if (joint.type == 'surface') {
                 var pA = joint.vertexA;
                 var pB = joint.vertexB;
             }
@@ -241,6 +311,10 @@ var World = function () {
         var lambdaAccumulated = [];
         var Jn = [];
         var Jt = [];
+        /*
+         var MInv2 = [];
+         var bias2 = [];
+         var J = [];*/
 
         for (var i = 0; i < this.contacts.length; i++) {
             // assemble the inverse mass vector (usually a matrix,
@@ -313,7 +387,7 @@ var World = function () {
                 //console.log('bodyA.vLin(contacts)-----------------------------');
                 //console.log(bodyA.vLin);
                 // friction stuff
-                var lambdaFriction = -(MV.dot(Jt[j], v) /*+ *0 * bias1[j]*/) / MV.dot(Jt[j], MV.VxV(MInv[j], Jt[j]));
+                var lambdaFriction = -(MV.dot(Jt[j], v) /*+ bias1[j]*/) / MV.dot(Jt[j], MV.VxV(MInv[j], Jt[j]));
                 if (lambdaFriction > this.friction * lambda) {
                     lambdaFriction = this.friction * lambda;
                 } else if (lambdaFriction < -this.friction * lambda) {
@@ -324,6 +398,7 @@ var World = function () {
                 v = MV.VpV(v, MV.VxV(MInv[j], MV.SxV(lambdaFriction, Jt[j])));
                 //console.log('v(frictions)---------------------------------');
                 //console.log(v);
+
                 bodyA.vLin = v.slice(0, 2);
                 bodyA.vAng = v[2];
                 bodyB.vLin = v.slice(3, 5);

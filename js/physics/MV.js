@@ -33,6 +33,11 @@ var MV = {
             return xElem * y[i];
         });
     },
+    VdV: function (x, y) { //element-wise division
+        return x.map(function (xElem, i) {
+            return xElem / y[i];
+        });
+    },
     VpV: function (x, y) { //element-wise addition
         return x.map(function (xElem, i) {
             return xElem + y[i];
