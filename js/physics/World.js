@@ -1,5 +1,5 @@
 if (!Array.prototype.indexOf) {
-    Array.prototype.indexOf = function(searchElement, fromIndex) {
+    Array.prototype.indexOf = function (searchElement, fromIndex) {
 
         var k;
 
@@ -64,7 +64,6 @@ if (!Array.prototype.indexOf) {
 }
 
 
-
 var World = function () {
     this.dt = 1 / 60;
     this.nIterations = 20;
@@ -118,25 +117,35 @@ var World = function () {
 
     function move() {
         this.quadTree.clear();
-        while(this.removes.length > 0){
-            var body = this.removes.pop();
-            var index = this.bodies.indexOf(body);
-            if(index != -1){
-                this.bodies.splice(index,1);
+        var world = this;
+        this.removes.forEach(function(body){
+            var index = world.bodies.indexOf(body);
+            if (index != -1) {
+                world.bodies.splice(index, 1);
             }
-        }
-        for (var i = 0; i < this.bodies.length; i++) {
-            this.bodies[i].index = i;
-            if (this.bodies[i].dinamic) {
-                var body = this.bodies[i];
-                var nc = MV.VpV(body.center, MV.SxV(this.dt, body.vLin));
-                var r = this.dt * body.vAng;
+        });
+        this.removes = [];
+
+        this.bodies.forEach(function(body,index,array){
+            body.index = index;
+            var valid = true;
+            if (body.dinamic) {
+                var nc = MV.VpV(body.center, MV.SxV(world.dt, body.vLin));
+                var r = world.dt * body.vAng;
                 body.center = nc;
                 body.shape.center = body.center;
                 body.shape.theta += r;
+
+                var AABB = getAABB(body);
+                if (!AABBoverlap(AABB, world.quadTree.AABB, 0)) {
+                    array.splice(index, 1);
+                    valid = false;
+                }
             }
-            this.quadTree.addBody(this.bodies[i]);
-        }
+            if (valid) {
+                world.quadTree.addBody(body);
+            }
+        });
     }
 
     this.addBody = function (body) {
@@ -164,6 +173,7 @@ var World = function () {
                 break;
             }
         }
+
     };
 
     this.setFriction = function (friction) {

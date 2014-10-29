@@ -35,7 +35,7 @@ function getAABB(body) {
 }
 
 function AABBoverlap(b1, b2, threshold) {
-    if (threshold === undefined){
+    if (threshold === undefined) {
         threshold = 0;
     }
 
@@ -163,8 +163,8 @@ function getContactsFromBodyPair(bodyA, bodyB) {
         }
         // if any distance is >= 0, then point pAcur of body A is not in body B
         if (distances.some(function (d) {
-            return d >= 0;
-        })) {
+                return d >= 0;
+            })) {
             continue;
         }
         // now determine the right collision face. I define it as the one
