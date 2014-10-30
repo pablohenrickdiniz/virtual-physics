@@ -72,21 +72,11 @@ function Body(shape, material, dinamic, vLin, vAng) {
     this.getVerticesInWorldCoords = function () {
         var vertsAbsolute = [];
         var rotationMatrix = this.getRotationMatrix();
-        for (var i = 0; i < this.shape.vertices.length; i++) {
-            vertsAbsolute.push(MV.VpV(this.shape.center,
-                MV.MxV(rotationMatrix, this.shape.vertices[i])));
-        }
-        return vertsAbsolute;
-    };
+        var shape = this.shape;
+        this.shape.vertices.forEach(function(vertice){
+            vertsAbsolute.push(MV.VpV(shape.center, MV.MxV(rotationMatrix, vertice)));
+        });
 
-    this.getVerticesInWorldCoords2 = function () {
-        var vertsAbsolute = [];
-        var rotationMatrix = this.getRotationMatrix();
-        var vertices = [this.shape.min[0], this.shape.min[1], this.shape.max[0], this.shape.max[1]];
-        for (var i = 0; i < vertices.length; i++) {
-            vertsAbsolute.push(MV.VpV(this.shape.center,
-                MV.MxV(rotationMatrix, vertices[i])));
-        }
         return vertsAbsolute;
     };
 

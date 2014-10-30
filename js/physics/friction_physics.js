@@ -22,7 +22,6 @@
  *THE SOFTWARE.
  */
 
-
 function getAABB(body) {
     var verticesWorld = body.getVerticesInWorldCoords();
     var AABB = [];
@@ -158,32 +157,26 @@ function getContactsFromBodyPair(bodyA, bodyB) {
     var distances = [];
     var normals = bodyB.faceNormals;
     // test for each point of body A whether it lies inside body B
-    for (var i = 0; i < pAs.length; i++) {
-        var pA = pAs[i];
-        // compute distance of pAcur from each face of B. negative means inward
-        for (var k = 0; k < pBs.length; k++) {
-            //console.log(pA);
+
+    pAs.forEach(function(pA){
+        pBs.forEach(function(pB,k){
             distances[k] = MV.dot(normals[k], MV.VmV(pA, pBs[k]));
-        }
-        // if any distance is >= 0, then point pAcur of body A is not in body B
+        });
         if (distances.some(function (d) {
                 return d >= 0;
             })) {
-            continue;
+            return;
         }
-        // now determine the right collision face. I define it as the one
-        // that intersects with the line pA -> (body A center)
-        // if none is found (shouldn't happen), take the closest surface
         var collisionFace = MV.minIndex(distances);
-        for (var k = 0; k < pBs.length; k++) {
-            if (linesIntersect(pA, bodyA.shape.center, pBs[k], pBs[(k + 1) % pBs.length])) {
+        pBs.forEach(function(pB,k){
+            if (linesIntersect(pA, bodyA.shape.center, pB, pBs[(k + 1) % pBs.length])) {
                 collisionFace = k;
             }
-        }
-        //console.log(normals[collisionFace]);
+        });
         var pB = MV.VmV(pA, MV.SxV(distances[collisionFace], normals[collisionFace]));
         contacts.push(new Contact(bodyA, pA, bodyB, pB, normals[collisionFace]));
-    }
+    });
+
     return contacts;
 }
 

@@ -13,9 +13,9 @@ function Polygon(center, theta) {
         else {
             this.center = MV.rotate(this.center, theta, origin);
         }
-        for (var i = 0; i < this.vertices.length; i++) {
-            this.vertices[i] = MV.rotate(this.vertices[i], theta, origin);
-        }
+        this.vertices.forEach(function(vertice,index,array){
+            array[index] = MV.rotate(vertice, theta, origin);
+        });
     };
 
     this.updateCenter = function () {

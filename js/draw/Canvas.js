@@ -11,8 +11,6 @@ function Canvas(canvas) {
     this.height = MV.toInt($("#" + canvas).css('height'));
     this.context = $("#" + canvas).get(0).getContext('2d');
     this.scale = 1;
-    this.frameWidth = this.width;
-    this.frameHeight = this.height;
     this.center = [this.width / 2, this.height / 2];
     this.min = [0, 0];
 
@@ -28,10 +26,6 @@ function Canvas(canvas) {
         else if (shape instanceof Polygon) {
             this.drawPolygon(shape);
         }
-    };
-
-    this.getCenter = function () {
-        return [this.center[0] / this.scale, this.center[1] / this.scale];
     };
 
     this.drawAABB = function(AABB){
@@ -55,9 +49,10 @@ function Canvas(canvas) {
 
     this.drawWorld = function (world) {
         this.clearScreen();
-        for (var i = 0; i < world.bodies.length; i++) {
-            this.drawShape(world.bodies[i]);
-        }
+        var canvas = this;
+        world.bodies.forEach(function(body){
+            canvas.drawShape(body);
+        });
     };
 
     this.drawCircle = function (circle) {
@@ -80,15 +75,16 @@ function Canvas(canvas) {
     };
 
     this.drawPolygon = function (polygon) {
+        var canvas = this;
         var center = polygon.center;
         this.context.save();
         this.context.translate(center[0] * this.scale, center[1] * this.scale);
         this.context.rotate(polygon.theta);
         this.context.beginPath();
         this.context.moveTo(polygon.vertices[0][0] * this.scale, polygon.vertices[0][1] * this.scale);
-        for (var i = 1; i < polygon.vertices.length; i++) {
-            this.context.lineTo(polygon.vertices[i][0] * this.scale, polygon.vertices[i][1] * this.scale);
-        }
+        polygon.vertices.forEach(function(vertice){
+            canvas.context.lineTo(vertice[0] * canvas.scale, vertice[1] * canvas.scale);
+        });
         this.context.closePath();
         this.fillShape(polygon);
         this.context.fill();
@@ -97,6 +93,7 @@ function Canvas(canvas) {
         this.context.restore();
     };
     this.drawBody = function (body) {
+        var canvas = this;
         var polygon = body.shape;
         var center = body.center;
         this.context.save();
@@ -104,9 +101,9 @@ function Canvas(canvas) {
         this.context.rotate(polygon.theta);
         this.context.beginPath();
         this.context.moveTo(polygon.vertices[0][0] * this.scale, polygon.vertices[0][1] * this.scale);
-        for (var i = 1; i < polygon.vertices.length; i++) {
-            this.context.lineTo(polygon.vertices[i][0] * this.scale, polygon.vertices[i][1] * this.scale);
-        }
+        polygon.vertices.forEach(function(vertice){
+            canvas.context.lineTo(vertice[0] * canvas.scale, vertice[1] * canvas.scale);
+        });
         this.context.closePath();
         this.fillShape(polygon);
         this.context.fill();
@@ -219,7 +216,6 @@ function Canvas(canvas) {
                 var sy = image.sy;
                 var x = image.x;
                 var y = image.y;
-                console.log(" w: " + w + "\n h:" + h + "\n x:" + x + "\n y:" + y);
                 this.context.drawImage(img, sx, sy, w, h, x, y, w, h);
                 return true;
             }

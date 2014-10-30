@@ -30,12 +30,11 @@ function QuadTree(AABB, l) {
     this.addBody = function (body, AABB) {
         AABB = AABB == undefined ? getAABB(body) : AABB;
 
-        if (this.qtd <= 10 || this.l == 5) {
+        if (this.qtd <= 5 || this.l == 5) {
             this.bodies.push(body);
             this.AABBs.push(AABB);
         }
         else {
-            console.log(this);
             if(this.nodes[0] == undefined){
                 this.split();
             }
@@ -95,11 +94,15 @@ function QuadTree(AABB, l) {
         var y0 = this.AABB[1];
         var x1 = this.AABB[2];
         var y1 = this.AABB[3];
-
-        this.nodes[0] = new QuadTree([x0, y0, x0 + ((x1 - x0) / 2), y0 + ((y1 - y0) / 2)], this.l + 1);
-        this.nodes[1] = new QuadTree([x0 + ((x1 - x0) / 2), y0, x1, y0 + ((y1 - y0) / 2)], this.l + 1);
-        this.nodes[2] = new QuadTree([x0 + ((x1 - x0) / 2), y0 + ((y1 - y0) / 2), x1, y1], this.l + 1);
-        this.nodes[3] = new QuadTree([x0, y0 + ((y1 - y0) / 2), x0 + ((x1 - x0) / 2), y1], this.l + 1);
+        var w = (x1 - x0) / 2;
+        var h = (y1 - y0) / 2;
+        var xw = x0 + w;
+        var yh = y0 + h;
+        var l = this.l+1;
+        this.nodes[0] = new QuadTree([x0, y0, xw, yh], l);
+        this.nodes[1] = new QuadTree([xw, y0, x1, yh], l);
+        this.nodes[2] = new QuadTree([xw, yh, x1, y1], l);
+        this.nodes[3] = new QuadTree([x0, yh, xw, y1], l);
     };
 }
 

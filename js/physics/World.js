@@ -213,17 +213,12 @@ var World = function () {
             // but a diagonal one, so I can replace it with a vector
             var joint = this.joints[i];
 
-
             MInv[i] = [joint.bodyB.mInv,
                 joint.bodyB.mInv]
                 .concat(joint.bodyB.moiInv)
                 .concat([joint.bodyA.mInv,
                     joint.bodyA.mInv])
                 .concat(joint.bodyA.moiInv);
-            //console.log('joint.bodyA.vLin-----------------');
-            //console.log(joint.bodyA.vLin);
-            //console.log('MInv[i]--------------------');
-            //console.log(MInv[i])
             if (joint.type == 'vertex') {
                 var pA = joint.bodyA.getVerticesInWorldCoords()[joint.vertexA];
                 var pB = joint.bodyB.getVerticesInWorldCoords()[joint.vertexB];
@@ -236,25 +231,15 @@ var World = function () {
                 var pA = joint.vertexA;
                 var pB = joint.vertexB;
             }
-
             var cA = joint.bodyA.center;
             var cB = joint.bodyB.center;
-            //console.log('------------------------------');
-            //console.log(pA);
-            //console.log(pB);
             // compute the Jacobians (they don't change in the iterations)
             J[i] = MV.SxV(2, MV.VmV(pB, pA)
                 .concat(MV.cross2(MV.VmV(pA, pB), MV.VmV(pB, cB)))
                 .concat(MV.VmV(pA, pB))
                 .concat(MV.cross2(MV.VmV(pB, pA), MV.VmV(pA, cA))));
             var C = MV.dot(MV.VmV(pA, pB), MV.VmV(pA, pB));
-            //console.log('J[i]------------------');
-            //console.log(J[i]);
-            //console.log('C--------------')
-            //console.log(C)
-            //console.log('bias[i]------------');
             bias2[i] = this.beta / this.dt * C;
-            //console.log(bias2[i]);
         }
 
         for (var i = 0; i < this.nIterations; i++) {
@@ -265,32 +250,10 @@ var World = function () {
                     .concat(bodyB.vAng)
                     .concat(bodyA.vLin)
                     .concat(bodyA.vAng);
-                //console.log('bodyB.vLin---------------------------');
-                //console.log(bodyB.vLin);
-                //console.log('bodyB.vAng----------------------------');
-                //console.log(bodyB.vAng);
-                //console.log('bodyA.vLin-----------------------------');
-                //console.log(bodyA.vLin);
-                //console.log('bodyA.vAng-----------------------------');
-                //console.log(bodyA.vAng);
-                //console.log('v-----------------------');
-                //console.log(v);
                 var lambdaDenominator = MV.dot(J[j], MV.VxV(MInv[j], J[j]))
-                //console.log('lambdaDenominator---------------');
-                //console.log(lambdaDenominator);
                 if (Math.abs(lambdaDenominator) <= 1e-15) continue;
-                //console.log('J[j]-------------------------------');
-                //console.log(J[j]);
-                // console.log('bias[j]------------------------------');
-                //console.log(bias2[j]);
                 var lambda = -(MV.dot(J[j], v) + bias2[j]) / lambdaDenominator;
-                //console.log('MV.dot(J[j], v)------------------------');
-                //console.log(MV.dot(J[j], v));
-                //console.log('lambda------------------------');
-                //console.log(lambda)
                 v = MV.VpV(v, MV.VxV(MInv[j], MV.SxV(lambda, J[j])));
-                //console.log('v---------------');
-                //console.log(v);
                 bodyB.vLin = v.slice(0, 2);
                 bodyB.vAng = v[2];
                 bodyA.vLin = v.slice(3, 5);
@@ -321,11 +284,9 @@ var World = function () {
                 .concat([contact.bodyB.mInv,
                     contact.bodyB.mInv])
                 .concat(contact.bodyB.moiInv);
-            //console.log('contact.bodyA.vLin-------------------');
-            //console.log(contact.bodyA.vLin);
+
             // compute the Jacobians (they don't change in the iterations)
             var Jn_vLinA = contact.normal;
-            //console.log(contact.normal);
             var Jn_vAngA = MV.cross2(MV.VmV(contact.pA, contact.bodyA.center), contact.normal);
             var Jn_vLinB = MV.SxV(-1, contact.normal);
             var Jn_vAngB = -MV.cross2(MV.VmV(contact.pB, contact.bodyB.center), contact.normal);
@@ -362,11 +323,7 @@ var World = function () {
                     .concat(bodyA.vAng)
                     .concat(bodyB.vLin)
                     .concat(bodyB.vAng);
-                //console.log('v(contacts)-------------------------');
-                //console.log(v);
                 var lambda = -(MV.dot(Jn[j], v) + bias1[j]) / MV.dot(Jn[j], MV.VxV(MInv[j], Jn[j]));
-                //console.log('lambda(contacts)----------------------------------')
-                //console.log(lambda);
                 // clamp accumulated impulse to 0
                 if (lambdaAccumulated[j] + lambda < 0) {
                     lambda = -lambdaAccumulated[j];
@@ -379,8 +336,6 @@ var World = function () {
                 bodyA.vAng = v[2];
                 bodyB.vLin = v.slice(3, 5);
                 bodyB.vAng = v[5];
-                //console.log('bodyA.vLin(contacts)-----------------------------');
-                //console.log(bodyA.vLin);
                 // friction stuff
                 var lambdaFriction = -(MV.dot(Jt[j], v) /*+ bias1[j]*/) / MV.dot(Jt[j], MV.VxV(MInv[j], Jt[j]));
                 if (lambdaFriction > this.friction * lambda) {
@@ -388,18 +343,11 @@ var World = function () {
                 } else if (lambdaFriction < -this.friction * lambda) {
                     lambdaFriction = -this.friction * lambda;
                 }
-                //console.log('lambdaFriction-----------------------------');
-                //console.log(lambdaFriction);
                 v = MV.VpV(v, MV.VxV(MInv[j], MV.SxV(lambdaFriction, Jt[j])));
-                //console.log('v(frictions)---------------------------------');
-                //console.log(v);
-
                 bodyA.vLin = v.slice(0, 2);
                 bodyA.vAng = v[2];
                 bodyB.vLin = v.slice(3, 5);
                 bodyB.vAng = v[5];
-                //console.log('bodyA.vLin(friction)-------------------------');
-                //console.log(bodyA.vLin);
             }
         }
     }
