@@ -45,19 +45,12 @@ function Canvas(canvas) {
         }
 
         this.drawAABB(quad.AABB);
-
-        if(quad.nodeA != null){
-            this.drawQuadTree(quad.nodeA,true);
-        }
-        if(quad.nodeB != null){
-            this.drawQuadTree(quad.nodeB,true);
-        }
-        if(quad.nodeC != null){
-            this.drawQuadTree(quad.nodeC,true);
-        }
-        if(quad.nodeD != null){
-            this.drawQuadTree(quad.nodeD,true);
-        }
+        var canvas = this;
+        quad.nodes.forEach(function(node){
+            if(node != null){
+                canvas.drawQuadTree(node,true);
+            }
+        });
     };
 
     this.drawWorld = function (world) {

@@ -3,17 +3,12 @@ function QuadTree(AABB, l) {
     this.l = l;
     this.bodies = [];
     this.AABBs = [];
-    this.nodeA = null;
-    this.nodeB = null;
-    this.nodeC = null;
-    this.nodeD = null;
+    this.nodes = [];
     this.qtd = 0;
 
     this.clear = function () {
-        this.nodeA = null;
-        this.nodeB = null;
-        this.nodeC = null;
-        this.nodeD = null;
+        this.qtd = 0;
+        this.nodes = [];
         this.bodies = [];
         this.AABBs = [];
     };
@@ -24,20 +19,10 @@ function QuadTree(AABB, l) {
             AABBsGroups.push([this.bodies, this.AABBs]);
         }
         else {
-            if (this.nodeA != null) {
-                this.nodeA.getAABBsGroups(AABBsGroups);
-            }
-            if (this.nodeB != null) {
-                this.nodeB.getAABBsGroups(AABBsGroups);
-            }
-            if (this.nodeC != null) {
-                this.nodeC.getAABBsGroups(AABBsGroups);
-            }
-            if (this.nodeD != null) {
-                this.nodeD.getAABBsGroups(AABBsGroups);
-            }
+            this.nodes.forEach(function(node){
+                node.getAABBsGroups(AABBsGroups);
+            });
         }
-
         return AABBsGroups;
     };
 
@@ -50,15 +35,19 @@ function QuadTree(AABB, l) {
             this.AABBs.push(AABB);
         }
         else {
+            console.log(this);
+            if(this.nodes[0] == undefined){
+                this.split();
+            }
             if (this.bodies.length > 0) {
                 var quad = this;
-                this.bodies.map(function(elem,index){
-                    quad.processInsert(elem,quad.AABBs[index]);
+                this.bodies.forEach(function(elem,index){
+                    quad.insert(elem,quad.AABBs[index]);
                 });
                 this.bodies = [];
                 this.AABBs = [];
             }
-            this.processInsert(body, AABB);
+            this.insert(body, AABB);
         }
         this.qtd++;
     };
@@ -73,104 +62,44 @@ function QuadTree(AABB, l) {
                 removed = true;
             }
         }
-        else {
-            if (this.nodeA != null) {
-                if (this.nodeA.removeBody(body)) {
-                    removed = true;
-                    if (this.nodeA.qtd == 0) {
-                        this.nodeA = null;
-                    }
-                }
-            }
-            if (this.nodeB != null) {
-                if (this.nodeB.removeBody(body)) {
-                    removed = true;
-                    if (this.nodeB.qtd == 0) {
-                        this.nodeB = null;
-                    }
-                }
-            }
-            if (this.nodeC != null) {
-                if (this.nodeC.removeBody(body)) {
-                    removed = true;
-                    if (this.nodeC.qtd == 0) {
-                        this.nodeC = null;
-                    }
-                }
-            }
-            if (this.nodeD != null) {
-                if (this.nodeD.removeBody(body)) {
-                    removed = true;
-                    if (this.nodeD.qtd == 0) {
-                        this.nodeD = null;
-                    }
-                }
+        else{
+            var count = 0;
+            this.nodes.forEach(function(node){
+               if(node != null  && node.removeBody(body)){
+                   removed = true;
+                   if (node.qtd == 0) {
+                       count++;
+                   }
+               }
+            });
+            if(count == 4){
+                this.nodes = [];
             }
         }
-
         if (removed) {
             this.qtd--;
         }
         return removed;
     };
 
-    this.processInsert = function (body, AABB) {
-        if (AABBoverlap(this.getNodeA().AABB, AABB, 0)) {
-            this.getNodeA().addBody(body, AABB);
-        }
-        if (AABBoverlap(this.getNodeB().AABB, AABB, 0)) {
-            this.getNodeB().addBody(body, AABB);
-        }
-        if (AABBoverlap(this.getNodeC().AABB, AABB, 0)) {
-            this.getNodeC().addBody(body, AABB);
-        }
-        if (AABBoverlap(this.getNodeD().AABB, AABB, 0)) {
-            this.getNodeD().addBody(body, AABB);
-        }
+    this.insert = function (body, AABB) {
+        this.nodes.forEach(function(node){
+            if (AABBoverlap(node.AABB, AABB, 0)) {
+                node.addBody(body, AABB);
+            }
+        });
     };
 
-    this.getNodeA = function () {
-        if (this.nodeA == null) {
-            var x0 = this.AABB[0];
-            var y0 = this.AABB[1];
-            var x1 = this.AABB[2];
-            var y1 = this.AABB[3];
-            this.nodeA = new QuadTree([x0, y0, x0 + ((x1 - x0) / 2), y0 + ((y1 - y0) / 2)], this.l + 1);
-        }
-        return this.nodeA;
-    };
+    this.split = function(){
+        var x0 = this.AABB[0];
+        var y0 = this.AABB[1];
+        var x1 = this.AABB[2];
+        var y1 = this.AABB[3];
 
-    this.getNodeB = function () {
-        if (this.nodeB == null){
-            var x0 = this.AABB[0];
-            var y0 = this.AABB[1];
-            var x1 = this.AABB[2];
-            var y1 = this.AABB[3];
-            this.nodeB = new QuadTree([x0 + ((x1 - x0) / 2), y0, x1, y0 + ((y1 - y0) / 2)], this.l + 1);
-        }
-        return this.nodeB;
-    };
-
-    this.getNodeC = function () {
-        if (this.nodeC == null) {
-            var x0 = this.AABB[0];
-            var y0 = this.AABB[1];
-            var x1 = this.AABB[2];
-            var y1 = this.AABB[3];
-            this.nodeC = new QuadTree([x0 + ((x1 - x0) / 2), y0 + ((y1 - y0) / 2), x1, y1], this.l + 1);
-        }
-        return this.nodeC;
-    };
-
-    this.getNodeD = function () {
-        if (this.nodeD == null) {
-            var x0 = this.AABB[0];
-            var y0 = this.AABB[1];
-            var x1 = this.AABB[2];
-            var y1 = this.AABB[3];
-            this.nodeD = new QuadTree([x0, y0 + ((y1 - y0) / 2), x0 + ((x1 - x0) / 2), y1], this.l + 1);
-        }
-        return this.nodeD;
+        this.nodes[0] = new QuadTree([x0, y0, x0 + ((x1 - x0) / 2), y0 + ((y1 - y0) / 2)], this.l + 1);
+        this.nodes[1] = new QuadTree([x0 + ((x1 - x0) / 2), y0, x1, y0 + ((y1 - y0) / 2)], this.l + 1);
+        this.nodes[2] = new QuadTree([x0 + ((x1 - x0) / 2), y0 + ((y1 - y0) / 2), x1, y1], this.l + 1);
+        this.nodes[3] = new QuadTree([x0, y0 + ((y1 - y0) / 2), x0 + ((x1 - x0) / 2), y1], this.l + 1);
     };
 }
 

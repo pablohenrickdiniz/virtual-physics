@@ -84,6 +84,7 @@ var World = function () {
         computeContacts.apply(this); // call private function computeContacts but give it the right this
 
         /***** 2. integrate forces/torques and compute tentative velocities *****/
+
         for (var i = 0; i < this.bodies.length; i++) {
             var mInv = this.bodies[i].mInv;
             var stat = !this.bodies[i].dinamic;
