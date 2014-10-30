@@ -84,28 +84,25 @@ var World = function () {
         computeContacts.apply(this); // call private function computeContacts but give it the right this
 
         /***** 2. integrate forces/torques and compute tentative velocities *****/
-
-        for (var i = 0; i < this.bodies.length; i++) {
-            var mInv = this.bodies[i].mInv;
-            var stat = !this.bodies[i].dinamic;
-            if (mInv == 0 || stat)
-                continue;
-            var moiInv = this.bodies[i].moiInv;
-            var rotationMatrix = this.bodies[i].getRotationMatrix();
-            // each force independently leads to a change in linear and angular
-            // velocity; i.e., add up all these changes by iterating over forces
-            for (var j = 0; j < this.bodies[i].forces.length; j++) {
-                var force = this.bodies[i].forces[j];
-                var forcePoint = this.bodies[i].forcePoints[j];
-                // linear motion is simply the integrated force, divided by the mass
-                this.bodies[i].vLin = MV.VpV(this.bodies[i].vLin, MV.SxV(this.dt * mInv, force));
-                // angular motion depends on the force application point as well via the torque
-                if (forcePoint !== undefined) { // 'undefined' means center of mass
-                    var torque = MV.cross2(MV.MxV(rotationMatrix, this.bodies[i].shape.vertices[forcePoint]), force);
-                    this.bodies[i].vAng += this.dt * moiInv * torque;
-                }
+        var world = this;
+        this.bodies.forEach(function(body){
+            var mInv = body.mInv;
+            if (mInv != 0 && body.dinamic){
+                var rotationMatrix = body.getRotationMatrix();
+                // each force independently leads to a change in linear and angular
+                // velocity; i.e., add up all these changes by iterating over forces
+                body.forces.forEach(function(force,index){
+                    var forcePoint = body.forcePoints[index];
+                    // linear motion is simply the integrated force, divided by the mass
+                    body.vLin = MV.VpV(body.vLin, MV.SxV(world.dt * mInv, force));
+                    // angular motion depends on the force application point as well via the torque
+                    if (forcePoint !== undefined) { // 'undefined' means center of mass
+                        var torque = MV.cross2(MV.MxV(rotationMatrix, body.shape.vertices[forcePoint]), force);
+                        body.vAng += world.dt * body.moiInv * torque;
+                    }
+                });
             }
-        }
+        });
 
         /***** 3. correct velocity errors *****/
         applyJoints.apply(this);
@@ -177,10 +174,6 @@ var World = function () {
 
     };
 
-    this.setFriction = function (friction) {
-        this.friction = friction;
-    };
-
     // private function. Make sure to call with apply() and pass in
     // the right world object.
     function computeContacts() {
@@ -199,22 +192,16 @@ var World = function () {
         // narrow phase - for each collision candidate, do some geometry to determine
         // whether two bodies indeed intersect, and if yes, create a Contact object
         // that contains penetrating point, penetrated surface, and surface normal
-        for (var i = 0; i < collisionCandidates.length; i++) {
-            // NB this function is asymmetrical - i.e., getContactFromBodyPair([A,B])
-            // will return a different result than getContactFromBodyPair([B,A]) -
-            // a returned contact presents a point of body A penetrating a face of
-            // body B in the first example, and vice versa for the second invocation.
-            var bodyA = this.bodies[collisionCandidates[i][0]];
-            var bodyB = this.bodies[collisionCandidates[i][1]];
+        var world = this;
+        collisionCandidates.forEach(function(candidates){
+            var bodyA = world.bodies[candidates[0]];
+            var bodyB = world.bodies[candidates[1]];
             if (bodyA.dinamic || bodyB.dinamic) {
                 var cs = getContactsFromBodyPair(bodyA, bodyB);
-                this.contacts = this.contacts.concat(cs);
+                world.contacts = world.contacts.concat(cs);
             }
-        }
-        /*
-         for (var i = 0; i < this.contacts.length; i++) {
-         var c = this.contacts[i];
-         }*/
+        });
+
     };
 
     function applyJoints() {
@@ -322,10 +309,7 @@ var World = function () {
         var lambdaAccumulated = [];
         var Jn = [];
         var Jt = [];
-        /*
-         var MInv2 = [];
-         var bias2 = [];
-         var J = [];*/
+
 
         for (var i = 0; i < this.contacts.length; i++) {
             // assemble the inverse mass vector (usually a matrix,
