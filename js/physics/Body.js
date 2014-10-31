@@ -71,9 +71,9 @@ function Body(shape, material, dinamic, vLin, vAng) {
     };
 
     this.getVerticesInWorldCoords = function () {
-        var vertsAbsolute = [],rotationMatrix = this.getRotationMatrix(),shape = this.shape,
-        vertices = this.shape.vertices,size = vertices.length,center = shape.center,i;
-        for(i = 0; i < size;i++){
+        var vertsAbsolute = [], rotationMatrix = this.getRotationMatrix(), shape = this.shape,
+            vertices = this.shape.vertices, size = vertices.length, center = shape.center, i;
+        for (i = 0; i < size; i++) {
             vertsAbsolute.push(MV.VpV(center, MV.MxV(rotationMatrix, vertices[i])));
         }
         return vertsAbsolute;

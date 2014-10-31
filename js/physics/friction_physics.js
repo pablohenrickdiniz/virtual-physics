@@ -59,7 +59,7 @@ function circleIntersectLine(cc, r, va, vb) {
 }
 
 function getFaceNormals(vertices) {
-    var normals = [],size = vertices.length, i,face,N;
+    var normals = [], size = vertices.length, i, face, N;
     for (i = 0; i < size; i++) {
         face = MV.VmV(vertices[(i + 1) % vertices.length], vertices[i]);
         N = [-face[1], face[0]];
@@ -69,9 +69,9 @@ function getFaceNormals(vertices) {
 }
 
 function getCollisionCandidates(world) {
-    var AABBsGroups = world.quadTree.getAABBsGroups(),collisionCandidates = [],
-    bodies,AABBs,size1 = AABBsGroups.length,size2, i, j,AABBsGroup,groupA,groupB,g;
-    for(g=0;g<size1;g++){
+    var AABBsGroups = world.quadTree.getAABBsGroups(), collisionCandidates = [],
+        bodies, AABBs, size1 = AABBsGroups.length, size2, i, j, AABBsGroup, groupA, groupB, g;
+    for (g = 0; g < size1; g++) {
         AABBsGroup = AABBsGroups[g];
         bodies = AABBsGroup[0];
         AABBs = AABBsGroup[1];
@@ -91,7 +91,7 @@ function getCollisionCandidates(world) {
 }
 
 function compare(groupA, groupB) {
-    var i,j;
+    var i, j;
     for (i = 0; i < groupA.length; i++) {
         for (j = 0; j < groupB.length; j++) {
             if (groupA[i] == groupB[j]) {
@@ -113,7 +113,7 @@ function computeFaceNormals(bodies, collisionCandidates) {
             return (i === 0 || arr[i] !== arr[i - 1]);
         });
     var size = sortedBodies.length;
-    for(var i = 0;i<size;i++){
+    for (var i = 0; i < size; i++) {
         bodies[sortedBodies[i]].faceNormals = getFaceNormals(bodies[sortedBodies[i]].getVerticesInWorldCoords());
     }
 }
@@ -147,25 +147,25 @@ function linesIntersect(X, Y, A, B) {
 }
 
 function getContactsFromBodyPair(bodyA, bodyB) {
-    var contacts = [], pAs = bodyA.getVerticesInWorldCoords(),pBs = bodyB.getVerticesInWorldCoords(),
-        distances = [],normals = bodyB.faceNormals,sizeA = pAs.length,sizeB=pBs.length, i, j,pA,pB,
+    var contacts = [], pAs = bodyA.getVerticesInWorldCoords(), pBs = bodyB.getVerticesInWorldCoords(),
+        distances = [], normals = bodyB.faceNormals, sizeA = pAs.length, sizeB = pBs.length, i, j, pA, pB,
         collisionFace;
     // test for each point of body A whether it lies inside body B
 
-    for(i = 0;i<sizeA;i++){
+    for (i = 0; i < sizeA; i++) {
         pA = pAs[i];
-        for(j = 0; j < sizeB;j++){
+        for (j = 0; j < sizeB; j++) {
             distances[j] = MV.dot(normals[j], MV.VmV(pA, pBs[j]));
         }
 
         if (distances.some(function (d) {
-            return d >= 0;
-        })) {
+                return d >= 0;
+            })) {
             continue;
         }
 
         collisionFace = MV.minIndex(distances);
-        for(j = 0; j < sizeB;j++){
+        for (j = 0; j < sizeB; j++) {
             pB = pBs[j];
             if (linesIntersect(pA, bodyA.shape.center, pB, pBs[(j + 1) % pBs.length])) {
                 collisionFace = j;
