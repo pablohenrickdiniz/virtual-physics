@@ -8,8 +8,8 @@ var KeyReader = {
     keyupaction: [],
     isPressed: function (keyName) {
         var index = this.keys[keyName];
-        if (this.pressedKeys[index] != undefined) {
-            return this.pressedKeys[index];
+        if (this.pressed[index] != undefined) {
+            return this.pressed[index];
         }
         return false;
     },
