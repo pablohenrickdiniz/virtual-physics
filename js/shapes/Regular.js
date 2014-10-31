@@ -39,18 +39,15 @@ function Regular(center, radius, sides, thickness, theta) {
         if (this.vertices.length == 4) {
             var width = this.max[0] - this.min[0];
             var height = this.max[1] - this.min[1];
-            var moi = mass / 12 * (height * height + width * width)
-            return moi;
+            return mass / 12 * (height * height + width * width)
         }
         else {
-            var sum1 = 0;
-            var sum2 = 0;
-
-            for (var n = 0; n < this.vertices.length; n++) {
-                var pos = n + 1 == this.vertices.length ? 0 : n + 1;
-                var pn = this.vertices[n];
-                var pn1 = this.vertices[pos];
-                var norm = MV.norm(MV.VxV(pn, pn1));
+            var sum1 = 0,sum2 = 0,size = this.vertices.length, n, pn,pn1,norm,pos;
+            for (n = 0; n < size; n++) {
+                pos = n + 1 == size ? 0 : n + 1;
+                pn = this.vertices[n];
+                pn1 = this.vertices[pos];
+                norm = MV.norm(MV.VxV(pn, pn1));
                 sum1 += norm * MV.dot(pn1, pn1) + MV.dot(pn1, pn) + MV.dot(pn, pn);
                 sum2 += norm;
             }

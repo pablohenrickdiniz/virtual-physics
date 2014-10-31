@@ -136,7 +136,7 @@ $(document).ready(function () {
             game.pause();
         }
         else {
-            game.continue();
+            game.restart();
         }
     });
 
@@ -362,7 +362,7 @@ $(document).ready(function () {
     });
 
     $("#play-btn").click(function () {
-        game.continue();
+        game.restart();
     });
 
     $("#pause-btn").click(function () {

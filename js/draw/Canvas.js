@@ -39,20 +39,21 @@ function Canvas(canvas) {
         }
 
         this.drawAABB(quad.AABB);
-        var canvas = this;
-        quad.nodes.forEach(function(node){
+        var size = quad.nodes.length, i,node;
+        for(i = 0; i <size;i++){
+            node = quad.nodes[i];
             if(node != null){
-                canvas.drawQuadTree(node,true);
+                this.drawQuadTree(node,true);
             }
-        });
+        }
     };
 
     this.drawWorld = function (world) {
         this.clearScreen();
-        var canvas = this;
-        world.bodies.forEach(function(body){
-            canvas.drawShape(body);
-        });
+        var size = world.bodies.length,bodies = world.bodies,i;
+        for(i=0;i<size;i++){
+            this.drawShape(bodies[i]);
+        }
     };
 
     this.drawCircle = function (circle) {
@@ -75,16 +76,15 @@ function Canvas(canvas) {
     };
 
     this.drawPolygon = function (polygon) {
-        var canvas = this;
-        var center = polygon.center;
+        var center = polygon.center,vertices = polygon.vertices,size = vertices.length,i,scale = this.scale;
         this.context.save();
-        this.context.translate(center[0] * this.scale, center[1] * this.scale);
+        this.context.translate(center[0] *scale, center[1] *scale);
         this.context.rotate(polygon.theta);
         this.context.beginPath();
-        this.context.moveTo(polygon.vertices[0][0] * this.scale, polygon.vertices[0][1] * this.scale);
-        polygon.vertices.forEach(function(vertice){
-            canvas.context.lineTo(vertice[0] * canvas.scale, vertice[1] * canvas.scale);
-        });
+        this.context.moveTo(vertices[0][0] *scale, vertices[0][1] *scale);
+        for(i=1;i<size;i++){
+            this.context.lineTo(vertices[i][0] * scale, vertices[i][1] * scale);
+        }
         this.context.closePath();
         this.fillShape(polygon);
         this.context.fill();
@@ -93,17 +93,16 @@ function Canvas(canvas) {
         this.context.restore();
     };
     this.drawBody = function (body) {
-        var canvas = this;
-        var polygon = body.shape;
-        var center = body.center;
+        var polygon = body.shape,center = body.center,vertices = polygon.vertices,scale = this.scale,
+        i,size = vertices.length;
         this.context.save();
-        this.context.translate(center[0] * this.scale, center[1] * this.scale);
+        this.context.translate(center[0] * scale, center[1] * scale);
         this.context.rotate(polygon.theta);
         this.context.beginPath();
-        this.context.moveTo(polygon.vertices[0][0] * this.scale, polygon.vertices[0][1] * this.scale);
-        polygon.vertices.forEach(function(vertice){
-            canvas.context.lineTo(vertice[0] * canvas.scale, vertice[1] * canvas.scale);
-        });
+        this.context.moveTo(vertices[0][0] * scale, vertices[0][1] * scale);
+        for(i=1;i<size;i++){
+            this.context.lineTo(vertices[i][0] * scale, vertices[i][1] * scale);
+        }
         this.context.closePath();
         this.fillShape(polygon);
         this.context.fill();
@@ -137,8 +136,8 @@ function Canvas(canvas) {
 
         if (gradient instanceof RadialGradient) {
             var r = gradient.r;
-            var cx = gradient.cx;
-            var cy = gradient.cy;
+            cx = gradient.cx;
+            cy = gradient.cy;
             var fx = gradient.fx;
             var fy = gradient.fy;
 

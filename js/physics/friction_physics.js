@@ -59,44 +59,41 @@ function circleIntersectLine(cc, r, va, vb) {
 }
 
 function getFaceNormals(vertices) {
-    var normals = [];
-    for (var i = 0; i < vertices.length; i++) {
-        //console.log(vertices[i]);
-        var face = MV.VmV(vertices[(i + 1) % vertices.length], vertices[i]);
-        var N = [-face[1], face[0]];
+    var normals = [],size = vertices.length, i,face,N;
+    for (i = 0; i < size; i++) {
+        face = MV.VmV(vertices[(i + 1) % vertices.length], vertices[i]);
+        N = [-face[1], face[0]];
         normals.push(MV.normalize(N));
     }
     return normals;
 }
 
 function getCollisionCandidates(world) {
-    var AABBsGroups = world.quadTree.getAABBsGroups();
-    var collisionCandidates = [];
-
-    AABBsGroups.forEach(function(AABBsGroup){
-        var bodies = AABBsGroup[0];
-        var AABBs = AABBsGroup[1];
-
-        for (var i = 0; i < AABBs.length - 1; i++) {
-            for (var j = i + 1; j < AABBs.length; j++) {
-
-                var groupA = bodies[i].groups;
-                var groupB = bodies[j].groups;
+    var AABBsGroups = world.quadTree.getAABBsGroups(),collisionCandidates = [],
+    bodies,AABBs,size1 = AABBsGroups.length,size2, i, j,AABBsGroup,groupA,groupB,g;
+    for(g=0;g<size1;g++){
+        AABBsGroup = AABBsGroups[g];
+        bodies = AABBsGroup[0];
+        AABBs = AABBsGroup[1];
+        size2 = bodies.length;
+        for (i = 0; i < size2 - 1; i++) {
+            for (j = i + 1; j < size2; j++) {
+                groupA = bodies[i].groups;
+                groupB = bodies[j].groups;
                 if (compare(groupA, groupB) && AABBoverlap(AABBs[i], AABBs[j], 0)) {
                     collisionCandidates.push([bodies[i].index, bodies[j].index]);
                     collisionCandidates.push([bodies[j].index, bodies[i].index]);
                 }
             }
         }
-    });
-
-
+    }
     return collisionCandidates;
 }
 
 function compare(groupA, groupB) {
-    for (var i = 0; i < groupA.length; i++) {
-        for (var j = 0; j < groupB.length; j++) {
+    var i,j;
+    for (i = 0; i < groupA.length; i++) {
+        for (j = 0; j < groupB.length; j++) {
             if (groupA[i] == groupB[j]) {
                 return true;
             }
@@ -115,9 +112,10 @@ function computeFaceNormals(bodies, collisionCandidates) {
         .filter(function (b, i, arr) {
             return (i === 0 || arr[i] !== arr[i - 1]);
         });
-    sortedBodies.forEach(function (bi) {
-        bodies[bi].faceNormals = getFaceNormals(bodies[bi].getVerticesInWorldCoords());
-    });
+    var size = sortedBodies.length;
+    for(var i = 0;i<size;i++){
+        bodies[sortedBodies[i]].faceNormals = getFaceNormals(bodies[sortedBodies[i]].getVerticesInWorldCoords());
+    }
 }
 
 var Contact = function (bodyA, pA, bodyB, pB, normal) {
@@ -149,34 +147,34 @@ function linesIntersect(X, Y, A, B) {
 }
 
 function getContactsFromBodyPair(bodyA, bodyB) {
-    var contacts = [];
-    var pAs = bodyA.getVerticesInWorldCoords();
-    var pBs = bodyB.getVerticesInWorldCoords();
-
-
-    var distances = [];
-    var normals = bodyB.faceNormals;
+    var contacts = [], pAs = bodyA.getVerticesInWorldCoords(),pBs = bodyB.getVerticesInWorldCoords(),
+        distances = [],normals = bodyB.faceNormals,sizeA = pAs.length,sizeB=pBs.length, i, j,pA,pB,
+        collisionFace;
     // test for each point of body A whether it lies inside body B
 
-    pAs.forEach(function(pA){
-        pBs.forEach(function(pB,k){
-            distances[k] = MV.dot(normals[k], MV.VmV(pA, pBs[k]));
-        });
-        if (distances.some(function (d) {
-                return d >= 0;
-            })) {
-            return;
+    for(i = 0;i<sizeA;i++){
+        pA = pAs[i];
+        for(j = 0; j < sizeB;j++){
+            distances[j] = MV.dot(normals[j], MV.VmV(pA, pBs[j]));
         }
-        var collisionFace = MV.minIndex(distances);
-        pBs.forEach(function(pB,k){
-            if (linesIntersect(pA, bodyA.shape.center, pB, pBs[(k + 1) % pBs.length])) {
-                collisionFace = k;
-            }
-        });
-        var pB = MV.VmV(pA, MV.SxV(distances[collisionFace], normals[collisionFace]));
-        contacts.push(new Contact(bodyA, pA, bodyB, pB, normals[collisionFace]));
-    });
 
+        if (distances.some(function (d) {
+            return d >= 0;
+        })) {
+            continue;
+        }
+
+        collisionFace = MV.minIndex(distances);
+        for(j = 0; j < sizeB;j++){
+            pB = pBs[j];
+            if (linesIntersect(pA, bodyA.shape.center, pB, pBs[(j + 1) % pBs.length])) {
+                collisionFace = j;
+            }
+        }
+
+        pB = MV.VmV(pA, MV.SxV(distances[collisionFace], normals[collisionFace]));
+        contacts.push(new Contact(bodyA, pA, bodyB, pB, normals[collisionFace]));
+    }
     return contacts;
 }
 

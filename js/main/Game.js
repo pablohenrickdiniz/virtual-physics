@@ -37,7 +37,7 @@ function Game() {
 
     this.start = function () {
         this.reader.start();
-        this.continue();
+        this.restart();
     };
 
     this.pause = function () {
@@ -47,7 +47,7 @@ function Game() {
         }
     };
 
-    this.continue = function () {
+    this.restart = function () {
         if (!this.running) {
             this.running = true;
             this.loop(this);

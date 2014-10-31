@@ -59,24 +59,23 @@ function Body(shape, material, dinamic, vLin, vAng) {
 
     this.getRotationMatrix = function () {
         // only recompute if theta has changed since the last call.
-        if (this.shape.theta !== rotMatTheta || rotationMatrix == null) {
+        var theta = this.shape.theta;
+        if (theta !== rotMatTheta || rotationMatrix == null) {
             rotationMatrix = [
-                [Math.cos(this.shape.theta), -Math.sin(this.shape.theta)],
-                [Math.sin(this.shape.theta), Math.cos(this.shape.theta)]
+                [Math.cos(theta), -Math.sin(theta)],
+                [Math.sin(theta), Math.cos(theta)]
             ];
-            rotMatTheta = this.shape.theta;
+            rotMatTheta = theta;
         }
         return rotationMatrix;
     };
 
     this.getVerticesInWorldCoords = function () {
-        var vertsAbsolute = [];
-        var rotationMatrix = this.getRotationMatrix();
-        var shape = this.shape;
-        this.shape.vertices.forEach(function(vertice){
-            vertsAbsolute.push(MV.VpV(shape.center, MV.MxV(rotationMatrix, vertice)));
-        });
-
+        var vertsAbsolute = [],rotationMatrix = this.getRotationMatrix(),shape = this.shape,
+        vertices = this.shape.vertices,size = vertices.length,center = shape.center,i;
+        for(i = 0; i < size;i++){
+            vertsAbsolute.push(MV.VpV(center, MV.MxV(rotationMatrix, vertices[i])));
+        }
         return vertsAbsolute;
     };
 

@@ -84,25 +84,33 @@ var World = function () {
         computeContacts.apply(this); // call private function computeContacts but give it the right this
 
         /***** 2. integrate forces/torques and compute tentative velocities *****/
-        var world = this;
-        this.bodies.forEach(function(body){
-            var mInv = body.mInv;
+        var bodies = this.bodies,size1 = bodies.length,body,mInv,rotationMatrix,size2,forces,
+        force, i, j,forcePoint,forcePoints,dt = this.dt;
+
+        for(i = 0; i < size1;i++){
+            body = bodies[i];
+            mInv = body.mInv;
             if (mInv != 0 && body.dinamic){
-                var rotationMatrix = body.getRotationMatrix();
+                rotationMatrix = body.getRotationMatrix();
                 // each force independently leads to a change in linear and angular
                 // velocity; i.e., add up all these changes by iterating over forces
-                body.forces.forEach(function(force,index){
-                    var forcePoint = body.forcePoints[index];
+                forces = body.forces;
+                size2 = forces.length;
+                forcePoints = body.forcePoints;
+
+                for(j=0;j<size2;j++){
+                    forcePoint = forcePoints[j];
+                    force = forces[j];
                     // linear motion is simply the integrated force, divided by the mass
-                    body.vLin = MV.VpV(body.vLin, MV.SxV(world.dt * mInv, force));
+                    body.vLin = MV.VpV(body.vLin, MV.SxV(dt * mInv, force));
                     // angular motion depends on the force application point as well via the torque
                     if (forcePoint !== undefined) { // 'undefined' means center of mass
                         var torque = MV.cross2(MV.MxV(rotationMatrix, body.shape.vertices[forcePoint]), force);
-                        body.vAng += world.dt * body.moiInv * torque;
+                        body.vAng += dt * body.moiInv * torque;
                     }
-                });
+                }
             }
-        });
+        }
 
         /***** 3. correct velocity errors *****/
         applyJoints.apply(this);
@@ -192,16 +200,17 @@ var World = function () {
         // narrow phase - for each collision candidate, do some geometry to determine
         // whether two bodies indeed intersect, and if yes, create a Contact object
         // that contains penetrating point, penetrated surface, and surface normal
-        var world = this;
-        collisionCandidates.forEach(function(candidates){
-            var bodyA = world.bodies[candidates[0]];
-            var bodyB = world.bodies[candidates[1]];
+
+        var size = collisionCandidates.length,candidates,bodyA,bodyB;
+        for(var i = 0; i < size;i++){
+            candidates = collisionCandidates[i];
+            bodyA = this.bodies[candidates[0]];
+            bodyB = this.bodies[candidates[1]];
             if (bodyA.dinamic || bodyB.dinamic) {
                 var cs = getContactsFromBodyPair(bodyA, bodyB);
-                world.contacts = world.contacts.concat(cs);
+                this.contacts = this.contacts.concat(cs);
             }
-        });
-
+        }
     };
 
     function applyJoints() {
@@ -264,66 +273,65 @@ var World = function () {
 
 
     function applyImpulses() {
-        var bias = [];
         // precompute MInv and bias for each contact - they don't change
         // across iterations
-        var MInv = [];
-        var bias1 = [];
-        var lambdaAccumulated = [];
-        var Jn = [];
-        var Jt = [];
+        var MInv = [],bias = [],lambdaAccumulated = [],Jn = [],Jt = [], i, j,contacts = this.contacts,
+        size = contacts.length,contact,bodyA,bodyB,vLinA,vLinB,vAngA,vAngB,mInvA,mInvB,moiInvA,moiInvB,
+        normal,pA,pB,cA,cB,jAngA,jAngB,jLinB,tangent,beta = this.beta,dt = this.dt, C,vPreNormal,
+        friction = this.friction,n = this.nIterations, v,lambdaFriction,lambda;
 
-
-        for (var i = 0; i < this.contacts.length; i++) {
+        for (i = 0; i < size; i++) {
             // assemble the inverse mass vector (usually a matrix,
             // but a diagonal one, so I can replace it with a vector
-            var contact = this.contacts[i];
-            MInv[i] = [contact.bodyA.mInv,
-                contact.bodyA.mInv]
-                .concat(contact.bodyA.moiInv)
-                .concat([contact.bodyB.mInv,
-                    contact.bodyB.mInv])
-                .concat(contact.bodyB.moiInv);
-
+            contact = contacts[i];
+            pA = contact.pA;
+            pB = contact.pB;
+            bodyA = contact.bodyA;
+            bodyB = contact.bodyB;
+            cA = bodyA.center;
+            cB = bodyB.center;
+            mInvA = bodyA.mInv;
+            mInvB = bodyB.mInv;
+            moiInvA = bodyA.moiInv;
+            moiInvB = bodyB.moiInv;
+            MInv[i] = [mInvA, mInvA,moiInvA,mInvB,mInvB,moiInvB];
+            normal = contact.normal;
             // compute the Jacobians (they don't change in the iterations)
-            var Jn_vLinA = contact.normal;
-            var Jn_vAngA = MV.cross2(MV.VmV(contact.pA, contact.bodyA.center), contact.normal);
-            var Jn_vLinB = MV.SxV(-1, contact.normal);
-            var Jn_vAngB = -MV.cross2(MV.VmV(contact.pB, contact.bodyB.center), contact.normal);
-            Jn[i] = Jn_vLinA.concat(Jn_vAngA).concat(Jn_vLinB).concat(Jn_vAngB);
-
+            jAngA = MV.cross2(MV.VmV(pA,cA),normal);
+            jLinB = MV.SxV(-1, normal);
+            jAngB = -MV.cross2(MV.VmV(pB,cB),normal);
+            Jn[i] = [normal[0],normal[1],jAngA,jLinB[0],jLinB[1],jAngB];
             // Jacobian for friction - like Jacobian for collision,
             // but with tangent in place of normal
-            var tangent = [-contact.normal[1], contact.normal[0]];
-            var Jt_vLinA = tangent;
-            var Jt_vAngA = MV.cross2(MV.VmV(contact.pA, contact.bodyA.center), tangent);
-            var Jt_vLinB = MV.SxV(-1, tangent);
-            var Jt_vAngB = -MV.cross2(MV.VmV(contact.pB, contact.bodyB.center), tangent);
-            Jt[i] = Jt_vLinA.concat(Jt_vAngA).concat(Jt_vLinB).concat(Jt_vAngB);
-
+            tangent = [-normal[1], normal[0]];
+            jAngA = MV.cross2(MV.VmV(pA, cA), tangent);
+            jLinB = MV.SxV(-1, tangent);
+            jAngB = -MV.cross2(MV.VmV(pB, cB), tangent);
+            Jt[i] = [tangent[0],tangent[1],jAngA,jLinB[0],jLinB[1],jAngB];
             /*
              var tmp = MV.VmV(contact.pB, contact.bodyB.shape.center);
              var vB = MV.VpV(contact.bodyB.vLin, MV.SxV(contact.bodyB.vAng, [-tmp[1], tmp[0]]));
              var tmp = MV.VmV(contact.pA, contact.bodyA.shape.center);
              var vA = MV.VpV(contact.bodyA.vLin, MV.SxV(contact.bodyA.vAng, [-tmp[1], tmp[0]]));
              */
-            var vPreNormal = 0; //MV.dot(MV.VmV(vA, vB), contact.normal);
-
-            var C = MV.dot(MV.VmV(contact.pA, contact.pB),
-                contact.normal);
-            bias1[i] = this.beta / this.dt * ((C < 0) ? C : 0) + 0.2 * vPreNormal;
+            vPreNormal = 0; //MV.dot(MV.VmV(vA, vB), contact.normal);
+            C = MV.dot(MV.VmV(pA, pB),normal);
+            bias[i] = beta / dt * ((C < 0) ? C : 0) + 0.2 * vPreNormal;
             lambdaAccumulated[i] = 0;
         }
 
-        for (var i = 0; i < this.nIterations; i++) {
-            for (var j = 0; j < this.contacts.length; j++) {
-                var bodyA = this.contacts[j].bodyA;
-                var bodyB = this.contacts[j].bodyB;
-                var v = bodyA.vLin
-                    .concat(bodyA.vAng)
-                    .concat(bodyB.vLin)
-                    .concat(bodyB.vAng);
-                var lambda = -(MV.dot(Jn[j], v) + bias1[j]) / MV.dot(Jn[j], MV.VxV(MInv[j], Jn[j]));
+        for (i = 0; i < n; i++) {
+            for (j = 0; j < size; j++) {
+                contact = contacts[j];
+                bodyA = contact.bodyA;
+                bodyB = contact.bodyB;
+                vLinA = bodyA.vLin;
+                vLinB = bodyB.vLin;
+                vAngA = bodyA.vAng;
+                vAngB = bodyB.vAng;
+
+                v = [vLinA[0],vLinA[1],vAngA,vLinB[0],vLinB[1],vAngB];
+                lambda = -(MV.dot(Jn[j], v) + bias[j]) / MV.dot(Jn[j], MV.VxV(MInv[j], Jn[j]));
                 // clamp accumulated impulse to 0
                 if (lambdaAccumulated[j] + lambda < 0) {
                     lambda = -lambdaAccumulated[j];
@@ -332,21 +340,21 @@ var World = function () {
                 lambdaAccumulated[j] += lambda;
                 v = MV.VpV(v, MV.VxV(MInv[j], MV.SxV(lambda, Jn[j])));
 
-                bodyA.vLin = v.slice(0, 2);
+                bodyA.vLin = [v[0],v[1]];
                 bodyA.vAng = v[2];
-                bodyB.vLin = v.slice(3, 5);
+                bodyB.vLin = [v[3],v[4]];
                 bodyB.vAng = v[5];
                 // friction stuff
-                var lambdaFriction = -(MV.dot(Jt[j], v) /*+ bias1[j]*/) / MV.dot(Jt[j], MV.VxV(MInv[j], Jt[j]));
-                if (lambdaFriction > this.friction * lambda) {
-                    lambdaFriction = this.friction * lambda;
-                } else if (lambdaFriction < -this.friction * lambda) {
-                    lambdaFriction = -this.friction * lambda;
+               lambdaFriction = -(MV.dot(Jt[j], v) /*+ bias1[j]*/) / MV.dot(Jt[j], MV.VxV(MInv[j], Jt[j]));
+                if (lambdaFriction > friction * lambda) {
+                    lambdaFriction = friction * lambda;
+                } else if (lambdaFriction < -friction * lambda) {
+                    lambdaFriction = -friction * lambda;
                 }
                 v = MV.VpV(v, MV.VxV(MInv[j], MV.SxV(lambdaFriction, Jt[j])));
-                bodyA.vLin = v.slice(0, 2);
+                bodyA.vLin = [v[0],v[1]];
                 bodyA.vAng = v[2];
-                bodyB.vLin = v.slice(3, 5);
+                bodyB.vLin = [v[3],v[4]];
                 bodyB.vAng = v[5];
             }
         }

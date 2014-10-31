@@ -19,9 +19,10 @@ function QuadTree(AABB, l) {
             AABBsGroups.push([this.bodies, this.AABBs]);
         }
         else {
-            this.nodes.forEach(function(node){
-                node.getAABBsGroups(AABBsGroups);
-            });
+            var size = this.nodes.length;
+            for(var i = 0; i < size;i++){
+                this.nodes[i].getAABBsGroups(AABBsGroups);
+            }
         }
         return AABBsGroups;
     };
@@ -38,11 +39,11 @@ function QuadTree(AABB, l) {
             if(this.nodes[0] == undefined){
                 this.split();
             }
-            if (this.bodies.length > 0) {
-                var quad = this;
-                this.bodies.forEach(function(elem,index){
-                    quad.insert(elem,quad.AABBs[index]);
-                });
+            var size = this.bodies.length;
+            if (size > 0) {
+                for(var i = 0; i < size;i++){
+                    this.insert(this.bodies[i],this.AABBs[i]);
+                }
                 this.bodies = [];
                 this.AABBs = [];
             }
@@ -62,15 +63,16 @@ function QuadTree(AABB, l) {
             }
         }
         else{
-            var count = 0;
-            this.nodes.forEach(function(node){
-               if(node != null  && node.removeBody(body)){
-                   removed = true;
-                   if (node.qtd == 0) {
-                       count++;
-                   }
-               }
-            });
+            var count = 0,size = this.nodes.length, node,i;
+            for(i = 0; i < size;i++){
+                node = this.nodes[i];
+                if(node != null  && node.removeBody(body)){
+                    removed = true;
+                    if (node.qtd == 0) {
+                        count++;
+                    }
+                }
+            }
             if(count == 4){
                 this.nodes = [];
             }
@@ -82,11 +84,13 @@ function QuadTree(AABB, l) {
     };
 
     this.insert = function (body, AABB) {
-        this.nodes.forEach(function(node){
+        var i,size=this.nodes.length,node;
+        for(i = 0; i < size;i++){
+            node = this.nodes[i];
             if (AABBoverlap(node.AABB, AABB, 0)) {
                 node.addBody(body, AABB);
             }
-        });
+        }
     };
 
     this.split = function(){

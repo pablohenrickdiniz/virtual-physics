@@ -29,18 +29,20 @@ var KeyReader = {
     keydown: function (keyCode) {
         if (this.keydownaction[keyCode] != undefined) {
             if (this.keydownaction[keyCode] != undefined) {
-                this.keydownaction[keyCode].forEach(function(action){
-                    action.call();
-                });
+                var size = this.keydownaction[keyCode].length, i,array = this.keydownaction[keyCode];
+                for(i=0;i<size;i++){
+                    array[i].call();
+                }
             }
         }
     },
     keyup: function (keyCode) {
         if (this.keyupaction[keyCode] != undefined) {
             if (this.keyupaction[keyCode] != undefined) {
-                this.keyupaction[keyCode].forEach(function(action){
-                    action.call();
-                });
+                var size = this.keyupaction[keyCode].length, i,array = this.keyupaction[keyCode];
+                for(i=0;i<size;i++){
+                    array[i].call();
+                }
             }
         }
     },
@@ -96,7 +98,6 @@ var KeyReader = {
 };
 
 $(document).keydown(function (event) {
-    console.log('key:' + event.which);
     var keyCode = event.which;
     KeyReader.pressed[keyCode] = true;
     KeyReader.keydown(keyCode);
