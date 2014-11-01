@@ -126,6 +126,7 @@ $(document).ready(function () {
             drawing.move(center);
             game.quad.move(center);
             if (!game.running) {
+                game.quad.drawQuadTree(game.world.quadTree);
                 game.canvas.drawWorld(game.world);
             }
         }
@@ -149,6 +150,7 @@ $(document).ready(function () {
         auxpoint: null,
         mousejoint: null,
         distancejoint: null,
+        joint:null,
         select: function (item) {
             this.selected = item;
             $("#" + item).addClass('well well-sm');
@@ -267,9 +269,14 @@ $(document).ready(function () {
                 }
             }
             else if (menu.selected == 'chain') {
-                var bodyB = findSelectedBody();
-                if (bodyB != null) {
-
+                var bodyA = findSelectedBody();
+                if (bodyA != null) {
+                    var pos = game.getMouse();
+                    menu.joint = new Joint();
+                    menu.joint.type = 'surface';
+                    menu.joint.vertexA = [bodyA.center[0]-pos[0],bodyA.center[1]-pos[1]];
+                    menu.joint.bodyA = bodyA;
+                    menu.drawing = true;
                 }
             }
         }
@@ -309,6 +316,17 @@ $(document).ready(function () {
                         game.canvas.drawWorld(game.world);
                     }
                     break;
+                case 'chain':
+                    menu.drawing = false;
+                    var bodyB= findSelectedBody();
+                    if (bodyB != null && menu.joint.bodyA != bodyB) {
+                        var pos = game.getMouse();
+                        menu.joint.vertexB = [bodyB.center[0]-pos[0],bodyB.center[1]-pos[1]];
+                        menu.joint.bodyB = bodyB;
+                        game.world.addJoint(menu.joint);
+                        menu.joint = null;
+                        menu.drawing = true;
+                    }
             }
         }
     });

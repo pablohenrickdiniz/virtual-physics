@@ -8,9 +8,14 @@ function QuadTree(AABB, l) {
 
     this.clear = function () {
         this.qtd = 0;
-        this.nodes = [];
         this.bodies = [];
         this.AABBs = [];
+        var size = this.nodes.length;
+        for(var i = 0; i < size;i++){
+            if(this.nodes[i] != undefined && this.nodes[i].qtd > 0){
+                this.nodes[i].clear();
+            }
+        }
     };
 
     this.getAABBsGroups = function (AABBsGroups) {
@@ -63,18 +68,12 @@ function QuadTree(AABB, l) {
             }
         }
         else {
-            var count = 0, size = this.nodes.length, node, i;
+            var size = this.nodes.length, node, i;
             for (i = 0; i < size; i++) {
                 node = this.nodes[i];
                 if (node != null && node.removeBody(body)) {
                     removed = true;
-                    if (node.qtd == 0) {
-                        count++;
-                    }
                 }
-            }
-            if (count == 4) {
-                this.nodes = [];
             }
         }
         if (removed) {

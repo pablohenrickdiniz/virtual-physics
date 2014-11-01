@@ -54,46 +54,29 @@ var World = function () {
         move.apply(this);
     };
 
-
     function move() {
         this.quadTree.clear();
-        var i, index, body, size = this.removes.length, size2 = this.bodies.length, valid, nc, r, AABB, quadTree = this.quadTree, bodies = this.bodies, dt = this.dt, shape;
-
-        for (i = 0; i < size; i++) {
-            body = this.removes[i];
-            index = bodies.indexOf(body);
-            if (index != -1) {
-                bodies.splice(index, 1);
-            }
-        }
-
+        var d = this;
+        this.removes.forEach(function (f) {
+            f = d.bodies.indexOf(f);
+            -1 != f && d.bodies.splice(f, 1)
+        });
         this.removes = [];
-
-        for (i = 0; i < size2; i++) {
-            body = bodies[i];
-            body.index = i;
-            valid = true;
-            if (body.dinamic) {
-                shape = body.shape;
-                nc = MV.VpV(body.center, MV.SxV(dt, body.vLin));
-                r = dt * body.vAng;
-                body.center = nc;
-                shape.center = nc;
-                shape.theta += r;
-
-                AABB = getAABB(body);
-                if (!AABBoverlap(AABB, quadTree.AABB, 0)) {
-                    bodies.splice(index, 1);
-                    size2--;
-                    i--;
-                    valid = false;
-                }
+        this.bodies.forEach(function (f, e, h) {
+            f.index = e;
+            var a = !0;
+            if (f.dinamic) {
+                var c = MV.VpV(f.center, MV.SxV(d.dt, f.vLin)), b = d.dt * f.vAng;
+                f.center = c;
+                f.shape.center = f.center;
+                f.shape.theta += b;
+                c = getAABB(f);
+                AABBoverlap(c, d.quadTree.AABB, 0) || (h.splice(e, 1), a = !1)
             }
-            if (valid) {
-                quadTree.addBody(body);
-            }
-        }
+            a && d.quadTree.addBody(f)
+        })
     }
+
 
     this.addBody = function (body) {
         if (body.dinamic) {
@@ -114,7 +97,7 @@ var World = function () {
     };
 
     this.removeJoint = function (joint) {
-        var joints = this.joints, size = joints.size, i;
+        var joints = this.joints, size = joints.length, i;
         for (i = 0; i < size; i++) {
             if (joints[i] == joint) {
                 joints.splice(i, 1);
@@ -156,7 +139,7 @@ var World = function () {
     }
 
     function applyJoints() {
-        var MInv = [],bias = [],J = [],joint, joints = this.joints, pA, pB, i, cA, cB, bodyA, bodyB, j, size = joints.length, beta = this.beta, dt = this.dt, lambda,lambdaDenominator, v, C, n = this.nIterations, mInvA, mInvB, moiInvA, moiInvB, type, vertexA, vertexB, a, b, c, d,vLinA,vLinB,vAngA,vAngB;
+        var MInv = [],bias = [],J = [],joint, joints = this.joints, pA, pB, i, cA, cB, bodyA, bodyB, j, size = joints.length, beta = this.beta, dt = this.dt, lambda,lambdaDenominator, v, C, n = this.nIterations, mInvA, mInvB, moiInvA, moiInvB, type, vertexA, vertexB, a, b, c, d,vLinA,vLinB,vAngA,vAngB,pApB,pBpA;
         for (i = 0; i < size; i++) {
             // assemble the inverse mass vector (usually a matrix,
             // but a diagonal one, so I can replace it with a vector
@@ -186,12 +169,13 @@ var World = function () {
                 pB = vertexB;
             }
             // compute the Jacobians (they don't change in the iterations)
-            a = MV.SxV(2, MV.VmV(pB, pA));
-            b = MV.cross2(MV.VmV(pA, pB), MV.VmV(pB, cB));
-            c = MV.VmV(pA, pB);
-            d = MV.cross2(MV.VmV(pB, pA), MV.VmV(pA, cA));
-            J[i] = [a[0], a[1], b, c[0], c[1], d];
-            C = MV.dot(MV.VmV(pA, pB), MV.VmV(pA, pB));
+            pApB = MV.VmV(pA,pB)
+            pBpA =  MV.VmV(pB, pA);
+            a = MV.SxV(2,pBpA);
+            b = MV.cross2(pApB, MV.VmV(pB, cB));
+            d = MV.cross2(pBpA, MV.VmV(pA, cA));
+            J[i] = [a[0], a[1], b, pApB[0], pApB[1], d];
+            C = MV.dot(pApB,pApB);
             bias[i] = beta / dt * C;
         }
         for (i = 0; i < n; i++) {
@@ -222,7 +206,7 @@ var World = function () {
         var MInv = [], bias = [], lambdaAccumulated = [], Jn = [], Jt = [], i, j, contacts = this.contacts,
             size = contacts.length, contact, bodyA, bodyB, vLinA, vLinB, vAngA, vAngB, mInvA, mInvB, moiInvA, moiInvB,
             normal, pA, pB, cA, cB, jAngA, jAngB, jLinB, tangent, beta = this.beta, dt = this.dt, C, vPreNormal,
-            friction = this.friction, n = this.nIterations, v, lambdaFriction, lambda;
+            friction = this.friction, n = this.nIterations, v, lambdaFriction, lambda,pAcA,pBcB,fl;
 
         for (i = 0; i < size; i++) {
             // assemble the inverse mass vector (usually a matrix,
@@ -240,15 +224,17 @@ var World = function () {
             moiInvB = bodyB.moiInv;
             MInv[i] = [mInvA, mInvA, moiInvA, mInvB, mInvB, moiInvB];
             normal = contact.normal;
+            pAcA = MV.VmV(pA, cA);
+            pBcB = MV.VmV(pB, cB);
             // compute the Jacobians (they don't change in the iterations)
-            jAngA = MV.cross2(MV.VmV(pA, cA), normal);
+            jAngA = MV.cross2(pAcA, normal);
             jLinB = MV.SxV(-1, normal);
-            jAngB = -MV.cross2(MV.VmV(pB, cB), normal);
+            jAngB = -MV.cross2(pBcB, normal);
             Jn[i] = [normal[0], normal[1], jAngA, jLinB[0], jLinB[1], jAngB];
             // Jacobian for friction - like Jacobian for collision,
             // but with tangent in place of normal
             tangent = [-normal[1], normal[0]];
-            jAngA = MV.cross2(MV.VmV(pA, cA), tangent);
+            jAngA = MV.cross2(pAcA, tangent);
             jLinB = MV.SxV(-1, tangent);
             jAngB = -MV.cross2(MV.VmV(pB, cB), tangent);
             Jt[i] = [tangent[0], tangent[1], jAngA, jLinB[0], jLinB[1], jAngB];
@@ -280,22 +266,17 @@ var World = function () {
                 if (lambdaAccumulated[j] + lambda < 0) {
                     lambda = -lambdaAccumulated[j];
                 }
-
-                lambdaAccumulated[j] += lambda;
-                v = MV.VpV(v, MV.VxV(MInv[j], MV.SxV(lambda, Jn[j])));
-
-                bodyA.vLin = [v[0], v[1]];
-                bodyA.vAng = v[2];
-                bodyB.vLin = [v[3], v[4]];
-                bodyB.vAng = v[5];
                 // friction stuff
                 lambdaFriction = -(MV.dot(Jt[j], v) /*+ bias1[j]*/) / MV.dot(Jt[j], MV.VxV(MInv[j], Jt[j]));
-                if (lambdaFriction > friction * lambda) {
-                    lambdaFriction = friction * lambda;
-                } else if (lambdaFriction < -friction * lambda) {
-                    lambdaFriction = -friction * lambda;
+                fl = friction * lambda;
+                if (lambdaFriction > fl) {
+                    lambdaFriction = fl;
+                } else if (lambdaFriction < -fl) {
+                    lambdaFriction = -fl;
                 }
-                v = MV.VpV(v, MV.VxV(MInv[j], MV.SxV(lambdaFriction, Jt[j])));
+
+                lambdaAccumulated[j] += lambda;
+                v = MV.VpV(MV.VpV(v, MV.VxV(MInv[j], MV.SxV(lambda, Jn[j]))), MV.VxV(MInv[j], MV.SxV(lambdaFriction, Jt[j])));
                 bodyA.vLin = [v[0], v[1]];
                 bodyA.vAng = v[2];
                 bodyB.vLin = [v[3], v[4]];

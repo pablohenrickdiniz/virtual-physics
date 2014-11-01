@@ -70,7 +70,7 @@ function getFaceNormals(vertices) {
 
 function getCollisionCandidates(world) {
     var AABBsGroups = world.quadTree.getAABBsGroups(), collisionCandidates = [],
-        bodies, AABBs, size1 = AABBsGroups.length, size2, i, j, AABBsGroup, groupA, groupB, g;
+        bodies, AABBs, size1 = AABBsGroups.length, size2, i, j, AABBsGroup, groupA, groupB, g,compared=[],indexA,indexB, a,b;
     for (g = 0; g < size1; g++) {
         AABBsGroup = AABBsGroups[g];
         bodies = AABBsGroup[0];
@@ -78,11 +78,19 @@ function getCollisionCandidates(world) {
         size2 = bodies.length;
         for (i = 0; i < size2 - 1; i++) {
             for (j = i + 1; j < size2; j++) {
-                groupA = bodies[i].groups;
-                groupB = bodies[j].groups;
-                if (compare(groupA, groupB) && AABBoverlap(AABBs[i], AABBs[j], 0)) {
-                    collisionCandidates.push([bodies[i].index, bodies[j].index]);
-                    collisionCandidates.push([bodies[j].index, bodies[i].index]);
+                indexA = bodies[i].index;
+                indexB = bodies[j].index;
+                a= indexA+''+indexB;
+                b= indexB+''+indexA;
+                if(compared[a]==undefined || compared[b] == undefined){
+                    groupA = bodies[i].groups;
+                    groupB = bodies[j].groups;
+                    if (compare(groupA, groupB) && AABBoverlap(AABBs[i], AABBs[j], 0)) {
+                        collisionCandidates.push([indexA, indexB]);
+                        collisionCandidates.push([indexB, indexA]);
+                        compared[a] = true;
+                        compared[b] = true;
+                    }
                 }
             }
         }
@@ -159,8 +167,8 @@ function getContactsFromBodyPair(bodyA, bodyB) {
         }
 
         if (distances.some(function (d) {
-                return d >= 0;
-            })) {
+            return d >= 0;
+        })) {
             continue;
         }
 

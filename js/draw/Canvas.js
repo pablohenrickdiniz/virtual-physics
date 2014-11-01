@@ -28,86 +28,83 @@ function Canvas(canvas) {
         }
     };
 
-    this.drawAABB = function(AABB){
+    this.drawAABB = function (AABB) {
         this.context.fillStyle = 'transparent';
-        this.context.strokeRect(AABB[0]*this.scale,AABB[1]*this.scale,(AABB[2]-AABB[0])*this.scale,(AABB[3]-AABB[1])*this.scale);
+        this.context.strokeRect(AABB[0] * this.scale, AABB[1] * this.scale, (AABB[2] - AABB[0]) * this.scale, (AABB[3] - AABB[1]) * this.scale);
     };
 
-    this.drawQuadTree = function(quad,sub){
-        if(sub != true){
+    this.drawQuadTree = function (quad, sub) {
+        if (sub != true) {
             this.clearScreen();
         }
 
         this.drawAABB(quad.AABB);
-        var size = quad.nodes.length, i,node;
-        for(i = 0; i <size;i++){
+        var size = quad.nodes.length, i, node;
+
+        for (i = 0; i < size; i++) {
             node = quad.nodes[i];
-            if(node != null){
-                this.drawQuadTree(node,true);
+            if (node != undefined && node.qtd > 0) {
+                this.drawQuadTree(node, true);
             }
         }
     };
 
     this.drawWorld = function (world) {
         this.clearScreen();
-        var size = world.bodies.length,bodies = world.bodies,i;
-        for(i=0;i<size;i++){
+        var size = world.bodies.length, bodies = world.bodies, i;
+        for (i = 0; i < size; i++) {
             this.drawShape(bodies[i]);
         }
     };
 
     this.drawCircle = function (circle) {
-        if (circle instanceof Circle) {
-            this.drawArc(circle);
-        }
+        this.drawArc(circle);
     };
 
     this.drawArc = function (arc) {
-        if (arc instanceof Arc) {
-            this.fillShadow(arc.shadow);
-            this.fillShape(arc);
-            this.context.beginPath();
-            this.context.arc(arc.center[0], arc.center[1],
-                arc.radius, Math.PI * arc.start / 180,
-                Math.PI * arc.end / 180);
-            this.context.fill();
-            this.preencherBorda(arc.border);
-        }
+        this.fillShadow(arc.shadow);
+        this.fillShape(arc);
+        this.context.beginPath();
+        this.context.arc(arc.center[0], arc.center[1],
+            arc.radius, Math.PI * arc.start / 180,
+            Math.PI * arc.end / 180);
+        this.context.fill();
+        this.fillBorder(arc.border);
     };
 
     this.drawPolygon = function (polygon) {
-        var center = polygon.center,vertices = polygon.vertices,size = vertices.length,i,scale = this.scale;
-        this.context.save();
-        this.context.translate(center[0] *scale, center[1] *scale);
-        this.context.rotate(polygon.theta);
-        this.context.beginPath();
-        this.context.moveTo(vertices[0][0] *scale, vertices[0][1] *scale);
-        for(i=1;i<size;i++){
-            this.context.lineTo(vertices[i][0] * scale, vertices[i][1] * scale);
-        }
-        this.context.closePath();
-        this.fillShape(polygon);
-        this.context.fill();
-        this.fillShadow(polygon.shadow);
-        this.preencherBorda(polygon.border);
-        this.context.restore();
-    };
-    this.drawBody = function (body) {
-        var polygon = body.shape,center = body.center,vertices = polygon.vertices,scale = this.scale,
-        i,size = vertices.length;
+        var center = polygon.center, vertices = polygon.vertices, size = vertices.length, i, scale = this.scale;
         this.context.save();
         this.context.translate(center[0] * scale, center[1] * scale);
         this.context.rotate(polygon.theta);
         this.context.beginPath();
         this.context.moveTo(vertices[0][0] * scale, vertices[0][1] * scale);
-        for(i=1;i<size;i++){
+        for (i = 1; i < size; i++) {
             this.context.lineTo(vertices[i][0] * scale, vertices[i][1] * scale);
         }
         this.context.closePath();
         this.fillShape(polygon);
         this.context.fill();
         this.fillShadow(polygon.shadow);
-        this.preencherBorda(polygon.border);
+        this.fillBorder(polygon.border);
+        this.context.restore();
+    };
+    this.drawBody = function (body) {
+        var polygon = body.shape, center = body.center, vertices = polygon.vertices, scale = this.scale,
+            i, size = vertices.length;
+        this.context.save();
+        this.context.translate(center[0] * scale, center[1] * scale);
+        this.context.rotate(polygon.theta);
+        this.context.beginPath();
+        this.context.moveTo(vertices[0][0] * scale, vertices[0][1] * scale);
+        for (i = 1; i < size; i++) {
+            this.context.lineTo(vertices[i][0] * scale, vertices[i][1] * scale);
+        }
+        this.context.closePath();
+        this.fillShape(polygon);
+        this.context.fill();
+        this.fillShadow(polygon.shadow);
+        this.fillBorder(polygon.border);
         this.context.restore();
     };
 
@@ -173,23 +170,25 @@ function Canvas(canvas) {
     };
 
     this.fillShadow = function (shadow) {
-        this.context.save();
         if (shadow != null) {
+            this.context.save();
             this.context.shadowOffsetX = shadow.x;
             this.context.shadowOffsetY = shadow.y;
             this.context.shadowBlur = shadow.blur;
             this.context.shadowColor = this.fillColor(shadow.color);
+            this.context.fill();
+            this.context.restore();
         }
-        this.context.fill();
-        this.context.restore();
     };
 
-    this.preencherBorda = function (border) {
-        this.context.setLineDash(border.lineDash);
-        this.context.lineCap = border.lineCap;
-        this.context.strokeStyle = this.fillColor(border.color);
-        this.context.lineWidth = border.thickness;
-        this.context.stroke();
+    this.fillBorder = function (border) {
+        if(border != null){
+            this.context.setLineDash(border.lineDash);
+            this.context.lineCap = border.lineCap;
+            this.context.strokeStyle = this.fillColor(border.color);
+            this.context.lineWidth = border.thickness;
+            this.context.stroke();
+        }
     };
 
     this.fillShape = function (shape) {
@@ -199,7 +198,6 @@ function Canvas(canvas) {
         } else if (color instanceof Image) {
             this.context.fillStyle = color.getFillPattern(this.context);
         } else {
-
             this.context.fillStyle = this.fillColor(color);
         }
     };
