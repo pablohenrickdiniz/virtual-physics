@@ -213,8 +213,8 @@ var World = function () {
         // across iterations
         var MInv = [], bias = [], lambdaAccumulated = [], Jn = [], Jt = [], i, j, contacts = this.contacts,
             size = contacts.length, contact, bodyA, bodyB, vLinA, vLinB, vAngA, vAngB, mInvA, mInvB, moiInvA, moiInvB,
-            normal, pA, pB, cA, cB, jAngA, jAngB, jLinB, tangent, beta = this.beta, dt = this.dt, C, vPreNormal,
-            friction = this.friction, n = this.nIterations, v, lambdaFriction, lambda,pAcA,pBcB,fl;
+            normal, pA, pB, cA, cB, beta = this.beta, dt = this.dt, C, vPreNormal,friction = this.friction,
+            n = this.nIterations, v, lambdaFriction, lambda,pAcA,pBcB,fl;
 
         for (i = 0; i < size; i++) {
             // assemble the inverse mass vector (usually a matrix,
@@ -232,20 +232,14 @@ var World = function () {
             moiInvB = bodyB.moiInv;
             MInv[i] = [mInvA, mInvA, moiInvA, mInvB, mInvB, moiInvB];
             normal = contact.normal;
-            pAcA = MV.VmV(pA, cA);
-            pBcB = MV.VmV(pB, cB);
+            pAcA = [pA[0]-cA[0],pA[1]-cA[1]];
+            pBcB = [pB[0]-cB[0],pB[1]-cB[1]];
+
             // compute the Jacobians (they don't change in the iterations)
-            jAngA = MV.cross2(pAcA, normal);
-            jLinB = MV.SxV(-1, normal);
-            jAngB = -MV.cross2(pBcB, normal);
-            Jn[i] = [normal[0], normal[1], jAngA, jLinB[0], jLinB[1], jAngB];
+            Jn[i] = [normal[0], normal[1], pAcA[0] * normal[1] - pAcA[1] * normal[0],normal[0]*-1, normal[1]*-1, -(pBcB[0] * normal[1] - pBcB[1] * normal[0])];
             // Jacobian for friction - like Jacobian for collision,
             // but with tangent in place of normal
-            tangent = [-normal[1], normal[0]];
-            jAngA = MV.cross2(pAcA, tangent);
-            jLinB = MV.SxV(-1, tangent);
-            jAngB = -MV.cross2(MV.VmV(pB, cB), tangent);
-            Jt[i] = [tangent[0], tangent[1], jAngA, jLinB[0], jLinB[1], jAngB];
+            Jt[i] = [-normal[1],normal[0],pAcA[0]*normal[0]-pAcA[1]*-normal[1],normal[1],-normal[0],-((pB[0]-cB[0])*-normal[1]-(pB[1]-cB[1])*-normal[1])];
             /*
              var tmp = MV.VmV(contact.pB, contact.bodyB.shape.center);
              var vB = MV.VpV(contact.bodyB.vLin, MV.SxV(contact.bodyB.vAng, [-tmp[1], tmp[0]]));
@@ -253,7 +247,7 @@ var World = function () {
              var vA = MV.VpV(contact.bodyA.vLin, MV.SxV(contact.bodyA.vAng, [-tmp[1], tmp[0]]));
              */
             vPreNormal = 0; //MV.dot(MV.VmV(vA, vB), contact.normal);
-            C = MV.dot(MV.VmV(pA, pB), normal);
+            C = (pA[0]-pB[0])*normal[0]+(pA[1]-pB[1])*normal[1];
             bias[i] = beta / dt * ((C < 0) ? C : 0) + 0.2 * vPreNormal;
             lambdaAccumulated[i] = 0;
         }
