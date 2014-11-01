@@ -7,10 +7,10 @@ var World = function () {
     this.friction = 0.5;
     this.contacts = [];
     this.gravity = 200;
-    this.width = 5000;
-    this.height = 5000;
+    this.width = 4000;
+    this.height = 4000;
     this.joints = [];
-    this.quadTree = new QuadTree([0, 0, this.width, this.height], 1);
+    this.quadTree = new QuadTree([0, 0, this.width, this.height], 1,Math.max((this.width+this.height)/2/500),4);
     this.removes = [];
 
     this.step = function () {
@@ -74,6 +74,7 @@ var World = function () {
                 AABBoverlap(c, d.quadTree.AABB, 0) || (h.splice(e, 1), a = !1)
             }
             a && d.quadTree.addBody(f)
+            f.vertsAbsolute = null;
         })
     }
 
@@ -139,7 +140,7 @@ var World = function () {
     }
 
     function applyJoints() {
-        var MInv = [],bias = [],J = [],joint, joints = this.joints, pA, pB, i, cA, cB, bodyA, bodyB, j, size = joints.length, beta = this.beta, dt = this.dt, lambda,lambdaDenominator, v, C, n = this.nIterations, mInvA, mInvB, moiInvA, moiInvB, type, vertexA, vertexB, a, b, c, d,vLinA,vLinB,vAngA,vAngB,pApB,pBpA;
+        var MInv = [],bias = [],J = [],joint, joints = this.joints, pA, pB, i, cA, cB, bodyA, bodyB, j, size = joints.length, beta = this.beta, dt = this.dt, lambda,lambdaDenominator, v, k, n = this.nIterations, mInvA, mInvB, moiInvA, moiInvB, type, vertexA, vertexB,vLinA,vLinB,vAngA,vAngB,pApB,pBpA,dot;
         for (i = 0; i < size; i++) {
             // assemble the inverse mass vector (usually a matrix,
             // but a diagonal one, so I can replace it with a vector
@@ -165,22 +166,22 @@ var World = function () {
                 pB = cB;
             }
             else if (type == 'surface') {
-                pA = vertexA;
-                pB = vertexB;
+                pA = [vertexA[0]+cA[0],vertexA[1]+cA[1]];
+                pB = [vertexB[0]+cB[0],vertexB[1]+cB[1]];
             }
             // compute the Jacobians (they don't change in the iterations)
-            pApB = MV.VmV(pA,pB)
-            pBpA =  MV.VmV(pB, pA);
-            a = MV.SxV(2,pBpA);
-            b = MV.cross2(pApB, MV.VmV(pB, cB));
-            d = MV.cross2(pBpA, MV.VmV(pA, cA));
-            J[i] = [a[0], a[1], b, pApB[0], pApB[1], d];
-            C = MV.dot(pApB,pApB);
-            bias[i] = beta / dt * C;
+            pApB = [pA[0]-pB[0],pA[1]-pB[1]];
+            pBpA = [pB[0]-pA[0],pB[1]-pA[1]];
+            J[i] = [pBpA[0]*2, pBpA[1]*2, pApB[0] * (pB[1]-cB[1]) - pApB[1] * (pB[0]-cB[0]), pApB[0], pApB[1],  pBpA[0] * (pA[1]-cA[1]) - pBpA[1] * (pA[0]-cA[0])];
+            bias[i] = beta / dt * (pApB[0]*pApB[0]+pApB[1]*pApB[1]);
         }
         for (i = 0; i < n; i++) {
             for (j = 0; j < size; j++) {
-                lambdaDenominator = MV.dot(J[j], MV.VxV(MInv[j], J[j]));
+                lambdaDenominator = 0;
+                for(k=0;k<=5;k++){
+                   lambdaDenominator += MInv[j][k]*J[j][k]*J[j][k];
+                }
+
                 if (Math.abs(lambdaDenominator) <= 1e-15) continue;
                 bodyA = joints[j].bodyA;
                 bodyB = joints[j].bodyB;
@@ -189,8 +190,15 @@ var World = function () {
                 vAngA = bodyA.vAng;
                 vAngB = bodyB.vAng;
                 v = [vLinB[0],vLinB[1],vAngB,vLinA[0],vLinA[1],vAngA];
-                lambda = -(MV.dot(J[j], v) + bias[j]) / lambdaDenominator;
-                v = MV.VpV(v, MV.VxV(MInv[j], MV.SxV(lambda, J[j])));
+                dot = 0;
+                for(k=0;k<=5;k++){
+                    dot += J[j][k]*v[k];
+                }
+                lambda = -(dot + bias[j]) / lambdaDenominator;
+                for(k=0;k<=5;k++){
+                    v[k] = lambda*J[j][k]*MInv[j][k]+v[k];
+                }
+
                 bodyB.vLin = [v[0], v[1]];
                 bodyB.vAng = v[2];
                 bodyA.vLin = [v[3], v[4]];

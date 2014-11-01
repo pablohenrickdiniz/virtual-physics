@@ -9,6 +9,7 @@ function Body(shape, material, dinamic, vLin, vAng) {
     this.forces = []; // array of forces...
     this.forcePoints = []; // ... and the vertex index of force application.
     this.groups = ['A'];
+    this.vertsAbsolute = null;
     // undefined is center of mass.
 
     var rotMatTheta; // used to avoid unnecessary rotation matrix computations
@@ -71,12 +72,16 @@ function Body(shape, material, dinamic, vLin, vAng) {
     };
 
     this.getVerticesInWorldCoords = function () {
-        var vertsAbsolute = [], rotationMatrix = this.getRotationMatrix(), shape = this.shape,
-            vertices = this.shape.vertices, size = vertices.length, center = shape.center, i;
-        for (i = 0; i < size; i++) {
-            vertsAbsolute.push(MV.VpV(center, MV.MxV(rotationMatrix, vertices[i])));
+        if(this.vertsAbsolute == null){
+            this.vertsAbsolute = [];
+            var rotationMatrix = this.getRotationMatrix(), shape = this.shape,
+                vertices = this.shape.vertices, size = vertices.length, center = shape.center, i;
+            for (i = 0; i < size; i++) {
+                this.vertsAbsolute.push(MV.VpV(center, MV.MxV(rotationMatrix, vertices[i])));
+            }
         }
-        return vertsAbsolute;
+
+        return this.vertsAbsolute;
     };
 
     this.update();

@@ -19,7 +19,7 @@ function Regular(center, radius, sides, thickness, theta) {
         pa = MV.rotate(pa, -this.theta, [0, 0]);
         //pb = MV.rotate(pb, -this.theta - gb, [0,0]);
         this.vertices = [];
-        this.vertices.push(pa);
+        this.vertices[this.vertices.length] = pa;
         //this.vertices.push(pb);
 
         for (var i = 1; i < this.sides; i++) {
@@ -27,7 +27,7 @@ function Regular(center, radius, sides, thickness, theta) {
             //pb = [pb[0], pb[1]];
             pa = MV.rotate(pa, -ga, [0, 0]);
             //pb = MV.rotate(pb, -ga, [0,0]);
-            this.vertices.push(pa);
+            this.vertices[this.vertices.length] = pa;
             //this.vertices.push(pb);
         }
         this.updateMinAndMax();

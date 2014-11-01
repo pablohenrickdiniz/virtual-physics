@@ -13,6 +13,6 @@ function LinearGradient(px0, py0, px1, py1) {
         if (!(color instanceof Color)) {
             color = Color.parse(color);
         }
-        this.colorsStop.push([stop, color]);
+        this.colorsStop[this.colorsStop.length] = [stop, color];
     };
 }

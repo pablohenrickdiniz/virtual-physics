@@ -15,6 +15,6 @@ function RadialGradient(cx, cy, r, fx, fy) {
         if (!(color instanceof Color)) {
             color = Color.parse(color);
         }
-        this.colorsStop.push([stop, color]);
+        this.colorsStop[this.colorsStop.length] = [stop, color];
     };
 }

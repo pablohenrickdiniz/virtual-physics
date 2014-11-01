@@ -219,8 +219,8 @@ $(document).ready(function () {
             }
             else if (menu.selected == 'convex') {
                 menu.shape = new Polygon([0, 0], 0);
-                menu.shape.vertices.push([pos[0], pos[1]]);
-                menu.shape.vertices.push(menu.drawPoint);
+                menu.shape.vertices[menu.shape.vertices.length] = [pos[0], pos[1]];
+                menu.shape.vertices[menu.shape.vertices.length] = menu.drawPoint;
                 menu.shape.color = new Color(document.getElementById("preenchimento").value);
                 menu.drawing = true;
             }
@@ -296,14 +296,14 @@ $(document).ready(function () {
                     var pos = game.getMouse();
                     menu.shape.vertices.splice(menu.shape.vertices.length - 1, 1);
                     if (menu.auxpoint != null) {
-                        menu.shape.vertices.push(menu.auxpoint);
+                        menu.shape.vertices[menu.shape.vertices.length] = menu.auxpoint;
                         menu.auxpoint = null;
                     }
                     else {
-                        menu.shape.vertices.push(pos);
+                        menu.shape.vertices[menu.shape.vertices.length] = pos;
                     }
 
-                    menu.shape.vertices.push(menu.drawPoint);
+                    menu.shape.vertices[menu.shape.vertices.length] = menu.drawPoint;
                     break;
                 case 'regular':
                     menu.drawing = false;
