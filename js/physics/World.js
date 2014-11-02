@@ -1,13 +1,13 @@
 var World = function () {
     var self = this;
     self.dt = 1 / 60;
-    self.nIterations = 20;
+    self.nIterations = 4;
     self.beta = 0.2;
     self.bodies = [];
     self.t = 0;
     self.friction = 0.5;
     self.contacts = [];
-    self.gravity = 200;
+    self.gravity = 9.81;
     self.width = 4000;
     self.height = 4000;
     self.joints = [];
@@ -86,7 +86,7 @@ var World = function () {
             if (f.dinamic) {
                 var c = MV.VpV(f.center, MV.SxV(d.dt, f.vLin)), b = d.dt * f.vAng;
                 f.center = c;
-                f.shape.center = f.center;
+                //f.shape.center = f.center;
                 f.shape.theta += b;
                 c = getAABB(f);
                 AABBoverlap(c, d.quadTree.AABB, 0) || (h.splice(e, 1), a = !1)
@@ -169,102 +169,106 @@ var World = function () {
     }
 
     function applyJoints() {
-        var MInv = [];
-        var bias = [];
-        var J = [];
-        var joint;
         var self = this;
         var joints = self.joints;
-        var pA;
-        var pB;
-        var i;
-        var cA;
-        var cB;
-        var bodyA;
-        var bodyB;
-        var j;
         var size = joints.length;
-        var beta = self.beta;
-        var dt = self.dt;
-        var lambda;
-        var lambdaDenominator;
-        var v;
-        var k;
-        var n = self.nIterations;
-        var mInvA;
-        var mInvB;
-        var moiInvA;
-        var moiInvB;
-        var type;
-        var vertexA;
-        var vertexB;
-        var vLinA;
-        var vLinB;
-        var vAngA;
-        var vAngB;
-        var pApB;
-        var pBpA;
-        var dot;
-        for (i = 0; i < size; i++) {
-            // assemble the inverse mass vector (usually a matrix,
-            // but a diagonal one, so I can replace it with a vector
-            joint = joints[i];
-            bodyA = joint.bodyA;
-            bodyB = joint.bodyB;
-            cA = bodyA.center;
-            cB = bodyB.center;
-            vertexA = joint.vertexA;
-            vertexB = joint.vertexB;
-            mInvA = bodyA.mInv;
-            mInvB = bodyB.mInv;
-            moiInvA = bodyA.moiInv;
-            moiInvB = bodyB.moiInv;
-            MInv[i] = [mInvB, mInvB, moiInvB, mInvA, mInvA, moiInvA];
-            type = joint.type;
-            if (type == 'vertex') {
-                pA = bodyA.getVerticesInWorldCoords()[vertexA];
-                pB = bodyB.getVerticesInWorldCoords()[vertexB];
-            }
-            else if (type == 'center') {
-                pA = bodyA.getVerticesInWorldCoords()[vertexA];
-                pB = cB;
-            }
-            else if (type == 'surface') {
-                pA = [vertexA[0]+cA[0],vertexA[1]+cA[1]];
-                pB = [vertexB[0]+cB[0],vertexB[1]+cB[1]];
-            }
-            // compute the Jacobians (they don't change in the iterations)
-            pApB = [pA[0]-pB[0],pA[1]-pB[1]];
-            pBpA = [pB[0]-pA[0],pB[1]-pA[1]];
-            J[i] = [pBpA[0]*2, pBpA[1]*2, pApB[0] * (pB[1]-cB[1]) - pApB[1] * (pB[0]-cB[0]), pApB[0], pApB[1],  pBpA[0] * (pA[1]-cA[1]) - pBpA[1] * (pA[0]-cA[0])];
-            bias[i] = beta / dt * (pApB[0]*pApB[0]+pApB[1]*pApB[1]);
-        }
-        for (i = 0; i < n; i++) {
-            for (j = 0; j < size; j++) {
-                lambdaDenominator = 0;
-                for(k=0;k<=5;k++){
-                    lambdaDenominator += MInv[j][k]*J[j][k]*J[j][k];
+        if(size > 0){
+            var MInv = [];
+            var bias = [];
+            var J = [];
+            var joint;
+            var pA;
+            var pB;
+            var i;
+            var cA;
+            var cB;
+            var bodyA;
+            var bodyB;
+            var j;
+            var beta = self.beta;
+            var dt = self.dt;
+            var lambda;
+            var lambdaDenominator;
+            var v;
+            var k;
+            var n = self.nIterations;
+            var mInvA;
+            var mInvB;
+            var moiInvA;
+            var moiInvB;
+            var type;
+            var vertexA;
+            var vertexB;
+            var vLinA;
+            var vLinB;
+            var vAngA;
+            var vAngB;
+            var pApB;
+            var pBpA;
+            var dot;
+            for (i = 0; i < size; i++) {
+                // assemble the inverse mass vector (usually a matrix,
+                // but a diagonal one, so I can replace it with a vector
+                joint = joints[i];
+                bodyA = joint.bodyA;
+                bodyB = joint.bodyB;
+                cA = bodyA.center;
+                cB = bodyB.center;
+                vertexA = joint.vertexA;
+                vertexB = joint.vertexB;
+                mInvA = bodyA.mInv;
+                mInvB = bodyB.mInv;
+                moiInvA = bodyA.moiInv;
+                moiInvB = bodyB.moiInv;
+                MInv[i] = [mInvB, mInvB, moiInvB, mInvA, mInvA, moiInvA];
+                type = joint.type;
+                if (type == 'vertex') {
+                    pA = bodyA.getVerticesInWorldCoords()[vertexA];
+                    pB = bodyB.getVerticesInWorldCoords()[vertexB];
                 }
-                if (Math.abs(lambdaDenominator) <= 1e-15) continue;
-                bodyA = joints[j].bodyA;
-                bodyB = joints[j].bodyB;
-                vLinA = bodyA.vLin;
-                vLinB = bodyB.vLin;
-                vAngA = bodyA.vAng;
-                vAngB = bodyB.vAng;
-                v = [vLinB[0],vLinB[1],vAngB,vLinA[0],vLinA[1],vAngA];
-                dot = 0;
-                for(k=0;k<=5;k++){
-                    dot += J[j][k]*v[k];
+                else if (type == 'center') {
+                    pA = bodyA.getVerticesInWorldCoords()[vertexA];
+                    pB = cB;
                 }
-                lambda = -(dot + bias[j]) / lambdaDenominator;
-                for(k=0;k<=5;k++){
-                    v[k] = lambda*J[j][k]*MInv[j][k]+v[k];
+                else if (type == 'surface') {
+                    pA = [vertexA[0]+cA[0],vertexA[1]+cA[1]];
+                    pB = [vertexB[0]+cB[0],vertexB[1]+cB[1]];
                 }
-                bodyB.vLin = [v[0], v[1]];
-                bodyB.vAng = v[2];
-                bodyA.vLin = [v[3], v[4]];
-                bodyA.vAng = v[5];
+
+                // compute the Jacobians (they don't change in the iterations)
+
+                pApB = [pA[0]-pB[0],pA[1]-pB[1]];
+                pBpA = [pB[0]-pA[0],pB[1]-pA[1]];
+                J[i] = [pBpA[0]*2,pBpA[1]*2,pApB[0]*(pB[1]-cB[1])-pApB[1]*(pB[0]-cB[0]),pApB[0],pApB[1],pBpA[0]*(pA[1]-cA[1])-pBpA[1]*(pA[0]-cA[0])];
+                bias[i] = beta / dt * (pApB[0]*pApB[0]+pApB[1]*pApB[1]);
+            }
+            for (i = 0; i < n; i++) {
+                for (j = 0; j < size; j++) {
+                    lambdaDenominator = 0;
+                    for(k=0;k<=5;k++){
+                        lambdaDenominator += MInv[j][k]*J[j][k]*J[j][k];
+                    }
+                    if (Math.abs(lambdaDenominator) <= 1e-15) continue;
+                    bodyA = joints[j].bodyA;
+                    bodyB = joints[j].bodyB;
+                    vLinA = bodyA.vLin;
+                    vLinB = bodyB.vLin;
+                    vAngA = bodyA.vAng;
+                    vAngB = bodyB.vAng;
+                    v = [vLinB[0],vLinB[1],vAngB,vLinA[0],vLinA[1],vAngA];
+                    dot = 0;
+                    for(k=0;k<=5;k++){
+                        dot += J[j][k]*v[k];
+                    }
+                    lambda = -(dot + bias[j]) / lambdaDenominator;
+                    for(k=0;k<=5;k++){
+                        v[k] = lambda*J[j][k]*MInv[j][k]+v[k];
+                    }
+                    bodyB.vLin = [v[0], v[1]];
+                    bodyB.vAng = v[2];
+                    bodyA.vLin = [v[3], v[4]];
+                    bodyA.vAng = v[5];
+                }
             }
         }
     }
@@ -342,9 +346,9 @@ var World = function () {
             // but with tangent in place of normal
             Jt[i] = [-normal[1],normal[0],pAcA[0]*normal[0]-pAcA[1]*-normal[1],normal[1],-normal[0],-((pB[0]-cB[0])*-normal[1]-(pB[1]-cB[1])*-normal[1])];
             /*
-             var tmp = MV.VmV(contact.pB, contact.bodyB.shape.center);
+             var tmp = MV.VmV(contact.pB, contact.bodyB.center);
              var vB = MV.VpV(contact.bodyB.vLin, MV.SxV(contact.bodyB.vAng, [-tmp[1], tmp[0]]));
-             var tmp = MV.VmV(contact.pA, contact.bodyA.shape.center);
+             var tmp = MV.VmV(contact.pA, contact.bodyA.center);
              var vA = MV.VpV(contact.bodyA.vLin, MV.SxV(contact.bodyA.vAng, [-tmp[1], tmp[0]]));
              */
             vPreNormal = 0; //MV.dot(MV.VmV(vA, vB), contact.normal);

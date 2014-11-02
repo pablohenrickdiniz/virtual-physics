@@ -149,8 +149,11 @@ $(document).ready(function () {
         selectedBody: null,
         auxpoint: null,
         mousejoint: null,
-        distancejoint: null,
-        joint:null,
+        rope:null,
+        bodyA:null,
+        bodyB:null,
+        vertexA:null,
+        vertexB:null,
         select: function (item) {
             this.selected = item;
             $("#" + item).addClass('well well-sm');
@@ -167,7 +170,11 @@ $(document).ready(function () {
 
     function findSelectedBody() {
         var pos = game.getMouse();
-        for (var i = 0; i < game.world.bodies.length; i++) {
+        var bodies =[];
+        var i;
+        var sizeA = game.world.bodies.length;
+
+        for (i = 0; i < sizeA; i++) {
             var body = game.world.bodies[i];
             var vertices = body.getVerticesInWorldCoords();
             var xo = MV.min(vertices, 0);
@@ -175,9 +182,26 @@ $(document).ready(function () {
             var xf = MV.max(vertices, 0);
             var yf = MV.max(vertices, 1);
             if (pos[0] >= xo && pos[1] >= yo && pos[0] <= xf && pos[1] <= yf) {
-                return body;
+                bodies.push(body);
             }
         }
+        var sizeB = bodies.length;
+        if(sizeB > 0){
+            var min = 0;
+            var distance = MV.distance(bodies[0].center,pos);
+            var aux;
+            for(i = 1; i < sizeB;i++){
+                aux =  MV.distance(bodies[i].center,pos);
+                if(aux < distance){
+                    distance = aux;
+                    min = i;
+                }
+            }
+            if(min!=-1){
+                return bodies[min];
+            }
+        }
+
         return null;
     }
 
@@ -272,10 +296,8 @@ $(document).ready(function () {
                 var bodyA = findSelectedBody();
                 if (bodyA != null) {
                     var pos = game.getMouse();
-                    menu.joint = new Joint();
-                    menu.joint.type = 'surface';
-                    menu.joint.vertexA = [bodyA.center[0]-pos[0],bodyA.center[1]-pos[1]];
-                    menu.joint.bodyA = bodyA;
+                    menu.vertexA = MV.VmV(bodyA.center,pos);
+                    menu.bodyA = bodyA;
                     menu.drawing = true;
                 }
             }
@@ -319,13 +341,15 @@ $(document).ready(function () {
                 case 'chain':
                     menu.drawing = false;
                     var bodyB= findSelectedBody();
-                    if (bodyB != null && menu.joint.bodyA != bodyB) {
+                    if (bodyB != null && menu.bodyA != bodyB) {
                         var pos = game.getMouse();
-                        menu.joint.vertexB = [bodyB.center[0]-pos[0],bodyB.center[1]-pos[1]];
-                        menu.joint.bodyB = bodyB;
-                        game.world.addJoint(menu.joint);
-                        menu.joint = null;
-                        menu.drawing = true;
+                        menu.vertexB = MV.VmV(bodyB.center,pos);
+                        menu.bodyB = bodyB;
+                        menu.rope = new Rope(menu.bodyA,menu.vertexA,menu.bodyB,menu.vertexB);
+                        game.world.addBody(menu.rope);
+                        game.world.addJoint(menu.rope.jointA);
+                        game.world.addJoint(menu.rope.jointB);
+                        menu.drawing = false;
                     }
             }
         }

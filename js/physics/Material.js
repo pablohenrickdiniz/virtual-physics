@@ -14,3 +14,4 @@ Material.Silver = {density: 10.50};
 Material.Steel = {density: 7.86};
 Material.Chromium = {density: 7.10};
 Material.Titanium = {density: 4.55};
+Material.Vectram = {density:1.41};

@@ -6,3 +6,4 @@ function Shape(center, color, border, theta) {
     this.theta = isNaN(theta) ? 0 : theta;
     this.vertices = [];
 }
+

@@ -173,7 +173,7 @@ function getContactsFromBodyPair(bodyA, bodyB) {
         collisionFace = MV.minIndex(distances);
         for (j = 0; j < sizeB; j++) {
             pB = pBs[j];
-            if (linesIntersect(pA, bodyA.shape.center, pB, pBs[(j + 1) % pBs.length])) {
+            if (linesIntersect(pA, bodyA.center, pB, pBs[(j + 1) % pBs.length])) {
                 collisionFace = j;
             }
         }

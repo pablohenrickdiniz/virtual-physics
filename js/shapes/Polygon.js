@@ -187,3 +187,7 @@ function Polygon(center, theta) {
         return self.sumAngles() > 360;
     };
 }
+
+Polygon.join = function(){
+
+};

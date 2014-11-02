@@ -20,7 +20,7 @@ function MouseBody(shape) {
         var i;
         var size =  self.shape.vertices.length;
         for (i = 0; i < size;i++) {
-            vertsAbsolute.push(MV.VpV(self.shape.center,
+            vertsAbsolute.push(MV.VpV(self.center,
                 MV.MxV(rotationMatrix, self.shape.vertices[i])));
         }
         return vertsAbsolute;
