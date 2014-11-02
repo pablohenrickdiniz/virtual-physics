@@ -14,18 +14,19 @@ var World = function () {
     this.removes = [];
 
     this.step = function () {
+        var world = this;
         /***** 1. collision detection *****/
-        computeContacts.apply(this); // call private function computeContacts but give it the right this
+        computeContacts.apply(world); // call private function computeContacts but give it the right this
 
         /***** 2. integrate forces/torques and compute tentative velocities *****/
-        var bodies = this.bodies, size1 = bodies.length, body, mInv, rotationMatrix, size2, forces,
-            force, i, j, forcePoint, forcePoints, dt = this.dt;
+        var bodies = world.bodies, size1 = bodies.length, body, mInv, rotMat, size2, forces,
+            force, i, j, forcePoint, forcePoints, dt = world.dt,torque,scalar,vertice;
 
         for (i = 0; i < size1; i++) {
             body = bodies[i];
             mInv = body.mInv;
             if (mInv != 0 && body.dinamic) {
-                rotationMatrix = body.getRotationMatrix();
+                rotMat = body.getRotationMatrix();
                 // each force independently leads to a change in linear and angular
                 // velocity; i.e., add up all these changes by iterating over forces
                 forces = body.forces;
@@ -36,22 +37,24 @@ var World = function () {
                     forcePoint = forcePoints[j];
                     force = forces[j];
                     // linear motion is simply the integrated force, divided by the mass
-                    body.vLin = MV.VpV(body.vLin, MV.SxV(dt * mInv, force));
+                    scalar = dt * mInv;
+                    body.vLin = [body.vLin[0]+force[0]*scalar,body.vLin[1]+force[1]*scalar];
                     // angular motion depends on the force application point as well via the torque
+
                     if (forcePoint !== undefined) { // 'undefined' means center of mass
-                        var torque = MV.cross2(MV.MxV(rotationMatrix, body.shape.vertices[forcePoint]), force);
-                        body.vAng += dt * body.moiInv * torque;
+                        vertice = body.shape.vertices[forcePoint];
+                        torque = (rotMat[0][0]*vertice[0]+ rotMat[0][1]*vertice[1]) * force[1] - (rotMat[1][0]*vertice[0]+ rotMat[1][1]*vertice[1]) * force[0];
                     }
                 }
             }
         }
 
         /***** 3. correct velocity errors *****/
-        applyJoints.apply(this);
-        applyImpulses.apply(this);
+        applyJoints.apply(world);
+        applyImpulses.apply(world);
 
         /***** 4. update positions *****/
-        move.apply(this);
+        move.apply(world);
     };
 
     function move() {
