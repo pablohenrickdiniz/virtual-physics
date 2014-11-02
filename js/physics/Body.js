@@ -1,66 +1,74 @@
 function Body(shape, material, dinamic, vLin, vAng) {
-    this.shape = shape;
-    this.center = shape.center;
-    this.shape.parent = this;
-    this.dinamic = dinamic;
-    this.material = material;
-    this.vLin = vLin == undefined ? [0, 0] : vLin; // linear (translational) velocity
-    this.vAng = vAng == undefined ? 0 : vAng; // angular (rotational) velocity
-    this.forces = []; // array of forces...
-    this.forcePoints = []; // ... and the vertex index of force application.
-    this.groups = ['A'];
-    this.vertsAbsolute = null;
+    var self = this;
+    self.shape = shape;
+    self.center = shape.center;
+    self.shape.parent = this;
+    self.dinamic = dinamic;
+    self.material = material;
+    self.vLin = vLin == undefined ? [0, 0] : vLin; // linear (translational) velocity
+    self.vAng = vAng == undefined ? 0 : vAng; // angular (rotational) velocity
+    self.forces = []; // array of forces...
+    self.forcePoints = []; // ... and the vertex index of force application.
+    self.groups = ['A'];
+    self.vertsAbsolute = null;
     // undefined is center of mass.
 
     var rotMatTheta; // used to avoid unnecessary rotation matrix computations
     var rotationMatrix;
 
     this.update = function () {
-        this.mass = this.dinamic ? this.material.density * this.shape.area : 0;
-        this.mInv = this.mass == 0 ? 0 : 1 / this.mass; // inverse of the mass
-        this.moiInv = this.mass == 0 ? 0 : 1 / this.shape.moi(this.mass);// inverse of the moment of inertia
-        this.forces = [];
-        if (this.dinamic) {
-            this.forces.push([0, 98.81 * this.mass]);
+        var self = this;
+        self.mass = self.dinamic ? self.material.density * self.shape.area : 0;
+        self.mInv = self.mass == 0 ? 0 : 1 / self.mass; // inverse of the mass
+        self.moiInv = self.mass == 0 ? 0 : 1 / self.shape.moi(self.mass);// inverse of the moment of inertia
+        self.forces = [];
+        if (self.dinamic) {
+            self.forces.push([0, 98.81 * self.mass]);
         }
         else {
-            this.vLin = [0, 0];
-            this.vAng = 0;
+            self.vLin = [0, 0];
+            self.vAng = 0;
         }
         rotationMatrix = null;
     };
 
     this.setDinamic = function (dinamic) {
-        this.dinamic = dinamic;
-        this.update();
+        var self = this;
+        self.dinamic = dinamic;
+        self.update();
     };
 
     this.setMass = function (mass) {
-        this.mass = mass;
-        this.mInv = this.mass == 0 ? 0 : 1 / this.mass; // inverse of the mass
-        this.moiInv = this.mass == 0 ? 0 : 1 / this.shape.moi(this.mass);// inverse of the moment of inertia
+        var self = this;
+        self.mass = mass;
+        self.mInv = self.mass == 0 ? 0 : 1 / self.mass; // inverse of the mass
+        self.moiInv = self.mass == 0 ? 0 : 1 / self.shape.moi(self.mass);// inverse of the moment of inertia
         rotationMatrix = null;
     };
 
     this.setShape = function (shape) {
-        this.shape = shape;
-        this.shape.parent = this;
-        this.update();
+        var self = this;
+        self.shape = shape;
+        self.shape.parent = self;
+        self.update();
     };
 
     this.setMaterial = function (material) {
-        this.material = material;
-        this.update();
+        var self = this;
+        self.material = material;
+        self.update();
     };
 
     this.addForce = function (force, forcePoint) {
-        this.forces.push(force);
-        this.forcePoints.push(forcePoint);
+        var self = this;
+        self.forces.push(force);
+        self.forcePoints.push(forcePoint);
     };
 
     this.getRotationMatrix = function () {
+        var self = this;
         // only recompute if theta has changed since the last call.
-        var theta = this.shape.theta;
+        var theta = self.shape.theta;
         if (theta !== rotMatTheta || rotationMatrix == null) {
             rotationMatrix = [
                 [Math.cos(theta), -Math.sin(theta)],
@@ -72,18 +80,19 @@ function Body(shape, material, dinamic, vLin, vAng) {
     };
 
     this.getVerticesInWorldCoords = function () {
-        if(this.vertsAbsolute == null){
-            this.vertsAbsolute = [];
-            var rotationMatrix = this.getRotationMatrix(), shape = this.shape,
-                vertices = this.shape.vertices, size = vertices.length, center = shape.center, i;
+        var self = this;
+        if(self.vertsAbsolute == null){
+           self.vertsAbsolute = [];
+            var rotationMatrix = self.getRotationMatrix(), shape = self.shape,
+                vertices = self.shape.vertices, size = vertices.length, center = shape.center, i;
             for (i = 0; i < size; i++) {
-                this.vertsAbsolute.push(MV.VpV(center, MV.MxV(rotationMatrix, vertices[i])));
+                self.vertsAbsolute.push(MV.VpV(center, MV.MxV(rotationMatrix, vertices[i])));
             }
         }
 
-        return this.vertsAbsolute;
+        return self.vertsAbsolute;
     };
 
-    this.update();
-    this.getRotationMatrix();
+    self.update();
+    self.getRotationMatrix();
 };
