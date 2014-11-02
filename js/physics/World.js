@@ -1,4 +1,5 @@
 var World = function () {
+    var world = this;
     this.dt = 1 / 60;
     this.nIterations = 20;
     this.beta = 0.2;
@@ -10,7 +11,7 @@ var World = function () {
     this.width = 4000;
     this.height = 4000;
     this.joints = [];
-    this.quadTree = new QuadTree([0, 0, this.width, this.height], 1,Math.max((this.width+this.height)/2/500),4);
+    this.quadTree = new QuadTree([0, 0, world.width, world.height], 1,Math.max((world.width+world.height)/2/500),4);
     this.removes = [];
 
     this.step = function () {
@@ -58,14 +59,14 @@ var World = function () {
     };
 
     function move() {
-        this.quadTree.clear();
         var d = this;
-        this.removes.forEach(function (f) {
+        d.quadTree.clear();
+        d.removes.forEach(function (f) {
             f = d.bodies.indexOf(f);
             -1 != f && d.bodies.splice(f, 1)
         });
-        this.removes = [];
-        this.bodies.forEach(function (f, e, h) {
+        d.removes = [];
+        d.bodies.forEach(function (f, e, h) {
             f.index = e;
             var a = !0;
             if (f.dinamic) {
@@ -83,13 +84,14 @@ var World = function () {
 
 
     this.addBody = function (body) {
+        var world = this;
         if (body.dinamic) {
-            body.addForce([0, this.gravity * body.mass]);
+            body.addForce([0, world.gravity * body.mass]);
         }
 
-        this.bodies.push(body);
-        this.quadTree.addBody(body);
-        body.index = this.bodies.length - 1;
+        world.bodies.push(body);
+        world.quadTree.addBody(body);
+        body.index = world.bodies.length - 1;
     };
 
     this.removeBody = function (body) {
@@ -119,31 +121,31 @@ var World = function () {
         // determine overlapping boxes. These list of candidate collisions is then
         // pruned in the narrow phase. Note for an overlap of bodies A and B,
         // [Ai, Bi] and [Bi, Ai] are added to the result.
+        var world = this;
+        var collisionCandidates = getCollisionCandidates(world);
 
-        var collisionCandidates = getCollisionCandidates(this);
-
-        computeFaceNormals(this.bodies, collisionCandidates);
+        computeFaceNormals(world.bodies, collisionCandidates);
 
         // later, reuse contacts?
-        this.contacts = [];
+        world.contacts = [];
         // narrow phase - for each collision candidate, do some geometry to determine
         // whether two bodies indeed intersect, and if yes, create a Contact object
         // that contains penetrating point, penetrated surface, and surface normal
 
-        var size = collisionCandidates.length, candidates, bodyA, bodyB;
-        for (var i = 0; i < size; i++) {
+        var size = collisionCandidates.length, candidates, bodyA, bodyB, i,cs;
+        for (i = 0; i < size; i++) {
             candidates = collisionCandidates[i];
-            bodyA = this.bodies[candidates[0]];
-            bodyB = this.bodies[candidates[1]];
+            bodyA = world.bodies[candidates[0]];
+            bodyB = world.bodies[candidates[1]];
             if (bodyA.dinamic || bodyB.dinamic) {
-                var cs = getContactsFromBodyPair(bodyA, bodyB);
-                this.contacts = this.contacts.concat(cs);
+                cs = getContactsFromBodyPair(bodyA, bodyB);
+                world.contacts = world.contacts.concat(cs);
             }
         }
     }
 
     function applyJoints() {
-        var MInv = [],bias = [],J = [],joint, joints = this.joints, pA, pB, i, cA, cB, bodyA, bodyB, j, size = joints.length, beta = this.beta, dt = this.dt, lambda,lambdaDenominator, v, k, n = this.nIterations, mInvA, mInvB, moiInvA, moiInvB, type, vertexA, vertexB,vLinA,vLinB,vAngA,vAngB,pApB,pBpA,dot;
+        var MInv = [],bias = [],J = [],joint, world = this,joints = world.joints, pA, pB, i, cA, cB, bodyA, bodyB, j, size = joints.length, beta = world.beta, dt = world.dt, lambda,lambdaDenominator, v, k, n = world.nIterations, mInvA, mInvB, moiInvA, moiInvB, type, vertexA, vertexB,vLinA,vLinB,vAngA,vAngB,pApB,pBpA,dot;
         for (i = 0; i < size; i++) {
             // assemble the inverse mass vector (usually a matrix,
             // but a diagonal one, so I can replace it with a vector
@@ -164,7 +166,7 @@ var World = function () {
                 pA = bodyA.getVerticesInWorldCoords()[vertexA];
                 pB = bodyB.getVerticesInWorldCoords()[vertexB];
             }
-            else if (type = 'center') {
+            else if (type == 'center') {
                 pA = bodyA.getVerticesInWorldCoords()[vertexA];
                 pB = cB;
             }
@@ -184,7 +186,6 @@ var World = function () {
                 for(k=0;k<=5;k++){
                    lambdaDenominator += MInv[j][k]*J[j][k]*J[j][k];
                 }
-
                 if (Math.abs(lambdaDenominator) <= 1e-15) continue;
                 bodyA = joints[j].bodyA;
                 bodyB = joints[j].bodyB;
@@ -201,7 +202,6 @@ var World = function () {
                 for(k=0;k<=5;k++){
                     v[k] = lambda*J[j][k]*MInv[j][k]+v[k];
                 }
-
                 bodyB.vLin = [v[0], v[1]];
                 bodyB.vAng = v[2];
                 bodyA.vLin = [v[3], v[4]];
@@ -214,10 +214,10 @@ var World = function () {
     function applyImpulses() {
         // precompute MInv and bias for each contact - they don't change
         // across iterations
-        var MInv = [], bias = [], lambdaAccumulated = [], Jn = [], Jt = [], i, j, contacts = this.contacts,
+        var MInv = [], bias = [], lambdaAccumulated = [], Jn = [], Jt = [], i, j,world=this, contacts = world.contacts,
             size = contacts.length, contact, bodyA, bodyB, vLinA, vLinB, vAngA, vAngB, mInvA, mInvB, moiInvA, moiInvB,
-            normal, pA, pB, cA, cB, beta = this.beta, dt = this.dt, C, vPreNormal,friction = this.friction,
-            n = this.nIterations, v, lambdaFriction, lambda,pAcA,pBcB,fl, a, b, c,d,k;
+            normal, pA, pB, cA, cB, beta = world.beta, dt = world.dt, C, vPreNormal,friction = world.friction,
+            n = world.nIterations, v, lambdaFriction, lambda,pAcA,pBcB,fl, a, b, c,d,k;
 
         for (i = 0; i < size; i++) {
             // assemble the inverse mass vector (usually a matrix,
