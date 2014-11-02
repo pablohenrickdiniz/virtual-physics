@@ -214,7 +214,7 @@ var World = function () {
         var MInv = [], bias = [], lambdaAccumulated = [], Jn = [], Jt = [], i, j, contacts = this.contacts,
             size = contacts.length, contact, bodyA, bodyB, vLinA, vLinB, vAngA, vAngB, mInvA, mInvB, moiInvA, moiInvB,
             normal, pA, pB, cA, cB, beta = this.beta, dt = this.dt, C, vPreNormal,friction = this.friction,
-            n = this.nIterations, v, lambdaFriction, lambda,pAcA,pBcB,fl;
+            n = this.nIterations, v, lambdaFriction, lambda,pAcA,pBcB,fl, a, b, c,d,k;
 
         for (i = 0; i < size; i++) {
             // assemble the inverse mass vector (usually a matrix,
@@ -261,15 +261,25 @@ var World = function () {
                 vLinB = bodyB.vLin;
                 vAngA = bodyA.vAng;
                 vAngB = bodyB.vAng;
-
                 v = [vLinA[0], vLinA[1], vAngA, vLinB[0], vLinB[1], vAngB];
-                lambda = -(MV.dot(Jn[j], v) + bias[j]) / MV.dot(Jn[j], MV.VxV(MInv[j], Jn[j]));
-                // clamp accumulated impulse to 0
+                a = 0;
+                b = 0;
+                c = 0;
+                d = 0;
+                for(k=0;k<=5;k++){
+                    a += Jn[j][k]*v[k];
+                    b += MInv[j][k]*Jn[j][k]*Jn[j][k];
+                    c += Jt[j][k]*v[k];
+                    d += MInv[j][k]*Jt[j][k]*Jt[j][k];
+                }
+
+                lambda = -(a+bias[j])/b;
+                lambdaFriction = -c/d;
+
                 if (lambdaAccumulated[j] + lambda < 0) {
                     lambda = -lambdaAccumulated[j];
                 }
-                // friction stuff
-                lambdaFriction = -(MV.dot(Jt[j], v) /*+ bias1[j]*/) / MV.dot(Jt[j], MV.VxV(MInv[j], Jt[j]));
+
                 fl = friction * lambda;
                 if (lambdaFriction > fl) {
                     lambdaFriction = fl;
@@ -278,7 +288,9 @@ var World = function () {
                 }
 
                 lambdaAccumulated[j] += lambda;
-                v = MV.VpV(MV.VpV(v, MV.VxV(MInv[j], MV.SxV(lambda, Jn[j]))), MV.VxV(MInv[j], MV.SxV(lambdaFriction, Jt[j])));
+                for(k=0;k<=5;k++){
+                    v[k] = (MInv[j][k]* lambdaFriction*Jt[j][k])+((MInv[j][k]*lambda*Jn[j][k])+v[k]);
+                }
                 bodyA.vLin = [v[0], v[1]];
                 bodyA.vAng = v[2];
                 bodyB.vLin = [v[3], v[4]];
