@@ -1,48 +1,50 @@
 function Game() {
-    this.world = new World();
-    this.canvas = new Canvas('game');
-    this.quad = new Canvas('quad');
-    this.running = false;
-    this.readFrame = null;
-    this.reader = CanvasMouseReader;
+    var self = this;
+    self.world = new World();
+    self.canvas = new Canvas('game');
+    self.quad = new Canvas('quad');
+    self.running = false;
+    self.readFrame = null;
+    self.reader = CanvasMouseReader;
     var game = this;
 
-    this.start = function () {
-        this.reader.start();
-        this.restart();
+    self.start = function () {
+        var self = this;
+        self.reader.start();
+        self.restart();
     };
 
-    this.pause = function () {
-        if (this.running) {
-            this.running = false;
-            clearInterval(this.readFrame);
+    self.pause = function () {
+        var self = this;
+        if (self.running) {
+            self.running = false;
+            clearInterval(self.readFrame);
         }
     };
 
-    this.restart = function () {
-        if (!this.running) {
-            this.running = true;
-            this.loop(this);
+    self.restart = function () {
+        var self = this;
+        if (!self.running) {
+            self.running = true;
+            self.loop(self);
         }
     };
 
-    this.loop = function (game) {
-        if (game.running) {
+    self.loop = function (self) {
+        if (self.running) {
             setTimeout(function () {
                 requestAnimationFrame(function () {
-                    game.loop(game);
+                    self.loop(self);
                 });
-                game.world.step();
-                game.canvas.drawWorld(game.world);
-                game.quad.drawQuadTree(game.world.quadTree);
-            }, game.dt * 1000);
+                self.world.step();
+                self.canvas.drawWorld(self.world);
+                self.quad.drawQuadTree(self.world.quadTree);
+            }, self.dt * 1000);
         }
     };
 
-    this.getMouse = function () {
-        var sum = MV.VpV(this.reader.vertex, this.canvas.min);
-        var div = MV.VdV(sum, [this.canvas.scale, this.canvas.scale]);
-        return div;
+    self.getMouse = function () {
+        return MV.VdV(MV.VpV(self.reader.vertex, self.canvas.min), [self.canvas.scale, self.canvas.scale]);
     };
 }
 

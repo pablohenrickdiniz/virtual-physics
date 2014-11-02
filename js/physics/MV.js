@@ -63,7 +63,8 @@ var MV = {
         if (x.length > 0 && !Array.isArray(x[0])) return x;
         var n = x[0].length;
         var r = [];
-        for (var dim = 0; dim < n; dim++) {
+        var dim;
+        for (dim = 0; dim < n; dim++) {
             r[dim] = x.map(function (xElem) {
                 return xElem[dim];
             });

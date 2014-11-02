@@ -1,8 +1,9 @@
 function Border(color, thickness) {
-    this.color = color == undefined ? null : color;
-    this.thickness = thickness == undefined ? 1 : thickness;
-    this.lineDash = [];
-    this.lineCap = 'butt';
+    var self = this;
+    self.color = color == undefined ? null : color;
+    self.thickness = thickness == undefined ? 1 : thickness;
+    self.lineDash = [];
+    self.lineCap = 'butt';
 }
 
 Border.BUTT = 'butt';

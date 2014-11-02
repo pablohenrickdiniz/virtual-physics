@@ -16,7 +16,7 @@ function Body(shape, material, dinamic, vLin, vAng) {
     var rotMatTheta; // used to avoid unnecessary rotation matrix computations
     var rotationMatrix;
 
-    this.update = function () {
+    self.update = function () {
         var self = this;
         self.mass = self.dinamic ? self.material.density * self.shape.area : 0;
         self.mInv = self.mass == 0 ? 0 : 1 / self.mass; // inverse of the mass
@@ -32,13 +32,13 @@ function Body(shape, material, dinamic, vLin, vAng) {
         rotationMatrix = null;
     };
 
-    this.setDinamic = function (dinamic) {
+    self.setDinamic = function (dinamic) {
         var self = this;
         self.dinamic = dinamic;
         self.update();
     };
 
-    this.setMass = function (mass) {
+    self.setMass = function (mass) {
         var self = this;
         self.mass = mass;
         self.mInv = self.mass == 0 ? 0 : 1 / self.mass; // inverse of the mass
@@ -46,26 +46,26 @@ function Body(shape, material, dinamic, vLin, vAng) {
         rotationMatrix = null;
     };
 
-    this.setShape = function (shape) {
+    self.setShape = function (shape) {
         var self = this;
         self.shape = shape;
         self.shape.parent = self;
         self.update();
     };
 
-    this.setMaterial = function (material) {
+    self.setMaterial = function (material) {
         var self = this;
         self.material = material;
         self.update();
     };
 
-    this.addForce = function (force, forcePoint) {
+    self.addForce = function (force, forcePoint) {
         var self = this;
         self.forces.push(force);
         self.forcePoints.push(forcePoint);
     };
 
-    this.getRotationMatrix = function () {
+    self.getRotationMatrix = function () {
         var self = this;
         // only recompute if theta has changed since the last call.
         var theta = self.shape.theta;
@@ -79,7 +79,7 @@ function Body(shape, material, dinamic, vLin, vAng) {
         return rotationMatrix;
     };
 
-    this.getVerticesInWorldCoords = function () {
+    self.getVerticesInWorldCoords = function () {
         var self = this;
         if(self.vertsAbsolute == null){
            self.vertsAbsolute = [];

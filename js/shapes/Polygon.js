@@ -2,49 +2,69 @@ Polygon.prototype = new Shape();
 
 function Polygon(center, theta) {
     Shape.call(this, center, new Color('White'), new Border('black', 1), theta);
-    this.vertices = [];
-    this.min = [];
-    this.max = [];
+    var self = this;
+    self.vertices = [];
+    self.min = [];
+    self.max = [];
 
-    this.rotate = function (theta, origin) {
+    self.rotate = function (theta, origin) {
+        var self = this;
         if (origin == undefined) {
-            origin = this.center;
+            origin = self.center;
         }
         else {
-            this.center = MV.rotate(this.center, theta, origin);
+            self.center = MV.rotate(self.center, theta, origin);
         }
-        var size = this.vertices.length;
-        for(var i = 0;i<size;i++){
-            this.vertices[i] = MV.rotate(this.vertices[i], theta, origin);
+        var size = self.vertices.length;
+        var i;
+        for(i = 0;i<size;i++){
+            self.vertices[i] = MV.rotate(self.vertices[i], theta, origin);
         }
     };
 
-    this.updateCenter = function () {
-        var centroid = [0, 0],a = 0,size = this.vertices.length,pos,vb,mult,va,m;
-        for (var i = 0; i < size; i++) {
+    self.updateCenter = function () {
+        var self = this;
+        var centroid = [0, 0];
+        var a = 0;
+        var size = self.vertices.length;
+        var pos;
+        var vb;
+        var mult;
+        var va;
+        var m;
+        var i;
+        for (i = 0; i < size; i++) {
             pos = i + 1 == size ? 0 : i + 1;
-            va = this.vertices[i];
-            vb = this.vertices[pos];
+            va = self.vertices[i];
+            vb = self.vertices[pos];
             mult = va[0] * vb[1] - vb[0] * va[1];
             centroid[0] += (va[0] + vb[0]) * mult;
             centroid[1] += (va[1] + vb[1]) * mult;
             a += mult;
         }
         a *= 0.5;
-        this.area = a;
+        self.area = a;
         m = 1 / (6 * a);
         centroid[0] *= m;
         centroid[1] *= m;
-        this.center = centroid;
+        self.center = centroid;
     };
 
-    this.moi2 = function (mass) {
-        var sum1 = 0,sum2= 0,pos,pn,pn1,norm,size=this.vertices.length,n;
+    self.moi2 = function (mass) {
+        var self = this;
+        var sum1 = 0;
+        var sum2= 0;
+        var pos;
+        var pn;
+        var pn1;
+        var norm;
+        var size=self.vertices.length;
+        var n;
 
         for (n = 0; n < size; n++) {
             pos = n + 1 == size ? 0 : n + 1;
-            pn = this.vertices[n];
-            pn1 = this.vertices[pos];
+            pn = self.vertices[n];
+            pn1 = self.vertices[pos];
             norm = MV.norm(MV.VxV(pn, pn1));
             sum1 += norm * MV.dot(pn1, pn1) + MV.dot(pn1, pn) + MV.dot(pn, pn);
             sum2 += norm;
@@ -52,14 +72,28 @@ function Polygon(center, theta) {
         return (mass / 6) * (sum1 / sum2);
     };
 
-    this.moi = function (mass) {
-        var cv = this.center,moi = 0, i,size = this.vertices.length,
-        pos,va,vb,b,ca,cb,h, a,moit,centroid,masst;
+    self.moi = function (mass) {
+        var self = this;
+        var cv = self.center;
+        var moi = 0;
+        var i;
+        var size = self.vertices.length;
+        var pos;
+        var va;
+        var vb;
+        var b;
+        var ca;
+        var cb;
+        var h;
+        var a;
+        var moit;
+        var centroid;
+        var masst;
 
         for (i = 0; i < size; i++) {
             pos = i + 1 == size ? 0 : i + 1;
-            va = this.vertices[i];
-            vb = this.vertices[pos];
+            va = self.vertices[i];
+            vb = self.vertices[pos];
             b = MV.distance(va, vb);
             ca = MV.distance(vb, cv);
             cb = MV.distance(va, cv);
@@ -73,61 +107,74 @@ function Polygon(center, theta) {
             }
             moit = (Math.pow(h, 3) * b - Math.pow(b, 2) * h * a + b * h * Math.pow(a, 2) + b * Math.pow(h, 3)) / 36;
             centroid = [(va[0] + vb[0] + cv[0]) / 3, (va[1] + vb[1] + cv[1]) / 3];
-            masst = (b * h * mass) / this.area;
+            masst = (b * h * mass) / self.area;
             moi += moit + masst * Math.pow(MV.distance(centroid, cv), 2);
         }
         return moi;
     };
 
-    this.updateRelative = function () {
-        this.vertices = this.vertices.reverse();
-        var cx = this.center[0],cy = this.center[1], i,size = this.vertices.length,vertex;
+    self.updateRelative = function () {
+        var self = this;
+        self.vertices = self.vertices.reverse();
+        var cx = self.center[0],cy = self.center[1], i,size = self.vertices.length,vertex;
         for (i = 0; i < size; i++) {
-            vertex = this.vertices[i];
+            vertex = self.vertices[i];
             vertex[0] = (cx - vertex[0]) * -1;
             vertex[1] = (cy - vertex[1]) * -1;
         }
-        this.updateMinAndMax();
+        self.updateMinAndMax();
     };
 
-    this.updateMinAndMax = function () {
-        var min = [this.vertices[0][0], this.vertices[0][1]];
-        var max = [this.vertices[0][0], this.vertices[0][1]];
-        var size = this.vertices.length, i,j;
+    self.updateMinAndMax = function () {
+        var self = this;
+        var min = [self.vertices[0][0], self.vertices[0][1]];
+        var max = [self.vertices[0][0], self.vertices[0][1]];
+        var size = self.vertices.length, i,j;
 
         for (i = 1; i < size; i++) {
             for (j = 0; j <= 1; j++) {
-                if (this.vertices[i][j] < min[j]) {
-                    min[j] = this.vertices[i][j];
+                if (self.vertices[i][j] < min[j]) {
+                    min[j] = self.vertices[i][j];
                 }
-                else if (this.vertices[i][0] > max[j]) {
-                    max[j] = this.vertices[i][j];
+                else if (self.vertices[i][0] > max[j]) {
+                    max[j] = self.vertices[i][j];
                 }
             }
         }
-        this.min = min;
-        this.max = max;
+        self.min = min;
+        self.max = max;
     };
 
-    this.isClockWise = function () {
-        var sum = 0, i,size = this.vertices.length, j,va,vb;
+    self.isClockWise = function () {
+        var self = this;
+        var sum = 0, i,size = self.vertices.length, j,va,vb;
         for (i = 0; i < size; i++) {
             j = i + 1 == size ? 0 : i + 1;
-            va = this.vertices[i];
-            vb = this.vertices[j];
+            va = self.vertices[i];
+            vb = self.vertices[j];
             sum += ((vb[0] - va[0]) * (vb[1] + va[1]))
         }
         return sum < 0;
     };
 
-    this.sumAngles = function () {
-        var sum = 0, i,size = this.vertices.length, j, k,vb,va,vc,v1,v2;
+    self.sumAngles = function () {
+        var self = this;
+        var sum = 0;
+        var i;
+        var size = self.vertices.length;
+        var j;
+        var k;
+        var vb;
+        var va;
+        var vc;
+        var v1;
+        var v2;
         for (i = 0; i < size; i++) {
             j = i + 1 == size ? 0 : i + 1;
             k = j + 1 == size ? 0 : j + 1;
-            va = this.vertices[i];
-            vb = this.vertices[j];
-            vc = this.vertices[k];
+            va = self.vertices[i];
+            vb = self.vertices[j];
+            vc = self.vertices[k];
             v1 = MV.VmV(vb, va);
             v2 = MV.VmV(vc, vb);
             sum += MV.getDegree(v1, v2);
@@ -135,7 +182,8 @@ function Polygon(center, theta) {
         return sum;
     };
 
-    this.isConvex = function () {
-        return this.sumAngles() > 360;
+    self.isConvex = function () {
+        var self = this;
+        return self.sumAngles() > 360;
     };
 }

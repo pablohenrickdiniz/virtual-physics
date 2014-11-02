@@ -1,113 +1,126 @@
 function QuadTree(AABB, l,maxl,maxo) {
-    this.AABB = AABB;
-    this.l = l;
-    this.bodies = [];
-    this.AABBs = [];
-    this.nodes = [];
-    this.qtd = 0;
-    this.maxl = maxl;
-    this.maxo = maxo;
+    var self = this;
+    self.AABB = AABB;
+    self.l = l;
+    self.bodies = [];
+    self.AABBs = [];
+    self.nodes = [];
+    self.qtd = 0;
+    self.maxl = maxl;
+    self.maxo = maxo;
 
-    this.clear = function () {
-        this.qtd = 0;
-        this.bodies = [];
-        this.AABBs = [];
-        var size = this.nodes.length;
-        for(var i = 0; i < size;i++){
-            if(this.nodes[i] != undefined && this.nodes[i].qtd > 0){
-                this.nodes[i].clear();
+    self.clear = function () {
+        var self = this;
+        self.qtd = 0;
+        self.bodies = [];
+        self.AABBs = [];
+        var size = self.nodes.length;
+        var i;
+        for(i = 0; i < size;i++){
+            if(self.nodes[i] != undefined && self.nodes[i].qtd > 0){
+                self.nodes[i].clear();
             }
         }
     };
 
-    this.getAABBsGroups = function (AABBsGroups) {
+    self.getAABBsGroups = function (AABBsGroups) {
+        var self = this;
         AABBsGroups = AABBsGroups == undefined ? [] : AABBsGroups;
-        if (this.bodies.length > 0 && this.qtd > 1) {
-            AABBsGroups.push([this.bodies, this.AABBs]);
+        if (self.bodies.length > 0 && self.qtd > 1) {
+            AABBsGroups.push([self.bodies, self.AABBs]);
         }
         else {
-            var size = this.nodes.length;
-            for (var i = 0; i < size; i++) {
-                this.nodes[i].getAABBsGroups(AABBsGroups);
+            var size = self.nodes.length;
+            var i;
+            for (i = 0; i < size; i++) {
+                self.nodes[i].getAABBsGroups(AABBsGroups);
             }
         }
         return AABBsGroups;
     };
 
 
-    this.addBody = function (body, AABB) {
+    self.addBody = function (body, AABB) {
+        var self = this;
         AABB = AABB == undefined ? getAABB(body) : AABB;
-
-        if (this.qtd <= maxo || this.l == maxl) {
-            this.bodies.push(body);
-            this.AABBs.push(AABB);
+        if (self.qtd <= maxo || self.l == maxl) {
+            self.bodies.push(body);
+            self.AABBs.push(AABB);
         }
         else {
-            if (this.nodes[0] == undefined) {
-                this.split();
+            if (self.nodes[0] == undefined) {
+                self.split();
             }
-            var size = this.bodies.length;
+            var size = self.bodies.length;
             if (size > 0) {
-                for (var i = 0; i < size; i++) {
-                    this.insert(this.bodies[i], this.AABBs[i]);
+                var i ;
+                for (i = 0; i < size; i++) {
+                    self.insert(self.bodies[i], self.AABBs[i]);
                 }
-                this.bodies = [];
-                this.AABBs = [];
+                self.bodies = [];
+                self.AABBs = [];
             }
-            this.insert(body, AABB);
+            self.insert(body, AABB);
         }
-        this.qtd++;
+        self.qtd++;
     };
 
-    this.removeBody = function (body) {
+    self.removeBody = function (body) {
+        var self = this;
         var removed = false;
-        if (this.bodies.length > 0 && this.qtd > 0) {
-            var index = this.bodies.indexOf(body);
+        if (self.bodies.length > 0 && self.qtd > 0) {
+            var index = self.bodies.indexOf(body);
             if (index != -1) {
-                this.bodies.splice(index, 1);
-                this.AABBs.splice(index, 1);
+                self.bodies.splice(index, 1);
+                self.AABBs.splice(index, 1);
                 removed = true;
             }
         }
         else {
-            var size = this.nodes.length, node, i;
+            var size = self.nodes.length;
+            var node;
+            var i;
             for (i = 0; i < size; i++) {
-                node = this.nodes[i];
+                node = self.nodes[i];
                 if (node != null && node.removeBody(body)) {
                     removed = true;
                 }
             }
         }
         if (removed) {
-            this.qtd--;
+            self.qtd--;
         }
         return removed;
     };
 
-    this.insert = function (body, AABB) {
-        var i, size = this.nodes.length, node;
+    self.insert = function (body, AABB) {
+        var self = this;
+        var i;
+        var size = self.nodes.length;
+        var node;
         for (i = 0; i < size; i++) {
-            node = this.nodes[i];
+            node = self.nodes[i];
             if (AABBoverlap(node.AABB, AABB, 0)) {
                 node.addBody(body, AABB);
             }
         }
     };
 
-    this.split = function () {
-        var x0 = this.AABB[0];
-        var y0 = this.AABB[1];
-        var x1 = this.AABB[2];
-        var y1 = this.AABB[3];
+    self.split = function () {
+        var self = this;
+        var x0 = self.AABB[0];
+        var y0 = self.AABB[1];
+        var x1 = self.AABB[2];
+        var y1 = self.AABB[3];
         var w = (x1 - x0) / 2;
         var h = (y1 - y0) / 2;
         var xw = x0 + w;
         var yh = y0 + h;
-        var l = this.l + 1;
-        this.nodes[0] = new QuadTree([x0, y0, xw, yh], l,this.maxl,this.maxo);
-        this.nodes[1] = new QuadTree([xw, y0, x1, yh], l,this.maxl,this.maxo);
-        this.nodes[2] = new QuadTree([xw, yh, x1, y1], l,this.maxl,this.maxo);
-        this.nodes[3] = new QuadTree([x0, yh, xw, y1], l,this.maxl,this.maxo);
+        var l = self.l + 1;
+        self.nodes[0] = new QuadTree([x0, y0, xw, yh], l,self.maxl,self.maxo);
+        self.nodes[1] = new QuadTree([xw, y0, x1, yh], l,self.maxl,self.maxo);
+        self.nodes[2] = new QuadTree([xw, yh, x1, y1], l,self.maxl,self.maxo);
+        self.nodes[3] = new QuadTree([x0, yh, xw, y1], l,self.maxl,self.maxo);
     };
 }
 

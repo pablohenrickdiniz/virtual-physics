@@ -1,52 +1,59 @@
 function Color(red, blue, green, alpha) {
+    var self = this;
     if (arguments.length == 1) {
         var color = Color.parse(arguments[0]);
-        this.red = color.red;
-        this.blue = color.blue;
-        this.green = color.green;
-        this.alpha = color.alpha;
+        self.red = color.red;
+        self.blue = color.blue;
+        self.green = color.green;
+        self.alpha = color.alpha;
     } else {
-        this.red = isNaN(red) || red < 0 ? 0 : red > 255 ? 255 : red;
-        this.blue = isNaN(blue) || blue < 0 ? 0 : blue > 255 ? 255 : blue;
-        this.green = isNaN(green) || green < 0 ? 0 : green > 255 ? 255 : green;
-        this.alpha = isNaN(alpha) || alpha < 0 || alpha > 1 ? 1 : alpha;
+        self.red = isNaN(red) || red < 0 ? 0 : red > 255 ? 255 : red;
+        self.blue = isNaN(blue) || blue < 0 ? 0 : blue > 255 ? 255 : blue;
+        self.green = isNaN(green) || green < 0 ? 0 : green > 255 ? 255 : green;
+        self.alpha = isNaN(alpha) || alpha < 0 || alpha > 1 ? 1 : alpha;
     }
 
-    this.toRGB = function () {
-        return "rgb(" + this.red + "," + this.blue + "," + this.green + ")";
+    self.toRGB = function () {
+        var self = this;
+        return "rgb(" + self.red + "," + self.blue + "," + self.green + ")";
     };
 
-    this.toRGBA = function () {
-        return "rgba(" + this.red + "," + this.blue + "," + this.green + ","
-            + this.alpha + ")";
+    self.toRGBA = function () {
+        var self = this;
+        return "rgba(" + self.red + "," + self.blue + "," + self.green + ","
+            + self.alpha + ")";
     };
 
-    this.toHEX = function () {
-        var r = this.red.toString(16);
-        var g = this.blue.toString(16);
-        var b = this.green.toString(16);
+    self.toHEX = function () {
+        var self = this;
+        var r = self.red.toString(16);
+        var g = self.blue.toString(16);
+        var b = self.green.toString(16);
         r = r.length < 2 ? r + "0" : r;
         g = g.length < 2 ? g + "0" : g;
         b = b.length < 2 ? b + "0" : b;
         return ("#" + r + g + b).toUpperCase();
     };
 
-    this.toString = function () {
-        return this.toRGBA();
+    self.toString = function () {
+        var self = this;
+        return self.toRGBA();
     };
 
-    this.reverse = function () {
-        this.red = this.red < 128 ? 128 + (128 - this.red)
-            : 128 - (this.red - 128);
-        this.blue = this.blue < 128 ? 128 + (128 - this.blue)
-            : 128 - (this.blue - 128);
-        this.green = this.green < 128 ? 128 + (128 - this.green)
-            : 128 - (this.green - 128);
+    self.reverse = function () {
+        var self = this;
+        self.red = self.red < 128 ? 128 + (128 - self.red)
+            : 128 - (self.red - 128);
+        self.blue = self.blue < 128 ? 128 + (128 - self.blue)
+            : 128 - (self.blue - 128);
+        self.green = self.green < 128 ? 128 + (128 - self.green)
+            : 128 - (self.green - 128);
     };
 
-    this.asName = function () {
+    self.asName = function () {
+        var self = this;
         for (var index in Color.Name) {
-            if (Color.Name[index] == this.toHEX()) {
+            if (Color.Name[index] == self.toHEX()) {
                 return index;
             }
         }
@@ -522,27 +529,30 @@ Color.Patterns = {
 Color.parse = function (str) {
     var exp = new RegExp(Color.Patterns.HEXADECIMAL);
     var color = null;
+    var r;
+    var g;
+    var b;
     if (exp.test(str)) {
         str = str.substr(str.indexOf("#") + 1, str.length);
-        var r = parseInt(str.substr(0, 2), 16);
-        var g = parseInt(str.substr(2, 2), 16);
-        var b = parseInt(str.substr(4, 2), 16);
+        r = parseInt(str.substr(0, 2), 16);
+        g = parseInt(str.substr(2, 2), 16);
+        b = parseInt(str.substr(4, 2), 16);
         color = new Color(r, g, b);
     } else {
         exp = new RegExp(Color.Patterns.RGB);
         if (exp.test(str)) {
             str = str.replace("rgb(", "").replace(")", "").split(",");
-            var r = parseInt(str[0]);
-            var g = parseInt(str[1]);
-            var b = parseInt(str[2]);
+            r = parseInt(str[0]);
+            g = parseInt(str[1]);
+            b = parseInt(str[2]);
             color = new Color(r, g, b);
         } else {
             exp = new RegExp(Color.Patterns.RGBA);
             if (exp.test(str)) {
                 str = str.replace("rgba(", "").replace(")", "").split(",");
-                var r = parseInt(str[0]);
-                var g = parseInt(str[1]);
-                var b = parseInt(str[2]);
+                r = parseInt(str[0]);
+                g = parseInt(str[1]);
+                b = parseInt(str[2]);
                 var a = parseFloat(str[3]);
                 color = new Color(r, g, b, a);
             } else {

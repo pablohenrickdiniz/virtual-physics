@@ -1,43 +1,46 @@
 function Image(url) {
-    this.url = url;
-    this.sx = 0;
-    this.sy = 0;
-    this.x = 0;
-    this.y = 0;
-    this.width = 0;
-    this.height = 0;
-    this.element = null;
-    this.loaded = false;
-    this.pattern = "repeat";
-    this.fillPattern = null;
+    var self = this;
+    self.url = url;
+    self.sx = 0;
+    self.sy = 0;
+    self.x = 0;
+    self.y = 0;
+    self.width = 0;
+    self.height = 0;
+    self.element = null;
+    self.loaded = false;
+    self.pattern = "repeat";
+    self.fillPattern = null;
 
-    this.load = function () {
-        if (this.element == null) {
-            this.element = new Image();
-            $(this.element).attr("src", this.url);
-            $(this.element).prop("id", this.id);
-            var img = this;
-            $(this.element).load(function () {
-                img.width = $(this).width;
-                img.height = $(this).height;
-                img.loaded = true;
+    self.load = function () {
+        var self = this;
+        if (self.element == null) {
+            self.element = new Image();
+            $(self.element).attr("src", self.url);
+            $(self.element).prop("id", self.id);
+            $(self.element).load(function () {
+                self.width = $(this).width;
+                self.height = $(this).height;
+                self.loaded = true;
             });
         }
-        return this.element;
+        return self.element;
     };
 
-    this.getFillPattern = function (contexto) {
-        if (this.fillPattern == null) {
-            this.fillPattern = contexto.createPattern(document.getElementById(this.id), this.pattern);
+    self.getFillPattern = function (context) {
+        var self = this;
+        if (self.fillPattern == null) {
+            self.fillPattern = context.createPattern(document.getElementById(self.id), self.pattern);
         }
-        return this.fillPattern;
+        return self.fillPattern;
     };
 
-    this.getElement = function () {
-        if (this.element == null) {
-            return this.load();
+    self.getElement = function () {
+        var self = this;
+        if (self.element == null) {
+            return self.load();
         }
-        return this.element;
+        return self.element;
     };
 }
 

@@ -1,9 +1,1 @@
-/**
- * Created by Pablo Henrick Diniz on 14/10/14.
- */
-function SurfaceJoint(bodyA, vertexA, bodyB, vertexB) {
-    this.bodyA = bodyA==undefined?null:bodyA;
-    this.vertexA = vertexA==undefined?null:vertexA;
-    this.bodyB = bodyB==undefined?null:bodyB;
-    this.vertexB = vertexB==undefined?null:vertexB;
-}
+function SurfaceJoint(a,b,c,d){this.bodyA=void 0==a?null:a;this.vertexA=void 0==b?null:b;this.bodyB=void 0==c?null:c;this.vertexB=void 0==d?null:d};

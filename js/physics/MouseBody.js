@@ -2,34 +2,39 @@
  * Created by Pablo Henrick Diniz on 12/10/14.
  */
 function MouseBody(shape) {
-    this.vLin = [0, 0];
-    this.vAng = 0;
-    this.mInv = 0
-    this.moiInv = 0;
-    this.shape = shape;
-    this.center = shape.center;
+    var self = this;
+    self.vLin = [0, 0];
+    self.vAng = 0;
+    self.mInv = 0;
+    self.moiInv = 0;
+    self.shape = shape;
+    self.center = shape.center;
 
     var rotMatTheta; // used to avoid unnecessary rotation matrix computations
     var rotationMatrix;
 
-    this.getVerticesInWorldCoords = function () {
+    self.getVerticesInWorldCoords = function () {
+        var self = this;
         var vertsAbsolute = [];
-        var rotationMatrix = this.getRotationMatrix();
-        for (var i = 0; i < this.shape.vertices.length; i++) {
-            vertsAbsolute.push(MV.VpV(this.shape.center,
-                MV.MxV(rotationMatrix, this.shape.vertices[i])));
+        var rotationMatrix = self.getRotationMatrix();
+        var i;
+        var size =  self.shape.vertices.length;
+        for (i = 0; i < size;i++) {
+            vertsAbsolute.push(MV.VpV(self.shape.center,
+                MV.MxV(rotationMatrix, self.shape.vertices[i])));
         }
         return vertsAbsolute;
     };
 
-    this.getRotationMatrix = function () {
+    self.getRotationMatrix = function () {
+        var self = this;
         // only recompute if theta has changed since the last call.
-        if (this.shape.theta !== rotMatTheta || rotationMatrix == null) {
+        if (self.shape.theta !== rotMatTheta || rotationMatrix == null) {
             rotationMatrix = [
-                [Math.cos(this.shape.theta), -Math.sin(this.shape.theta)],
-                [Math.sin(this.shape.theta), Math.cos(this.shape.theta)]
+                [Math.cos(self.shape.theta), -Math.sin(self.shape.theta)],
+                [Math.sin(self.shape.theta), Math.cos(self.shape.theta)]
             ];
-            rotMatTheta = this.shape.theta;
+            rotMatTheta = self.shape.theta;
         }
         return rotationMatrix;
     }

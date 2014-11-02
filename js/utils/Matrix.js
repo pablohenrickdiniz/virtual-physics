@@ -1,35 +1,37 @@
 function Matrix(rows, cols) {
-    this.rows = isNaN(rows) ? 3 : parseInt(rows);
-    this.cols = isNaN(cols) ? 3 : parseInt(cols);
-    this.determinant = null;
-    this.cofactor = null;
-    this.transpose = null;
-    this.adjunct = null;
-    this.inverse = null;
-    this.mat = [];
+    var self = this;
+    self.rows = isNaN(rows) ? 3 : parseInt(rows);
+    self.cols = isNaN(cols) ? 3 : parseInt(cols);
+    self.determinant = null;
+    self.cofactor = null;
+    self.transpose = null;
+    self.adjunct = null;
+    self.inverse = null;
+    self.mat = [];
 
-    for (var i = 0; i < this.rows; i++) {
-        this.mat[i] = [];
-        for (var j = 0; j < this.cols; j++) {
-            this.mat[i][j] = 0;
+    for (var i = 0; i < self.rows; i++) {
+        self.mat[i] = [];
+        for (var j = 0; j < self.cols; j++) {
+            self.mat[i][j] = 0;
         }
     }
 
-    this.getValue = function (row, col) {
-        if (row >= 0 && row < this.rows && col >= 0 && col < this.cols) {
-            return this.mat[row][col];
+    self.getValue = function (row, col) {
+        var self = this;
+        if (row >= 0 && row < self.rows && col >= 0 && col < self.cols) {
+            return self.mat[row][col];
         }
         else {
             throw new TypeError('Indice de matriz inválido:[' + row + '][' + col + ']');
-            ;
         }
     };
 
-    this.setValue = function (row, col, value) {
-        if (row >= 0 && row < this.rows && col >= 0 && col < this.cols) {
+    self.setValue = function (row, col, value) {
+        var self = this;
+        if (row >= 0 && row < self.rows && col >= 0 && col < self.cols) {
             if (!isNaN(value)) {
-                this.mat[row][col] = value;
-                this.determinant = null;
+                self.mat[row][col] = value;
+                self.determinant = null;
             }
             else {
                 throw new TypeError("O valor passado como parâmetro deve ser um numero");
@@ -37,15 +39,15 @@ function Matrix(rows, cols) {
         }
         else {
             throw new TypeError('Indice de matriz inválido:[' + row + '][' + col + ']');
-            ;
         }
     };
 
-    this.setRow = function (row, values) {
-        if (row >= 0 && row < this.rows) {
-            if (values instanceof Array && values.length == this.cols) {
-                this.mat[row] = values;
-                this.determinant = null;
+    self.setRow = function (row, values) {
+        var self = this;
+        if (row >= 0 && row < self.rows) {
+            if (values instanceof Array && values.length == self.cols) {
+                self.mat[row] = values;
+                self.determinant = null;
             }
             else {
                 throw new TypeError("A quantidade de colunas deve ser a mesma da matriz");
@@ -56,13 +58,14 @@ function Matrix(rows, cols) {
         }
     };
 
-    this.setCol = function (col, values) {
-        if (col >= 0 && col < this.cols) {
-            if (values instanceof Array && values.length == this.rows) {
-                for (var i = 0; i < this.mat.length; i++) {
-                    this.mat[i][col] = values[i];
+    self.setCol = function (col, values) {
+        var self = this;
+        if (col >= 0 && col < self.cols) {
+            if (values instanceof Array && values.length == self.rows) {
+                for (var i = 0; i < self.mat.length; i++) {
+                    self.mat[i][col] = values[i];
                 }
-                this.determinant = null;
+                self.determinant = null;
             }
             else {
                 throw new TypeError("A quantidade de colunas deve ser a mesma da matriz");
@@ -73,42 +76,48 @@ function Matrix(rows, cols) {
         }
     };
 
-    this.getRow = function (row) {
-        if (row >= 0 && row <= this.rows) {
-            return this.mat[row];
+    self.getRow = function (row) {
+        var self = this;
+        if (row >= 0 && row <= self.rows) {
+            return self.mat[row];
         }
+        return null;
     };
 
-    this.getCol = function (col) {
-        if (col >= 0 && col <= this.cols) {
+    self.getCol = function (col) {
+        var self = this;
+        if (col >= 0 && col <= self.cols) {
             var aux = [];
-            for (var i = 0; i < this.mat.length; i++) {
-                aux[i] = this.mat[i][col];
+            for (var i = 0; i < self.mat.length; i++) {
+                aux[i] = self.mat[i][col];
             }
             return aux;
         }
+        return null;
     };
 
-    this.obterCofator = function (row, col) {
-        if (row >= 0 && row < this.rows && col >= 0 && col < this.cols) {
-            return Math.pow(-1, row + col) * this.obterSubMatriz(row, col).determinant()
+    self.obterCofator = function (row, col) {
+        var self = this;
+        if (row >= 0 && row < self.rows && col >= 0 && col < self.cols) {
+            return Math.pow(-1, row + col) * self.obterSubMatriz(row, col).determinant()
         }
         else {
             throw new TypeError("Indice inexistente[" + row + "][" + col + "]");
         }
     };
 
-    this.obterSubMatriz = function (row, col) {
-        if (row >= 0 && row < this.rows && col >= 0 && col < this.cols) {
-            var subOrdem = this.rows - 1;
+    self.obterSubMatriz = function (row, col) {
+        var self = this;
+        if (row >= 0 && row < self.rows && col >= 0 && col < self.cols) {
+            var subOrdem = self.rows - 1;
             var subMat = new Matrix(subOrdem, subOrdem);
             var subi = 0;
             var subj = 0;
-            for (var i = 0; i < this.mat.length; i++) {
+            for (var i = 0; i < self.mat.length; i++) {
                 if (i != row) {
-                    for (var j = 0; j < this.mat[i].length; j++) {
+                    for (var j = 0; j < self.mat[i].length; j++) {
                         if (j != col) {
-                            subMat.setValue(subi, subj, this.mat[i][j]);
+                            subMat.setValue(subi, subj, self.mat[i][j]);
                             subj++;
                             if (subj == subOrdem) {
                                 subj = 0;
@@ -125,100 +134,107 @@ function Matrix(rows, cols) {
         }
     };
 
-    this.cofactor = function () {
-        if (this.cofactor == null) {
-            this.cofactor = new Matrix(this.rows, this.cols);
-            for (var i = 0; i < this.rows; i++) {
-                for (var j = 0; j < this.cols; j++) {
-                    this.cofactor.setValue(i, j, this.obterCofator(i, j));
+    self.cofactor = function () {
+        var self = this;
+        if (self.cofactor == null) {
+            self.cofactor = new Matrix(self.rows, self.cols);
+            for (var i = 0; i < self.rows; i++) {
+                for (var j = 0; j < self.cols; j++) {
+                    self.cofactor.setValue(i, j, self.obterCofator(i, j));
                 }
             }
         }
-        return this.cofactor;
+        return self.cofactor;
     };
 
-    this.transpose = function () {
-        if (this.transpose == null) {
-            this.transpose = new Matrix(this.cols, this.rows);
-            for (var i = 0; i < this.mat.length; i++) {
-                var linha = this.getRow(i);
-                this.transpose.setCol(i, linha);
+    self.transpose = function () {
+        var self = this;
+        if (self.transpose == null) {
+            self.transpose = new Matrix(self.cols, self.rows);
+            for (var i = 0; i < self.mat.length; i++) {
+                var linha = self.getRow(i);
+                self.transpose.setCol(i, linha);
             }
         }
-        return this.transpose;
+        return self.transpose;
     };
 
-    this.adjunct = function () {
-        if (this.adjunct == null) {
-            this.adjunct = this.cofactor().transpose();
+    self.adjunct = function () {
+        var self = this;
+        if (self.adjunct == null) {
+            self.adjunct = self.cofactor().transpose();
         }
-        return this.adjunct;
+        return self.adjunct;
     };
 
 
-    this.inverse = function () {
-        if (this.inverse == null) {
-            if (this.determinant() != 0) {
-                this.inverse = multiplicarPorEscalar(this.adjunct(), 1 / this.determinant());
+    self.inverse = function () {
+        var self = this;
+        if (self.inverse == null) {
+            if (self.determinant() != 0) {
+                self.inverse = Matrix.scale(self.adjunct(), 1 / self.determinant());
             }
             else {
                 console.log("A matriz não possui matriz inversa");
             }
         }
-        return this.inverse;
+        return self.inverse;
     };
 
-    this.determinant = function () {
-        if (this.determinant == null) {
-            if (this.rows == this.cols) {
-                if (this.rows == 1) {
-                    this.determinant = this.getValue(0, 0);
+    self.determinant = function () {
+        var self = this;
+        if (self.determinant == null) {
+            if (self.rows == self.cols) {
+                if (self.rows == 1) {
+                    self.determinant = self.getValue(0, 0);
                 }
-                else if (this.rows <= 3) {
-                    this.determinant = this.determinantBySarrus();
+                else if (self.rows <= 3) {
+                    self.determinant = self.determinantBySarrus();
                 }
                 else {
-                    this.determinant = this.determinantByLaplace();
+                    self.determinant = self.determinantByLaplace();
                 }
             }
             else {
-                throw new TypeError("Não é possivel calcular a determinate porque a matriz nao e quadrada:" + this.rows + "," + this.cols);
+                throw new TypeError("Não é possivel calcular a determinate porque a matriz nao e quadrada:" + self.rows + "," + self.cols);
             }
         }
-        return this.determinant;
+        return self.determinant;
     };
 
-    this.determinantByLaplace = function () {
-        var i = parseInt(Math.floor(Math.random() * this.rows));
+    self.determinantByLaplace = function () {
+        var self = this;
+        var i = parseInt(Math.floor(Math.random() * self.rows));
         var det = 0;
-        for (var j = 0; j < this.mat[i].length; j++) {
-            det += this.mat[i][j] * this.obterCofator(i, j);
+        for (var j = 0; j < self.mat[i].length; j++) {
+            det += self.mat[i][j] * self.obterCofator(i, j);
         }
         return det;
     };
 
-    this.determinantBySarrus = function () {
+    self.determinantBySarrus = function () {
+        var self = this;
         var sum = 0;
-        if (this.cols == 2) {
-            sum = this.getValue(0, 0) * this.getValue(1, 1) - this.getValue(0, 1) * this.getValue(1, 0);
+        if (self.cols == 2) {
+            sum = self.getValue(0, 0) * self.getValue(1, 1) - self.getValue(0, 1) * self.getValue(1, 0);
         }
         else {
             for (var j = 0; j < 3; j++) {
                 var da = 0;
                 var aux = 1;
                 for (var jAux = j, i = 0, count = 0; count < 3; jAux++, i++, count++) {
-                    jAux = jAux >= this.cols ? 0 : jAux;
-                    i = i >= this.rows ? 0 : i;
-                    aux *= this.getValue(i, jAux);
+                    jAux = jAux >= self.cols ? 0 : jAux;
+                    i = i >= self.rows ? 0 : i;
+                    aux *= self.getValue(i, jAux);
                 }
 
                 da = aux;
                 aux = 1;
 
                 for (jAux = j, i = 0, count = 0; count < 3; jAux--, i++, count++) {
-                    jAux = jAux < 0 ? this.cols - 1 : jAux;
-                    i = i >= this.rows ? 0 : i;
-                    aux *= this.getValue(i, jAux);
+                    jAux = jAux < 0 ? self.cols - 1 : jAux;
+                    i = i >= self.rows ? 0 : i;
+                    aux *= self.getValue(i, jAux);
                 }
 
                 sum += (da - aux);
@@ -227,20 +243,22 @@ function Matrix(rows, cols) {
         return sum;
     };
 
-    this.load = function (matrix) {
+    self.load = function (matrix) {
+        var self = this;
         for (i in matrix) {
             for (j in matrix[i]) {
-                this.setValue(i, j, matrix[i][j]);
+                self.setValue(i, j, matrix[i][j]);
             }
         }
     };
 
-    this.toString = function () {
+    self.toString = function () {
+        var self = this;
         var str = "";
-        for (var i = 0; i < this.mat.length; i++) {
+        for (var i = 0; i < self.mat.length; i++) {
             str += "\n";
-            for (var j = 0; j < this.mat[i].length; j++) {
-                str += "[" + this.getValue(i, j) + "]";
+            for (var j = 0; j < self.mat[i].length; j++) {
+                str += "[" + self.getValue(i, j) + "]";
             }
 
         }
@@ -254,14 +272,17 @@ Matrix.sum = function (matrixA, matrixB) {
             var mal = matrixA.rows;
             var mbc = matrixB.cols;
             var mat = new Matrix(mal, mbc);
-            for (var i = 0; i < mal; i++) {
-                for (var j = 0; j < mbc; j++) {
+            var i;
+            var j;
+            for (i = 0; i < mal; i++) {
+                for (j = 0; j < mbc; j++) {
                     mat.setValue(i, j, matrixA.getValue(i, j) + matrixB.getValue(i, j));
                 }
             }
             return mat;
         }
     }
+    return null;
 };
 
 Matrix.subtrair = function (matrixA, matrixB) {
@@ -270,38 +291,50 @@ Matrix.subtrair = function (matrixA, matrixB) {
             var mal = matrixA.rows;
             var mbc = matrixB.cols;
             var mat = new Matrix(mal, mbc);
-            for (var i = 0; i < mal; i++) {
-                for (var j = 0; j < mbc; j++) {
+            var i;
+            var j;
+            for (i = 0; i < mal; i++) {
+                for (j = 0; j < mbc; j++) {
                     mat.setValue(i, j, matrixA.getValue(i, j) - matrixB.getValue(i, j));
                 }
             }
             return mat;
         }
     }
+    return null;
 };
 
 Matrix.scale = function (matrix, scalar) {
     if (matrix instanceof Matrix && !isNaN(scalar)) {
         var mat = new Matrix(matrix.rows, matrix.cols);
-        for (var i = 0; i < matrix.rows; i++) {
-            for (var j = 0; j < matrix.cols; j++) {
+        var i;
+        var j;
+        for (i = 0; i < matrix.rows; i++) {
+            for (j = 0; j < matrix.cols; j++) {
                 mat.setValue(i, j, matrix.getValue(i, j) * scalar);
             }
         }
         return mat;
     }
+    return null;
 };
 
 Matrix.multiplicarMatrizes = function (matrixA, matrixB) {
     if (matrixA instanceof Matrix && matrixB instanceof Matrix) {
         if (matrixA.cols == matrixB.rows) {
             var mat = new Matrix(matrixA.rows, matrixB.cols);
-            for (var i = 0; i < matrixA.rows; i++) {
-                for (var j = 0; j < matrixB.cols; j++) {
-                    var linha = matrixA.getRow(i);
-                    var coluna = matrixB.getCol(j);
-                    var soma = 0;
-                    for (var k = 0; k < linha.length; k++) {
+            var i;
+            var j;
+            var linha;
+            var coluna;
+            var soma = 0;
+            var k;
+            for (i = 0; i < matrixA.rows; i++) {
+                for(j = 0; j < matrixB.cols; j++) {
+                    linha = matrixA.getRow(i);
+                    coluna = matrixB.getCol(j);
+                    soma = 0;
+                    for (k = 0; k < linha.length; k++) {
                         soma += linha[k] * coluna[k];
                     }
                     mat.setValue(i, j, soma);
@@ -310,4 +343,5 @@ Matrix.multiplicarMatrizes = function (matrixA, matrixB) {
             return mat;
         }
     }
+    return null;
 };
