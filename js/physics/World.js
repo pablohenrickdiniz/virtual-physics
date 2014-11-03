@@ -1,11 +1,11 @@
 var World = function () {
     var self = this;
     self.dt = 1 / 60;
-    self.nIterations = 4;
+    self.nIterations = 20;
     self.beta = 0.2;
     self.bodies = [];
     self.t = 0;
-    self.friction = 0.5;
+    self.friction = 0.2;
     self.contacts = [];
     self.gravity = 9.81;
     self.width = 4000;
@@ -86,7 +86,7 @@ var World = function () {
             if (f.dinamic) {
                 var c = MV.VpV(f.center, MV.SxV(d.dt, f.vLin)), b = d.dt * f.vAng;
                 f.center = c;
-                //f.shape.center = f.center;
+                f.shape.center = f.center;
                 f.shape.theta += b;
                 c = getAABB(f);
                 AABBoverlap(c, d.quadTree.AABB, 0) || (h.splice(e, 1), a = !1)
@@ -345,13 +345,13 @@ var World = function () {
             // Jacobian for friction - like Jacobian for collision,
             // but with tangent in place of normal
             Jt[i] = [-normal[1],normal[0],pAcA[0]*normal[0]-pAcA[1]*-normal[1],normal[1],-normal[0],-((pB[0]-cB[0])*-normal[1]-(pB[1]-cB[1])*-normal[1])];
-            /*
+
              var tmp = MV.VmV(contact.pB, contact.bodyB.center);
              var vB = MV.VpV(contact.bodyB.vLin, MV.SxV(contact.bodyB.vAng, [-tmp[1], tmp[0]]));
-             var tmp = MV.VmV(contact.pA, contact.bodyA.center);
+             tmp = MV.VmV(contact.pA, contact.bodyA.center);
              var vA = MV.VpV(contact.bodyA.vLin, MV.SxV(contact.bodyA.vAng, [-tmp[1], tmp[0]]));
-             */
-            vPreNormal = 0; //MV.dot(MV.VmV(vA, vB), contact.normal);
+
+            vPreNormal = MV.dot(MV.VmV(vA, vB), contact.normal);
             C = (pA[0]-pB[0])*normal[0]+(pA[1]-pB[1])*normal[1];
             bias[i] = beta / dt * ((C < 0) ? C : 0) + 0.2 * vPreNormal;
             lambdaAccumulated[i] = 0;

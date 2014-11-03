@@ -176,12 +176,7 @@ $(document).ready(function () {
 
         for (i = 0; i < sizeA; i++) {
             var body = game.world.bodies[i];
-            var vertices = body.getVerticesInWorldCoords();
-            var xo = MV.min(vertices, 0);
-            var yo = MV.min(vertices, 1);
-            var xf = MV.max(vertices, 0);
-            var yf = MV.max(vertices, 1);
-            if (pos[0] >= xo && pos[1] >= yo && pos[0] <= xf && pos[1] <= yf) {
+            if(body.shape.contains(pos)){
                 bodies.push(body);
             }
         }
@@ -410,4 +405,9 @@ $(document).ready(function () {
     $("#pause-btn").click(function () {
         game.pause();
     });
+
+    var polygonA = new Rect([100,100],20,100);
+    var polygonB =  new Rect([100,100],100,20);
+    var polygonC = Polygon.join(polygonA,polygonB);
+    drawing.drawPolygon(polygonC);
 });

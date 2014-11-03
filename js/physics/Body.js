@@ -84,7 +84,7 @@ function Body(shape, material, dinamic, vLin, vAng) {
         if(self.vertsAbsolute == null){
            self.vertsAbsolute = [];
             var rotationMatrix = self.getRotationMatrix(), shape = self.shape,
-                vertices = self.shape.vertices, size = vertices.length, center = self.center, i;
+                vertices = shape.vertices, size = vertices.length, center = self.center, i;
             for (i = 0; i < size; i++) {
                 self.vertsAbsolute.push(MV.VpV(center, MV.MxV(rotationMatrix, vertices[i])));
             }

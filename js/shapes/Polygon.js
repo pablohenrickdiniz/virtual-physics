@@ -7,6 +7,44 @@ function Polygon(center, theta) {
     self.min = [];
     self.max = [];
 
+    self.contains = function (c) {
+        var self = this;
+        var a = self.getVerticesInWorldCoords();
+        var f = a.length;
+        var e = !1;
+        var b;
+        var d;
+        b = -1;
+        for (d = f - 1; ++b < f; d = b)
+            (a[b][1] <= c[1] && c[1] < a[d][1] || a[d][1] <= c[1] && c[1] < a[b][1]) && c[0] < (a[d][0] - a[b][0]) * (c[1] - a[b][1]) / (a[d][1] - a[b][1]) + a[b][0] && (e = !e);
+        return e;
+    };
+
+    self.getVerticesInWorldCoords = function () {
+        var self = this;
+        var a = [];
+        var g = self.vertices;
+        var f = g.length;
+        var cx = self.center;
+        for(var i = 0; i < f;i++){
+            a.push(MV.rotate(MV.VpV(cx,g[i]),self.theta,self.center));
+        }
+        return a;
+    };
+
+    self.getRelativeVertices = function(){
+        var self = this;
+        var g = self.vertices;
+        var size = g.length;
+        var i;
+        var a =[];
+        var cx = self.center;
+        for(i=0;i<size;i++){
+            a.push(MV.VmV(cx,g[i]));
+        }
+        return a;
+    };
+
     self.rotate = function (theta, origin) {
         var self = this;
         if (origin == undefined) {
@@ -17,7 +55,7 @@ function Polygon(center, theta) {
         }
         var size = self.vertices.length;
         var i;
-        for(i = 0;i<size;i++){
+        for (i = 0; i < size; i++) {
             self.vertices[i] = MV.rotate(self.vertices[i], theta, origin);
         }
     };
@@ -53,12 +91,12 @@ function Polygon(center, theta) {
     self.moi2 = function (mass) {
         var self = this;
         var sum1 = 0;
-        var sum2= 0;
+        var sum2 = 0;
         var pos;
         var pn;
         var pn1;
         var norm;
-        var size=self.vertices.length;
+        var size = self.vertices.length;
         var n;
 
         for (n = 0; n < size; n++) {
@@ -116,7 +154,7 @@ function Polygon(center, theta) {
     self.updateRelative = function () {
         var self = this;
         self.vertices = self.vertices.reverse();
-        var cx = self.center[0],cy = self.center[1], i,size = self.vertices.length,vertex;
+        var cx = self.center[0], cy = self.center[1], i, size = self.vertices.length, vertex;
         for (i = 0; i < size; i++) {
             vertex = self.vertices[i];
             vertex[0] = (cx - vertex[0]) * -1;
@@ -129,7 +167,7 @@ function Polygon(center, theta) {
         var self = this;
         var min = [self.vertices[0][0], self.vertices[0][1]];
         var max = [self.vertices[0][0], self.vertices[0][1]];
-        var size = self.vertices.length, i,j;
+        var size = self.vertices.length, i, j;
 
         for (i = 1; i < size; i++) {
             for (j = 0; j <= 1; j++) {
@@ -147,7 +185,7 @@ function Polygon(center, theta) {
 
     self.isClockWise = function () {
         var self = this;
-        var sum = 0, i,size = self.vertices.length, j,va,vb;
+        var sum = 0, i, size = self.vertices.length, j, va, vb;
         for (i = 0; i < size; i++) {
             j = i + 1 == size ? 0 : i + 1;
             va = self.vertices[i];
@@ -186,8 +224,43 @@ function Polygon(center, theta) {
         var self = this;
         return self.sumAngles() > 360;
     };
+
 }
 
-Polygon.join = function(){
+Polygon.join = function (a,b) {
+    var vas = a.getVerticesInWorldCoords();
+    var vbs = b.getVerticesInWorldCoords();
+    var subj = Polygon.toClipper(vas);
+    var clips= Polygon.toClipper(vbs);
 
+    var solution = new ClipperLib.Path();
+    var c = new ClipperLib.Clipper();
+    c.AddPath(subj, ClipperLib.PolyType.ptSubject, true);
+    c.AddPath(clips, ClipperLib.PolyType.ptClip, true);
+    c.Execute(ClipperLib.ClipType.ctUnion, solution);
+    var path = Polygon.fromClipper(solution[0]);
+    console.log(path);
+    var polygon = new Polygon();
+    polygon.vertices = path;
+    polygon.updateCenter();
+    polygon.vertices = polygon.getRelativeVertices();
+    return polygon;
 };
+
+
+Polygon.toClipper = function(vertices){
+    var clipper =[];
+    for(var i = 0; i < vertices.length;i++){
+        clipper.push({X:vertices[i][0],Y:vertices[i][1]});
+    }
+    return clipper;
+};
+
+Polygon.fromClipper = function(vertices){
+    var normal =[];
+    for(var i = 0; i < vertices.length;i++){
+        normal.push([vertices[i].X,vertices[i].Y]);
+    }
+    return normal;
+};
+

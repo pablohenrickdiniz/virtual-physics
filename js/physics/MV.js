@@ -151,20 +151,12 @@ var MV = {
     distance: function (pa, pb) {
         return Math.sqrt(Math.pow(pa[0] - pb[0], 2) + Math.pow(pa[1] - pb[1], 2));
     },
-    intersectPoint:function(pa,pb,pc,pd){
-        var a = pa[0]*pb[1];
-        var b = pa[1]*pb[0];
-        var c = pc[0]-pd[0];
-        var d = pa[0]-pb[0];
-        var e = pc[0]*pd[1];
-        var f = pc[1]*pd[0];
-        var g = pc[1]-pd[1];
-        var h = pa[1]-pb[1];
-        var ab = a-b;
-        var ef = e-f;
-        var i = d*g-h*c;
-        var xa = ab*c-d*ef;
-        var ya = ab*g-h*ef;
-        return i==0||xa==0?null:[xa/i,ya/i];
+    intersectPoint: function (b, e, c, a) {
+        var d = c[0] - a[0], f = b[0] - e[0], g = c[1] - a[1], h = b[1] - e[1];
+        b = b[0] * e[1] - b[1] * e[0];
+        c = c[0] * a[1] - c[1] * a[0];
+        a = f * g - h * d;
+        d = b * d - f * c;
+        return 0 == a || 0 == d ? null : [d / a, (b * g - h * c) / a];
     }
 };

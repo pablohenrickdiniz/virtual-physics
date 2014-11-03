@@ -61,7 +61,7 @@ function circleIntersectLine(cc, r, va, vb) {
 function getFaceNormals(vertices) {
     var normals = [], size = vertices.length, i, face, N;
     for (i = 0; i < size; i++) {
-        face = MV.VmV(vertices[(i + 1) % vertices.length], vertices[i]);
+        face = MV.VmV(vertices[(i + 1) % size], vertices[i]);
         N = [-face[1], face[0]];
         normals.push(MV.normalize(N));
     }
@@ -115,9 +115,7 @@ function compare(groupA, groupB) {
 function computeFaceNormals(bodies, collisionCandidates) {
     var sortedBodies = collisionCandidates.map(function (cb) {
         return cb[0];
-    })
-        .sort()
-        .filter(function (b, i, arr) {
+    }).sort().filter(function (b, i, arr) {
             return (i === 0 || arr[i] !== arr[i - 1]);
         });
     var size = sortedBodies.length;
@@ -137,7 +135,7 @@ var Contact = function (bodyA, pA, bodyB, pB, normal) {
     self.bodyB = bodyB;
     self.pB = pB;
     self.normal = normal;
-}
+};
 
 function linesIntersect(X, Y, A, B) {
     var denominator = (Y[0] - X[0]) * (B[1] - A[1]) - (Y[1] - X[1]) * (B[0] - A[0]),epsilon = 0.001;
@@ -145,7 +143,7 @@ function linesIntersect(X, Y, A, B) {
         return false;
     var lambdaNominator = (B[0] - A[0]) * (X[1] - A[1]) - (B[1] - A[1]) * (X[0] - A[0]),lambda = lambdaNominator / denominator;
     if (lambda < 0 || lambda > 1)
-        return false
+        return false;
     var alphaNominator = (Y[1] - X[1]) * (A[0] - X[0]) - (Y[0] - X[0]) * (A[1] - X[1]),alpha = alphaNominator / denominator;
     if (alpha < 0 || alpha > 1)
         return false;
