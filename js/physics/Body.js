@@ -10,6 +10,7 @@ function Body(shape, material, dinamic, vLin, vAng) {
     self.forces = []; // array of forces...
     self.forcePoints = []; // ... and the vertex index of force application.
     self.groups = ['A'];
+    self.AABB = null;
     self.vertsAbsolute = null;
     // undefined is center of mass.
 
@@ -77,6 +78,14 @@ function Body(shape, material, dinamic, vLin, vAng) {
             rotMatTheta = theta;
         }
         return rotationMatrix;
+    };
+
+    self.getAABB = function(){
+        var self = this;
+        if(self.AABB == null){
+            self.AABB = getAABB2(self.getVerticesInWorldCoords());
+        }
+        return self.AABB;
     };
 
     self.getVerticesInWorldCoords = function () {

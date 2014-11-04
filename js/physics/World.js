@@ -93,6 +93,7 @@ var World = function () {
             }
             a && d.quadTree.addBody(f);
             f.vertsAbsolute = null;
+            f.AABB = null;
         })
     }
 

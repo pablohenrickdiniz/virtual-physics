@@ -33,6 +33,16 @@ function getAABB(body) {
     return AABB;
 }
 
+function getAABB2(verticesWorld){
+    var AABB = [];
+    AABB[0] = MV.min(verticesWorld, 0);
+    AABB[1] = MV.min(verticesWorld, 1);
+    AABB[2] = MV.max(verticesWorld, 0);
+    AABB[3] = MV.max(verticesWorld, 1);
+    return AABB;
+}
+
+
 function AABBoverlap(b1, b2, threshold) {
     if (threshold === undefined) {
         threshold = 0;

@@ -30,23 +30,20 @@ var CanvasMouseReader = {
             switch (event.which) {
                 case 1:
                     reader.left = true;
-                    reader.leftdown.map(function (val) {
+                    reader.leftdown.forEach(function (val) {
                         val.call();
-                        return val;
                     });
                     break;
                 case 2:
                     reader.middle = true;
-                    reader.middledown.map(function (val) {
+                    reader.middledown.forEach(function (val) {
                         val.call();
-                        return val;
                     });
                     break;
                 case 3:
                     reader.right = true;
-                    reader.rightdown.map(function (val) {
+                    reader.rightdown.forEach(function (val) {
                         val.call();
-                        return val;
                     });
             }
         });
@@ -54,23 +51,20 @@ var CanvasMouseReader = {
             switch (event.which) {
                 case 1:
                     reader.left = false;
-                    reader.leftup.map(function (val) {
+                    reader.leftup.forEach(function (val) {
                         val.call();
-                        return val;
                     });
                     break;
                 case 2:
                     reader.middle = false;
-                    reader.middleup.map(function (val) {
+                    reader.middleup.forEach(function (val) {
                         val.call();
-                        return val;
                     });
                     break;
                 case 3:
                     reader.right = false;
-                    reader.rightup.map(function (val) {
+                    reader.rightup.forEach(function (val) {
                         val.call();
-                        return val;
                     });
             }
         });
