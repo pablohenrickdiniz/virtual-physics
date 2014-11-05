@@ -97,6 +97,13 @@ var World = function () {
         })
     }
 
+    self.clear = function(){
+        var self = this;
+        var i;
+        for(i = 0; i < self.bodies.length;i++){
+            self.removeBody(self.bodies[i]);
+        }
+    };
 
     self.addBody = function (body) {
         var self = this;

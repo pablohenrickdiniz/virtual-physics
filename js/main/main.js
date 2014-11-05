@@ -6,6 +6,7 @@ $(document).ready(function () {
         return false;
     });
 
+
     var game = new Game();
     var drawing = new Canvas('drawing');
     game.start();
@@ -38,6 +39,43 @@ $(document).ready(function () {
                 game.canvas.drawWorld(game.world);
             }
         }
+    });
+
+    var joinPolygons = function(polygons){
+
+            for(var i = 0; i < polygons.length;i++){
+                for(var j =i+1; j < polygons.length;j++){
+                    var result = Polygon.join(polygons[i],polygons[j]);
+                    if(result.length == 1){
+                        polygons[i] = result[0];
+                        polygons.splice(j,1);
+                        j--;
+                    }
+                }
+            }
+
+        return polygons;
+    };
+
+
+    KeyReader.onkeydown(KeyReader.KEY_J,function(){
+
+            var polygons = [];
+            var i;
+            var body;
+            for(i = 0; i < menu.selectedBodies.length;i++){
+                polygons.push(menu.selectedBodies[i].shape);
+                game.world.removeBody(menu.selectedBodies[i]);
+            }
+            var result = joinPolygons(polygons);
+            menu.selectedBodies = [];
+            for(i = 0; i < result.length;i++){
+                result[i].border.lineDash = [5,5];
+                body = new Body(result[i],Material.Iron,false);
+                game.world.addBody(body);
+                menu.selectedBodies.push(body);
+            }
+
     });
 
     KeyReader.onkeydown(KeyReader.KEY_ESC, function () {
@@ -429,6 +467,9 @@ $(document).ready(function () {
                         var bodies = findSelectedBodies(menu.shape);
                         menu.selectedBodies = bodies;
                         console.log(menu.selectedBodies);
+                        if (!game.running) {
+                            game.canvas.drawWorld(game.world);
+                        }
                     }
 
             }

@@ -38,9 +38,9 @@ function Polygon(center, theta) {
         var size = g.length;
         var i;
         var a =[];
-        var cx = self.center;
+        var c = self.center;
         for(i=0;i<size;i++){
-            a.push(MV.VmV(cx,g[i]));
+            a.push([-(c[0]-g[i][0]),-(c[1]-g[i][1])]);
         }
         return a;
     };
@@ -232,35 +232,43 @@ Polygon.join = function (a,b) {
     var vbs = b.getVerticesInWorldCoords();
     var subj = Polygon.toClipper(vas);
     var clips= Polygon.toClipper(vbs);
-
+    var polygons =[];
+    var polygon;
+    var i;
     var solution = new ClipperLib.Path();
     var c = new ClipperLib.Clipper();
+
     c.AddPath(subj, ClipperLib.PolyType.ptSubject, true);
     c.AddPath(clips, ClipperLib.PolyType.ptClip, true);
     c.Execute(ClipperLib.ClipType.ctUnion, solution);
-    var path = Polygon.fromClipper(solution[0]);
-    console.log(path);
-    var polygon = new Polygon();
-    polygon.vertices = path;
-    polygon.updateCenter();
-    polygon.vertices = polygon.getRelativeVertices();
-    return polygon;
+    var paths = Polygon.fromClipper(solution);
+    for(i = 0; i < paths.length;i++){
+        polygon = new Polygon();
+        polygon.vertices = paths[i];
+        polygon.updateCenter();
+        polygon.vertices = polygon.getRelativeVertices();
+        polygons.push(polygon);
+    }
+    return polygons;
 };
 
-
 Polygon.toClipper = function(vertices){
-    var clipper =[];
+    var path = new ClipperLib.Path();
     for(var i = 0; i < vertices.length;i++){
-        clipper.push({X:vertices[i][0],Y:vertices[i][1]});
+        path.push(new ClipperLib.IntPoint(vertices[i][0], vertices[i][1]));
     }
-    return clipper;
+    return path;
 };
 
 Polygon.fromClipper = function(vertices){
-    var normal =[];
+    var paths =[];
     for(var i = 0; i < vertices.length;i++){
-        normal.push([vertices[i].X,vertices[i].Y]);
+        var path =[];
+        for(var j = 0; j < vertices[i].length;j++){
+            path.push([vertices[i][j].X,vertices[i][j].Y]);
+        }
+        paths.push(path);
     }
-    return normal;
+    return paths;
 };
 
