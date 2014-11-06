@@ -42,7 +42,6 @@ $(document).ready(function () {
     });
 
     var joinPolygons = function(polygons){
-
             for(var i = 0; i < polygons.length;i++){
                 for(var j =i+1; j < polygons.length;j++){
                     var result = Polygon.join(polygons[i],polygons[j]);
@@ -57,9 +56,7 @@ $(document).ready(function () {
         return polygons;
     };
 
-
     KeyReader.onkeydown(KeyReader.KEY_J,function(){
-
             var polygons = [];
             var i;
             var body;
@@ -76,6 +73,49 @@ $(document).ready(function () {
                 menu.selectedBodies.push(body);
             }
 
+    });
+
+    KeyReader.onkeydown(KeyReader.KEY_T,function(){
+        var polygons = [];
+        var i;
+        var body;
+        var j;
+        var k;
+        for(i = 0; i < menu.selectedBodies.length;i++){
+            polygons.push(menu.selectedBodies[i].shape);
+            game.world.removeBody(menu.selectedBodies[i]);
+        }
+        var contours = [];
+        for(i = 0; i < polygons.length;i++){
+            contours[i] = [];
+            var vertices = polygons[i].vertices;
+            for(j = 0; j < vertices.length;j++){
+                contours[i].push(new poly2tri.Point(polygons[i].center[0]+vertices[j][0],polygons[i].center[1]+ vertices[j][1]));
+            }
+        }
+        for(k = 0; k < contours.length;k++){
+            var swctx = new poly2tri.SweepContext(contours[k]);
+            swctx.triangulate();
+            var triangles =swctx.getTriangles();
+            for(i = 0; i < triangles.length;i++){
+                var points = triangles[i].getPoints();
+                console.log(points);
+                for(j = 0; j< points.length;j++){
+                    points[j] =[points[j].x,points[j].y];
+                }
+                var polygon = new Polygon();
+                polygon.vertices = points;
+                if (!polygon.isClockWise()) {
+                    var first = polygon.vertices.shift();
+                    polygon.vertices.reverse();
+                    polygon.vertices.unshift(first);
+                }
+                polygon.updateCenter();
+                polygon.updateRelative();
+                body = new Body(polygon,Material.Iron,true);
+                game.world.addBody(body);
+            }
+        }
     });
 
     KeyReader.onkeydown(KeyReader.KEY_ESC, function () {

@@ -272,3 +272,5 @@ Polygon.fromClipper = function(vertices){
     return paths;
 };
 
+
+
