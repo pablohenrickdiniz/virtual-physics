@@ -89,10 +89,9 @@ $(document).ready(function () {
         for(i = 0; i < polygons.length;i++){
             contours[i] = [];
             var p = polygons[i];
-            var v = p.vertices;
-            var c = p.center;
+            var v = p.getVerticesInWorldCoords();
             for(j = 0; j < v.length;j++){
-                contours[i].push(new poly2tri.Point(c[0]+v[j][0],c[1]+ v[j][1]));
+                contours[i].push(new poly2tri.Point(v[j][0],v[j][1]));
             }
         }
         for(k = 0; k < contours.length;k++){
@@ -101,8 +100,8 @@ $(document).ready(function () {
             var triangles =swctx.getTriangles();
             for(i = 0; i < triangles.length;i++){
                 var points = triangles[i].getPoints();
-                console.log(points);
-                for(j = points.length-1; j >= 0;j--){
+
+                for(j = 0; j< points.length;j++){
                     points[j] =[points[j].x,points[j].y];
                 }
                 var polygon = new Polygon();
@@ -114,9 +113,11 @@ $(document).ready(function () {
                     polygon.vertices.unshift(first);
                 }
                 polygon.updateCenter();
+                polygon.rotate(MV.toDegree(polygons[k].theta),polygons[k].center);
                 polygon.updateRelative();
-                polygon.rotate(polygons[k].theta);
-                body = new Body(polygon,Material.Iron,true);
+                body = new Body(polygon,Material.Iron,menu.selectedBodies[k].dinamic);
+                body.vLin = menu.selectedBodies[k].vLin;
+                body.vAng = menu.selectedBodies[k].vAng;
                 game.world.addBody(body);
             }
         }

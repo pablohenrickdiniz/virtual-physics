@@ -27,7 +27,7 @@ function Polygon(center, theta) {
         var f = g.length;
         var cx = self.center;
         for(var i = 0; i < f;i++){
-            a.push(MV.rotate(MV.VpV(cx,g[i]),self.theta,self.center));
+            a.push(MV.rotate(MV.VpV(cx,g[i]),MV.toDegree(self.theta),self.center));
         }
         return a;
     };
