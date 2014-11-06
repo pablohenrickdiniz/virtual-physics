@@ -160,6 +160,33 @@ function linesIntersect(X, Y, A, B) {
     return true;
 }
 
+
+function polygonsIntersect(polygonA, polygonB){
+    var pAs = polygonA.getVerticesInWorldCoords();
+    var pBs = polygonB.getVerticesInWorldCoords();
+    var sizeA = pAs.length;
+    var sizeB = pBs.length;
+    var i;
+    var j;
+    var pa;
+    var pb;
+    var pc;
+    var pd;
+
+    for(i=0;i<sizeA;i++){
+        pa = pAs[i];
+        pb = pAs[i+1==sizeA?0:i+1];
+        for(j=0;j<sizeB;j++){
+            pc = pBs[j];
+            pd = pBs[j+1==sizeA?0:j+1];
+            if (linesIntersect(pAs[i], polygonA.center, pBs[j], pBs[(j + 1) % pBs.length])) {
+                return true;
+            }
+        }
+    }
+    return false;
+};
+
 function getContactsFromBodyPair(bodyA, bodyB) {
     var contacts = [], pAs = bodyA.getVerticesInWorldCoords(), pBs = bodyB.getVerticesInWorldCoords(),
         distances = [], normals = bodyB.faceNormals, sizeA = pAs.length, sizeB = pBs.length, i, j, pA, pB,

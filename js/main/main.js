@@ -88,9 +88,11 @@ $(document).ready(function () {
         var contours = [];
         for(i = 0; i < polygons.length;i++){
             contours[i] = [];
-            var vertices = polygons[i].vertices;
-            for(j = 0; j < vertices.length;j++){
-                contours[i].push(new poly2tri.Point(polygons[i].center[0]+vertices[j][0],polygons[i].center[1]+ vertices[j][1]));
+            var p = polygons[i];
+            var v = p.vertices;
+            var c = p.center;
+            for(j = 0; j < v.length;j++){
+                contours[i].push(new poly2tri.Point(c[0]+v[j][0],c[1]+ v[j][1]));
             }
         }
         for(k = 0; k < contours.length;k++){
@@ -100,11 +102,12 @@ $(document).ready(function () {
             for(i = 0; i < triangles.length;i++){
                 var points = triangles[i].getPoints();
                 console.log(points);
-                for(j = 0; j< points.length;j++){
+                for(j = points.length-1; j >= 0;j--){
                     points[j] =[points[j].x,points[j].y];
                 }
                 var polygon = new Polygon();
                 polygon.vertices = points;
+
                 if (!polygon.isClockWise()) {
                     var first = polygon.vertices.shift();
                     polygon.vertices.reverse();
@@ -112,6 +115,7 @@ $(document).ready(function () {
                 }
                 polygon.updateCenter();
                 polygon.updateRelative();
+                polygon.rotate(polygons[k].theta);
                 body = new Body(polygon,Material.Iron,true);
                 game.world.addBody(body);
             }
@@ -253,17 +257,14 @@ $(document).ready(function () {
     };
 
     function findSelectedBodies(shape) {
-        var AABB = getAABB2(shape.getVerticesInWorldCoords());
         var bodies = [];
         var i;
         var size = game.world.bodies.length;
         var body;
         for (i = 0; i < size; i++) {
             body = game.world.bodies[i];
-            if (AABBoverlap(AABB, body.getAABB(),0)) {
+            if (polygonsIntersect(shape, body.shape)) {
                 body.shape.border.lineDash = [5, 5];
-                game.canvas.drawAABB(AABB);
-                game.canvas.drawAABB(body.getAABB());
                 bodies.push(body);
             }
         }
