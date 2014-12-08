@@ -148,7 +148,7 @@ var Contact = function (bodyA, pA, bodyB, pB, normal) {
 };
 
 function linesIntersect(X, Y, A, B) {
-    var denominator = (Y[0] - X[0]) * (B[1] - A[1]) - (Y[1] - X[1]) * (B[0] - A[0]),epsilon = 0.001;
+    var denominator = (Y[0] - X[0]) * (B[1] - A[1]) - (Y[1] - X[1]) * (B[0] - A[0]),epsilon = 0.000000001;
     if (Math.abs(denominator) < epsilon)
         return false;
     var lambdaNominator = (B[0] - A[0]) * (X[1] - A[1]) - (B[1] - A[1]) * (X[0] - A[0]),lambda = lambdaNominator / denominator;

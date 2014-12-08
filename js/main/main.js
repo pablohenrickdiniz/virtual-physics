@@ -21,9 +21,7 @@ $(document).ready(function () {
     KeyReader.onkeydown(KeyReader.KEY_ENTER, function () {
         if (menu.selected == 'convex') {
             if (!menu.shape.isClockWise()) {
-                var first = menu.shape.vertices.shift();
-                menu.shape.vertices.reverse();
-                menu.shape.vertices.unshift(first);
+                menu.shape.invertPath();
             }
             menu.shape.updateCenter();
             menu.shape.updateRelative();
@@ -41,84 +39,57 @@ $(document).ready(function () {
         }
     });
 
-    var joinPolygons = function(polygons){
-            for(var i = 0; i < polygons.length;i++){
-                for(var j =i+1; j < polygons.length;j++){
-                    var result = Polygon.join(polygons[i],polygons[j]);
-                    if(result.length == 1){
-                        polygons[i] = result[0];
-                        polygons.splice(j,1);
-                        j--;
-                    }
-                }
-            }
 
-        return polygons;
-    };
 
-    KeyReader.onkeydown(KeyReader.KEY_J,function(){
-            var polygons = [];
-            var i;
-            var body;
-            for(i = 0; i < menu.selectedBodies.length;i++){
-                polygons.push(menu.selectedBodies[i].shape);
-                game.world.removeBody(menu.selectedBodies[i]);
-            }
-            var result = joinPolygons(polygons);
-            menu.selectedBodies = [];
-            for(i = 0; i < result.length;i++){
-                result[i].border.lineDash = [5,5];
-                body = new Body(result[i],Material.Iron,false);
-                game.world.addBody(body);
-                menu.selectedBodies.push(body);
-            }
-
+    KeyReader.onkeydown(KeyReader.KEY_J, function () {
+        menu.joinSelectedBodies();
     });
 
-    KeyReader.onkeydown(KeyReader.KEY_T,function(){
+    KeyReader.onkeydown(KeyReader.KEY_T, function () {
         var polygons = [];
         var i;
         var body;
         var j;
         var k;
-        for(i = 0; i < menu.selectedBodies.length;i++){
-            polygons.push(menu.selectedBodies[i].shape);
-            game.world.removeBody(menu.selectedBodies[i]);
+        var bodies = menu.selectedBodies;
+        menu.selectedBodies = [];
+        for (i = 0; i < bodies.length; i++) {
+            polygons.push(bodies[i].shape);
+            game.world.removeBody(bodies[i]);
         }
         var contours = [];
-        for(i = 0; i < polygons.length;i++){
+        for (i = 0; i < polygons.length; i++) {
             contours[i] = [];
             var p = polygons[i];
             var v = p.getVerticesInWorldCoords();
-            for(j = 0; j < v.length;j++){
-                contours[i].push(new poly2tri.Point(v[j][0],v[j][1]));
+            for (j = 0; j < v.length; j++) {
+                contours[i].push(new poly2tri.Point(v[j][0], v[j][1]));
             }
         }
-        for(k = 0; k < contours.length;k++){
+        for (k = 0; k < contours.length; k++) {
             var swctx = new poly2tri.SweepContext(contours[k]);
             swctx.triangulate();
-            var triangles =swctx.getTriangles();
-            for(i = 0; i < triangles.length;i++){
+            var triangles = swctx.getTriangles();
+            for (i = 0; i < triangles.length; i++) {
                 var points = triangles[i].getPoints();
-
-                for(j = 0; j< points.length;j++){
-                    points[j] =[points[j].x,points[j].y];
+                for (j = 0; j < points.length; j++) {
+                    points[j] = [points[j].x, points[j].y];
                 }
                 var polygon = new Polygon();
+                polygon.border.lineDash = [5, 5];
                 polygon.vertices = points;
-
                 if (!polygon.isClockWise()) {
-                    var first = polygon.vertices.shift();
-                    polygon.vertices.reverse();
-                    polygon.vertices.unshift(first);
+                    polygon.invertPath();
                 }
                 polygon.updateCenter();
-                polygon.rotate(MV.toDegree(polygons[k].theta),polygons[k].center);
+                polygon.rotate(MV.toDegree(polygons[k].theta), polygons[k].center);
                 polygon.updateRelative();
-                body = new Body(polygon,Material.Iron,menu.selectedBodies[k].dinamic);
-                body.vLin = menu.selectedBodies[k].vLin;
-                body.vAng = menu.selectedBodies[k].vAng;
+                polygon.color = bodies[k].shape.color;
+                body = new Body(polygon, Material.Iron, bodies[k].dinamic);
+                body.vLin = bodies[k].vLin;
+                body.vAng = bodies[k].vAng;
                 game.world.addBody(body);
+                menu.selectedBodies.push(body);
             }
         }
     });
@@ -127,10 +98,10 @@ $(document).ready(function () {
         menu.shape = null;
         menu.drawing = false;
         menu.drawPoints = [];
-        for(var i = 0; i < menu.selectedBodies.length;i++){
-            menu.selectedBodies[i].shape.border.lineDash =[];
+        for (var i = 0; i < menu.selectedBodies.length; i++) {
+            menu.selectedBodies[i].shape.border.lineDash = [];
         }
-        menu.selectedBodies =[];
+        menu.selectedBodies = [];
         drawing.clearScreen();
     });
 
@@ -153,7 +124,7 @@ $(document).ready(function () {
     });
 
     KeyReader.onkeydown(KeyReader.KEY_DEL, function () {
-        for(var i = 0; i < menu.selectedBodies.length;i++){
+        for (var i = 0; i < menu.selectedBodies.length; i++) {
             game.world.removeBody(menu.selectedBodies[i]);
         }
         if (!game.running) {
@@ -254,6 +225,40 @@ $(document).ready(function () {
             this.drawing = false;
             this.shape = null;
             drawing.clearScreen();
+        },
+        getSelectedShapes:function(){
+            var shapes =[];
+            var i;
+            for(i=0;i<this.selectedBodies.length;i++){
+                shapes.push([this.selectedBodies[i].shape,false]);
+            }
+            return shapes;
+        },
+        clearSelectedBodies:function(){
+            for(var i = 0; i < this.selectedBodies.length;i++){
+                game.world.removeBody(this.selectedBodies[i]);
+            }
+            this.selectedBodies =[];
+        },
+        joinSelectedBodies:function(){
+            var shapes = this.getSelectedShapes();
+            menu.clearSelectedBodies();
+            shapes = Polygon.joinAll(shapes);
+            var body;
+            var i;
+            var size = shapes.length;
+            for(i = 0; i < size;i++){
+                if(shapes[i][1]){
+                    if(shapes[i][0].isClockWise()){
+                        shapes[i][0].invertPath();
+                    }
+                    shapes[i][0].updateCenter();
+                    shapes[i][0].updateRelative();
+                }
+                shapes[i][0].border.lineDash = [5,5];
+                body = new Body(shapes[i][0],Material.Iron,false);
+                game.world.addBody(body);
+            }
         }
     };
 
@@ -264,7 +269,7 @@ $(document).ready(function () {
         var body;
         for (i = 0; i < size; i++) {
             body = game.world.bodies[i];
-            if (polygonsIntersect(shape, body.shape)) {
+            if (AABBoverlap(getAABB2(shape.getVerticesInWorldCoords()), body.getAABB())) {
                 body.shape.border.lineDash = [5, 5];
                 bodies.push(body);
             }
@@ -316,20 +321,18 @@ $(document).ready(function () {
         if (menu.shape != null) {
             menu.shape.color = new Color(value);
         }
-
-            for(var i = 0;i< menu.selectedBodies.length;i++){
-                menu.selectedBodies[i].shape.color = new Color(value);
-            }
-
-            if (!game.running) {
-                game.canvas.drawWorld(game.world);
-            }
+        for (var i = 0; i < menu.selectedBodies.length; i++) {
+            menu.selectedBodies[i].shape.color = new Color(value);
+        }
+        if (!game.running) {
+            game.canvas.drawWorld(game.world);
+        }
 
     });
 
     $("#tipo").change(function () {
         var value = document.getElementById('tipo').value == 'true';
-        for(var i = 0;i< menu.selectedBodies.length;i++){
+        for (var i = 0; i < menu.selectedBodies.length; i++) {
             menu.selectedBodies[i].setDinamic(value);
         }
     });
@@ -450,17 +453,17 @@ $(document).ready(function () {
         }
     });
 
-    $("#game").mouseup(function(e){
-           switch(e.which){
-               case 1:
-                   switch(menu.selected){
-                       case 'cursor':
-                           menu.drawing = false;
-                           drawing.clearScreen();
-                       break;
-                   }
-               break;
-           }
+    $("#game").mouseup(function (e) {
+        switch (e.which) {
+            case 1:
+                switch (menu.selected) {
+                    case 'cursor':
+                        menu.drawing = false;
+                        drawing.clearScreen();
+                        break;
+                }
+                break;
+        }
     });
 
     $("#game").mousemove(function () {
@@ -508,7 +511,6 @@ $(document).ready(function () {
                         }
                         var bodies = findSelectedBodies(menu.shape);
                         menu.selectedBodies = bodies;
-                        console.log(menu.selectedBodies);
                         if (!game.running) {
                             game.canvas.drawWorld(game.world);
                         }

@@ -1,4 +1,7 @@
-function QuadTree(AABB, l,maxl,maxo) {
+QuadTree.maxl = 8;
+QuadTree.maxo = 8;
+
+function QuadTree(AABB, l) {
     var self = this;
     self.AABB = AABB;
     self.l = l;
@@ -6,8 +9,6 @@ function QuadTree(AABB, l,maxl,maxo) {
     self.AABBs = [];
     self.nodes = [];
     self.qtd = 0;
-    self.maxl = maxl;
-    self.maxo = maxo;
 
     self.clear = function () {
         var self = this;
@@ -43,7 +44,7 @@ function QuadTree(AABB, l,maxl,maxo) {
     self.addBody = function (body, AABB) {
         var self = this;
         AABB = AABB == undefined ? getAABB(body) : AABB;
-        if (self.qtd <= maxo || self.l == maxl) {
+        if (self.qtd <= QuadTree.maxo || self.l == QuadTree.maxl) {
             self.bodies.push(body);
             self.AABBs.push(AABB);
         }
@@ -117,10 +118,10 @@ function QuadTree(AABB, l,maxl,maxo) {
         var xw = x0 + w;
         var yh = y0 + h;
         var l = self.l + 1;
-        self.nodes[0] = new QuadTree([x0, y0, xw, yh], l,self.maxl,self.maxo);
-        self.nodes[1] = new QuadTree([xw, y0, x1, yh], l,self.maxl,self.maxo);
-        self.nodes[2] = new QuadTree([xw, yh, x1, y1], l,self.maxl,self.maxo);
-        self.nodes[3] = new QuadTree([x0, yh, xw, y1], l,self.maxl,self.maxo);
+        self.nodes[0] = new QuadTree([x0, y0, xw, yh], l);
+        self.nodes[1] = new QuadTree([xw, y0, x1, yh], l);
+        self.nodes[2] = new QuadTree([xw, yh, x1, y1], l);
+        self.nodes[3] = new QuadTree([x0, yh, xw, y1], l);
     };
 }
 

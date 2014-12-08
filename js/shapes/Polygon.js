@@ -6,6 +6,7 @@ function Polygon(center, theta) {
     self.vertices = [];
     self.min = [];
     self.max = [];
+    this.AABB = null;
 
     self.contains = function (c) {
         var self = this;
@@ -25,11 +26,18 @@ function Polygon(center, theta) {
         var a = [];
         var g = self.vertices;
         var f = g.length;
-        var cx = self.center;
+        var cx = self.getCenter();
         for(var i = 0; i < f;i++){
             a.push(MV.rotate(MV.VpV(cx,g[i]),MV.toDegree(self.theta),self.center));
         }
         return a;
+    };
+
+    self.getCenter = function(){
+        if(this.center == null || this.center == undefined){
+            this.updateCenter();
+        }
+        return this.center;
     };
 
     self.getRelativeVertices = function(){
@@ -183,6 +191,13 @@ function Polygon(center, theta) {
         self.max = max;
     };
 
+    self.invertPath = function(){
+        var self = this;
+        var first = self.vertices.shift();
+        self.vertices.reverse();
+        self.vertices.unshift(first);
+    };
+
     self.isClockWise = function () {
         var self = this;
         var sum = 0, i, size = self.vertices.length, j, va, vb;
@@ -232,23 +247,28 @@ Polygon.join = function (a,b) {
     var vbs = b.getVerticesInWorldCoords();
     var subj = Polygon.toClipper(vas);
     var clips= Polygon.toClipper(vbs);
-    var polygons =[];
-    var polygon;
-    var i;
     var solution = new ClipperLib.Path();
     var c = new ClipperLib.Clipper();
-
     c.AddPath(subj, ClipperLib.PolyType.ptSubject, true);
     c.AddPath(clips, ClipperLib.PolyType.ptClip, true);
     c.Execute(ClipperLib.ClipType.ctUnion, solution);
-    var paths = Polygon.fromClipper(solution);
-    for(i = 0; i < paths.length;i++){
-        polygon = new Polygon();
-        polygon.vertices = paths[i];
-        polygon.updateCenter();
-        polygon.vertices = polygon.getRelativeVertices();
-        polygons.push(polygon);
+    return Polygon.fromClipper(solution);
+};
+
+Polygon.joinAll = function(polygons){
+    for(var i = 0; i < polygons.length;i++){
+        for(var j = i+1; j < polygons.length;j++){
+
+            var result = Polygon.join(polygons[i][0],polygons[j][0]);
+
+            if(result.length == 1){
+                polygons[i] = [result[0],true];
+                polygons.splice(j,1);
+                j--;
+            }
+        }
     }
+
     return polygons;
 };
 
@@ -263,11 +283,11 @@ Polygon.toClipper = function(vertices){
 Polygon.fromClipper = function(vertices){
     var paths =[];
     for(var i = 0; i < vertices.length;i++){
-        var path =[];
+        var polygon = new Polygon();
         for(var j = 0; j < vertices[i].length;j++){
-            path.push([vertices[i][j].X,vertices[i][j].Y]);
+            polygon.vertices.push([vertices[i][j].X,vertices[i][j].Y]);
         }
-        paths.push(path);
+        paths.push(polygon);
     }
     return paths;
 };
