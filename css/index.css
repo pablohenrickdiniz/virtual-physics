@@ -56,3 +56,50 @@
     margin: 0;
     padding: 0;
 }
+
+.tool-aligner{
+    margin:auto;
+    width:200px;
+}
+
+.panel-heading{
+    height:50px;
+}
+
+.tipo-area,.cor-area{
+    display:none;
+}
+
+.properties th,.properties td,.tools th, .tools td,.properties{
+    text-align:center;
+}
+
+.table th:hover{
+    cursor:pointer;
+    background-color:#d9edf7 !important;
+}
+
+#propriedades-header,#tools-header{
+    background-color:#f9f9f9;
+}
+
+.tools span{
+    width:38px;
+    height:38px;
+}
+
+.tools span:hover{
+    cursor:pointer;
+}
+
+.tools-group{
+    display:none;
+}
+
+.table{
+    margin-bottom:0;
+}
+
+#tipo-header,#cor-header{
+    display:none;
+}

@@ -47,47 +47,50 @@
             <canvas id="quad" width="600px" height="600px"></canvas>
         </div>
         <div class="tools-area">
-            <div id="forms">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        Tools
-                    </div>
-                    <div class="panel-body">
-                        <ul class="nav nav-pills">
-                            <li><a id="cursor" class="fa fa-2x fa-hand-o-up"></a></li>
-                            <li><a id="eraser" class="fa fa-2x fa-eraser"></a></li>
-                            <li><a id="move" class="fa fa-2x fa-arrows"></a></li>
-                        </ul>
-                        <ul class="nav nav-pills">
-                            <li><a id="quadrado" class="fa fa-2x fa-square"></a></li>
-                            <li><a id="circulo" class="fa fa-2x fa-circle"></a></li>
-                            <li><a id="regular" class="fa fa-2x fa-star"></a></li>
-                        </ul>
-                        <ul class="nav nav-pills">
-                            <li><a id="convex" class="fa fa-2x fa-pencil"></a></li>
-                            <li><a id="chain" class="fa fa-2x fa-chain"></a></li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-            <div class="properties">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        Properties
-                    </div>
-                    <div class="panel-body">
-                        <ul class="nav nav-pills nav-stacked">
-                            <label for="tipo">Tipo</label>
-                            <select id="tipo" class="form-control">
-                                <option value="false">Estático</option>
-                                <option value="true">Dinâmico</option>
-                            </select>
-                            <label for="preenchimento">Cor</label>
-                            <input class="form-control" type="color" id="preenchimento" value="#ffffff"/>
-                        </ul>
-                    </div>
-                </div>
-            </div>
+            <table class="table table-condensed tools">
+                <tr>
+                    <th  id="tools-header" colspan="3">Ferramentas</th>
+                </tr>
+                <tr class="tools-group">
+                    <td><span id="cursor" class="fa fa-2x fa-hand-o-up"></span></td>
+                    <td><span id="eraser" class="fa fa-2x fa-eraser"></span></td>
+                    <td><span id="move" class="fa fa-2x fa-arrows"></span></td>
+                </tr>
+                <tr class="tools-group">
+                    <td><span id="quadrado" class="fa fa-2x fa-square"></span></td>
+                    <td><span id="circulo" class="fa fa-2x fa-circle"></span></td>
+                    <td><span id="regular" class="fa fa-2x fa-star"></span></td>
+                </tr>
+                <tr class="tools-group">
+                    <td><span id="convex" class="fa fa-2x fa-pencil"></span></td>
+                    <td><span id="chain" class="fa fa-2x fa-chain"></span></td>
+                    <td></td>
+                </tr>
+            </table>
+            <table class="table table-condensed properties">
+                <tr>
+                    <th id='propriedades-header' colspan="2">Propriedades</th>
+                </tr>
+                <tr>
+                    <th colspan="2" id="tipo-header">Tipo</th>
+                </tr>
+                <tr class="tipo-area">
+                    <td>Estático</td>
+                    <td>Dinâmico</td>
+                </tr>
+                <tr class="tipo-area">
+                    <td><input class='tipo' type="radio" value="false" name="tipo" checked/></td>
+                    <td> <input class='tipo' type="radio" value="true" name="tipo"/></td>
+                </tr>
+                <tr>
+                    <th colspan="2"  id="cor-header">Cor</th>
+                </tr>
+                <tr class="cor-area">
+                    <td colspan="2">
+                        <input class="form-control" type="color" id="preenchimento" value="#ffffff"/>
+                    </td>
+                </tr>
+            </table>
         </div>
     </div>
     <div id="game-controls">

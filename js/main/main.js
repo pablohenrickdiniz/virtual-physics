@@ -6,6 +6,28 @@ $(document).ready(function () {
         return false;
     });
 
+    $('#tipo-header').click(function(){
+        $('.tipo-area').toggle();
+    });
+
+    $('#cor-header').click(function(){
+        $('.cor-area').toggle();
+    });
+
+    $('#tools-header').click(function(){
+        $('.tools-group').toggle();
+    });
+
+    $('#propriedades-header').click(function(){
+        $('#tipo-header').toggle();
+        $('#cor-header').toggle();
+        if(!$('#tipo-header').is(':visible')){
+            $('.tipo-area').hide();
+        }
+        if(!$('#cor-header').is(':visible')){
+            $('.cor-area').hide();
+        }
+    });
 
     var game = new Game();
     var drawing = new Canvas('drawing');
@@ -26,7 +48,7 @@ $(document).ready(function () {
             menu.shape.updateCenter();
             menu.shape.updateRelative();
 
-            var body = new Body(menu.shape, Material.Gold, $("#tipo").val() == 'true');
+            var body = new Body(menu.shape, Material.Gold, getType());
             game.world.addBody(body);
             menu.shape = null;
             menu.drawing = false;
@@ -330,12 +352,18 @@ $(document).ready(function () {
 
     });
 
-    $("#tipo").change(function () {
-        var value = document.getElementById('tipo').value == 'true';
+    $("input[name=tipo]").change(function () {
+        var value = $(this).attr('value') == 'true';
         for (var i = 0; i < menu.selectedBodies.length; i++) {
             menu.selectedBodies[i].setDinamic(value);
         }
     });
+
+    function getType(){
+        return $('.tipo:checked').attr('value') == 'true'
+    }
+
+
 
     $("#game").mousedown(function (e) {
         switch (event.which) {
@@ -414,7 +442,7 @@ $(document).ready(function () {
                         case 'quadrado':
                             menu.drawing = false;
                             drawing.clearScreen();
-                            var body = new Body(menu.shape, Material.Iron, $("#tipo").val() == 'true');
+                            var body = new Body(menu.shape, Material.Iron, getType());
                             game.world.addBody(body);
                             menu.drawPoint = null;
                             if (!game.running) {
@@ -437,7 +465,7 @@ $(document).ready(function () {
                         case 'regular':
                             menu.drawing = false;
                             drawing.clearScreen();
-                            var body = new Body(menu.shape, Material.Iron, $("#tipo").val() == 'true');
+                            var body = new Body(menu.shape, Material.Iron, getType());
                             game.world.addBody(body);
                             menu.shape = null;
                             menu.drawPoint = null;
