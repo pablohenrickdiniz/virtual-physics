@@ -18,6 +18,7 @@ $(document).ready(function () {
         $('.tools-group').toggle();
     });
 
+
     $('#propriedades-header').click(function(){
         $('#tipo-header').toggle();
         $('#cor-header').toggle();
@@ -565,4 +566,29 @@ $(document).ready(function () {
         game.pause();
     });
 
+    $('#friction-text').change(function(){
+        var friction = document.getElementById('friction-text').value;
+        console.log('friction:'+friction);
+        game.world.setFriction(friction);
+    });
+
+    $('#gravity-text').change(function(){
+        var gravity = document.getElementById('gravity-text').value;
+        console.log('gravity:'+gravity);
+        game.world.setGravity(gravity);
+    });
 });
+
+function frictionUpdate(value){
+    document.getElementById('friction-text').value = value;
+    $('#friction-text').change();
+}
+
+function gravityUpdate(value){
+    document.getElementById('gravity-text').value = value;
+    $('#gravity-text').change();
+}
+
+
+
+

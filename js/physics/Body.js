@@ -66,6 +66,12 @@ function Body(shape, material, dinamic, vLin, vAng) {
         self.forcePoints.push(forcePoint);
     };
 
+    self.removeForce = function(index){
+        var self = this;
+        self.forces.splice(index,1);
+        self.forcePoints.splice(index,1);
+    };
+
     self.getRotationMatrix = function () {
         var self = this;
         // only recompute if theta has changed since the last call.

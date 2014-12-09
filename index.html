@@ -91,6 +91,31 @@
                     </td>
                 </tr>
             </table>
+            <table class="table table-condensed world">
+                <tr>
+                    <th colspan='2' id='configuracoes-header'>Configurações</th>
+                </tr>
+                <tr class="friction-area">
+                    <td>Fricção</td>
+                    <td><input id='friction-range' type="range" value="0.1" min="0.01" max="1" step="0.01" onchange="frictionUpdate(value)"/></td>
+                </tr>
+                <tr class="friction-area">
+                    <td></td>
+                    <td>
+                        <input class='text-center friction ' id="friction-text" value="0.2" contenteditable="false"/>
+                    </td>
+                </tr>
+                <tr class="gravity-area">
+                    <td>Gravidade</td>
+                    <td><input id='gravity-range' type="range" value="0.1" min="-100" max="100" step="0.1" onchange="gravityUpdate(value)"/></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td class="gravity-area">
+                        <input class='text-center gravity' id="gravity-text" value="9.81" contenteditable="false"/>
+                    </td>
+                </tr>
+            </table>
         </div>
     </div>
     <div id="game-controls">

@@ -70,7 +70,7 @@
     display:none;
 }
 
-.properties th,.properties td,.tools th, .tools td,.properties{
+.properties th,.properties td,.tools th, .tools td,.properties,.world td, .world th{
     text-align:center;
 }
 
@@ -79,7 +79,7 @@
     background-color:#d9edf7 !important;
 }
 
-#propriedades-header,#tools-header{
+#propriedades-header,#tools-header,#configuracoes-header{
     background-color:#f9f9f9;
 }
 
@@ -102,4 +102,11 @@
 
 #tipo-header,#cor-header{
     display:none;
+}
+.friction,.gravity{
+    border:none;
+}
+
+.friction:focus,.gravity:focus{
+    outline:0;
 }

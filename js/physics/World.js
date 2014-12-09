@@ -7,7 +7,7 @@ var World = function () {
     self.t = 0;
     self.friction = 0.2;
     self.contacts = [];
-    self.gravity = 9.81;
+    self.gravity = 90.81;
     self.width = 4000;
     self.height = 4000;
     self.joints = [];
@@ -108,12 +108,29 @@ var World = function () {
     self.addBody = function (body) {
         var self = this;
         if (body.dinamic) {
-            body.addForce([0, self.gravity * body.mass]);
+            body.forces= [[0,self.gravity*body.mass]];
+            body.forcePoints = [];
         }
 
         self.bodies.push(body);
         self.quadTree.addBody(body);
         body.index = self.bodies.length - 1;
+    };
+
+    self.setGravity = function(gravity){
+        gravity*=10;
+        var self = this;
+        var size = self.bodies.length;
+        var i;
+        var body;
+        self.gravity = gravity;
+        for(i = 0; i < size;i++){
+            body = self.bodies[i];
+            if(body.dinamic){
+                body.forces= [[0,self.gravity*body.mass]];
+                body.forcePoints = [];
+            }
+        }
     };
 
     self.removeBody = function (body) {
@@ -138,6 +155,12 @@ var World = function () {
             }
         }
 
+    };
+
+
+    self.setFriction = function(friction){
+        var self = this;
+        self.friction = friction;
     };
 
     // private function. Make sure to call with apply() and pass in
