@@ -20,3 +20,9 @@ Shape.validateTheta = function(theta){
         throw new TypeError('theta must be a double number:theta='+theta);
     }
 };
+
+Shape.validateShape = function(shape){
+    if(!(shape instanceof Shape)){
+        throw new TypeError('shape must be a instace of Shape');
+    }
+};

@@ -15,6 +15,7 @@
     <script type="text/javascript" src="js/utils/poly2tri.min.js"></script>
     <script type="text/javascript" src="js/utils/KeyReader.js"></script>
     <script type="text/javascript" src="js/utils/CanvasMouseReader.js"></script>
+    <script type="text/javascript" src="js/shapes/Point.js"></script>
     <script type="text/javascript" src="js/draw/Color.js"></script>
     <script type="text/javascript" src="js/draw/RadialGradient.js"></script>
     <script type="text/javascript" src="js/draw/LinearGradient.js"></script>
@@ -36,7 +37,7 @@
     <script type="text/javascript" src="js/physics/World.js"></script>
     <script type="text/javascript" src="js/physics/friction_physics.js"></script>
     <script type="text/javascript" src="js/main/Game.js"></script>
-    <script type="text/javascript" src="js/main/main.js"></script>s
+    <script type="text/javascript" src="js/main/main.js"></script>
 </head>
 <body>
 <div class="row" style="position:relative;min-height:670px;">
@@ -97,8 +98,7 @@
                 </tr>
                 <tr class="friction-area">
                     <td>Fricção</td>
-                    <td><input id='friction-range' type="range" value="0.1" min="0.01" max="1" step="0.01"
-                               onchange="frictionUpdate(value)"/></td>
+                    <td><input id='friction-range' type="range" value="0.1" min="0.01" max="1" step="0.01" onchange="frictionUpdate(value)"/></td>
                 </tr>
                 <tr class="friction-area">
                     <td></td>
@@ -108,8 +108,7 @@
                 </tr>
                 <tr class="gravity-area">
                     <td>Gravidade</td>
-                    <td><input id='gravity-range' type="range" value="0.1" min="-100" max="100" step="0.1"
-                               onchange="gravityUpdate(value)"/></td>
+                    <td><input id='gravity-range' type="range" value="0.1" min="-100" max="100" step="0.1" onchange="gravityUpdate(value)"/></td>
                 </tr>
                 <tr>
                     <td></td>

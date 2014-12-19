@@ -111,3 +111,9 @@ function Body(shape, material, dinamic, vLin, vAng) {
     self.update();
     self.getRotationMatrix();
 };
+
+Body.validateBody = function(body){
+    if(!(body instanceof Body)){
+        throw new TypeError('body must be a instance of Body');
+    }
+};

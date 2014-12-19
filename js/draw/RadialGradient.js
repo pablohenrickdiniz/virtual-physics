@@ -10,8 +10,7 @@ function RadialGradient(cx, cy, r, fx, fy) {
 
     self.addColorStop = function (stop, color) {
         if (isNaN(stop) || stop < 0 || stop > 100) {
-            throw new TypeError(
-                'O indice de parada deve ser um numero entre 0 e 100');
+            throw new TypeError('O indice de parada deve ser um numero entre 0 e 100');
         }
         if (!(color instanceof Color)) {
             color = Color.parse(color);

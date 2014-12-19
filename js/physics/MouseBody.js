@@ -3,6 +3,7 @@
  */
 function MouseBody(shape) {
     var self = this;
+    Shape.validateShape(shape);
     self.vLin = [0, 0];
     self.vAng = 0;
     self.mInv = 0;

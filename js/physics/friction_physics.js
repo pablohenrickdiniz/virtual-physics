@@ -50,7 +50,7 @@ function AABBoverlap(b1, b2, threshold) {
 
     return !((b1[0] + threshold) >= b2[2] || b1[2] <= (b2[0] + threshold) || (b1[1] + threshold) >= b2[3] || b1[3] <= (b2[1] + threshold));
 }
-
+/*
 function circleIntersectLine(cc, r, va, vb) {
     var med = MV.med(va, vb);
     var degree = MV.getDegree(va, vb)
@@ -66,7 +66,7 @@ function circleIntersectLine(cc, r, va, vb) {
     var maxX = cpMaxx + r;
     var maxY = cpMaxy + r;
     return (((cc[0] <= va[0] && cc[0] >= minX) || (cc[0] >= va[0] && cc[0] <= maxX)) && (cc[1] <= maxY && cc[1] >= minY));
-}
+}*/
 
 function getFaceNormals(vertices) {
     var normals = [], size = vertices.length, i, face, N;
@@ -160,7 +160,7 @@ function linesIntersect(X, Y, A, B) {
     return true;
 }
 
-
+/*
 function polygonsIntersect(polygonA, polygonB){
     var pAs = polygonA.getVerticesInWorldCoords();
     var pBs = polygonB.getVerticesInWorldCoords();
@@ -185,7 +185,7 @@ function polygonsIntersect(polygonA, polygonB){
         }
     }
     return false;
-};
+};*/
 
 function getContactsFromBodyPair(bodyA, bodyB) {
     var contacts = [], pAs = bodyA.getVerticesInWorldCoords(), pBs = bodyB.getVerticesInWorldCoords(),

@@ -6,7 +6,6 @@ function Game() {
     self.running = false;
     self.readFrame = null;
     self.reader = CanvasMouseReader;
-    var game = this;
 
     self.start = function () {
         var self = this;

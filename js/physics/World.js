@@ -351,6 +351,7 @@ var World = function () {
         var c;
         var d;
         var k;
+        var tmp;
 
         for (i = 0; i < size; i++) {
             // assemble the inverse mass vector (usually a matrix,
@@ -377,7 +378,7 @@ var World = function () {
             // but with tangent in place of normal
             Jt[i] = [-normal[1],normal[0],pAcA[0]*normal[0]-pAcA[1]*-normal[1],normal[1],-normal[0],-((pB[0]-cB[0])*-normal[1]-(pB[1]-cB[1])*-normal[1])];
 
-             var tmp = MV.VmV(contact.pB, contact.bodyB.center);
+             tmp = [pB[0]-cB[0],pB[1]-cB[1]];
              var vB = MV.VpV(contact.bodyB.vLin, MV.SxV(contact.bodyB.vAng, [-tmp[1], tmp[0]]));
              tmp = MV.VmV(contact.pA, contact.bodyA.center);
              var vA = MV.VpV(contact.bodyA.vLin, MV.SxV(contact.bodyA.vAng, [-tmp[1], tmp[0]]));

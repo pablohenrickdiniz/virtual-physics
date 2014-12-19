@@ -3,5 +3,6 @@
  */
 Distance.prototype = new Joint();
 function Distance(bodyA, vertexA, bodyB, vertexB) {
-    Joint.call(this, bodyA, vertexA, bodyB, vertexB);
+    var self = this;
+    Joint.call(self, bodyA, vertexA, bodyB, vertexB);
 }
