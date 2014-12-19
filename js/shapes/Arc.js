@@ -1,18 +1,23 @@
-Arc.prototype = new Shape();
+Arc.prototype = new Shape([0,0],null,null,0);
 
 function Arc(center, radius, start, end) {
-    Shape.call(this, center, 'white', new Border('black', 1), 0);
-    this.radius = isNaN(radius) ? 10 : radius;
-    start = isNaN(start) ? this.theta : start;
-    end = isNaN(end) ? this.theta + 180 : end;
-    while (start > 360) {
-        start = start % 360;
-    }
-
-    while (this.end > 360) {
-        end = end % 360;
-    }
-
-    this.start = start;
-    this.end = end;
+    var self = this;
+    Shape.call(self, center, 'white', new Border('black', 1), 0);
+    Arc.validateRadius(radius);
+    Arc.validateAngle(start);
+    Arc.validateAngle(end);
+    self.start = start;
+    self.end = end;
 }
+
+Arc.validateRadius = function(radius){
+    if(isNaN(radius)){
+        throw new TypeError('radius must be a double value:radius='+radius);
+    }
+};
+
+Arc.validateAngle = function(angle){
+    if(isNaN(angle) || angle < 0 || angle > 360){
+        throw new TypeError('aangle must be a positive double value between 0 and 360:angle='+angle);
+    }
+};

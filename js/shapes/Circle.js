@@ -1,19 +1,21 @@
-Circle.prototype = new Arc();
+Circle.prototype = new Arc([0,0],1,0,360);
 
 function Circle(center, radius) {
+    var self = this;
     Arc.call(this, center, radius, 0, 360);
-
-    this.update = function () {
-        this.area = Math.PI * this.radius * this.radius;
+    self.update = function () {
+        var self = this;
+        self.area = Math.PI * self.radius * self.radius;
     };
 
-
-    this.setRadius = function (radius) {
-        this.radius = radius;
-        this.update();
+    self.setRadius = function (radius) {
+        Arc.validateRadius(radius);
+        self.radius = radius;
+        self.update();
     };
 
-    this.moi = function (mass) {
-        return mass * this.radius * radius / 2;
+    self.moi = function (mass) {
+        var self = this;
+        return mass * self.radius * radius / 2;
     };
 };

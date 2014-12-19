@@ -1,41 +1,65 @@
-Rect.prototype = new Polygon();
+Rect.prototype = new Polygon([0,0],0);
+Rect.validateWidth = function(width){
+    if(isNaN(width) || width < 1){
+        throw new TypeError('width must be a double larger than 1:width='+width);
+    }
+};
+Rect.validateHeight = function(height){
+    if(isNaN(height) || height < 1){
+        throw new TypeError('height must be a double larger than 1:height='+height);
+    }
+};
+
+
 function Rect(center, width, height) {
-    Polygon.call(this, center, 0);
-    this.width = isNaN(width) || width <= 0 ? 100 : width;
-    this.height = isNaN(height) || height <= 0 ? 100 : height;
-    this.parent = null;
+    var self = this;
+    Polygon.call(self, center, 0);
 
-    this.setWidth = function (width) {
-        this.updateDimen(width, this.height);
+    Rect.validateWidth(width);
+    Rect.validateHeight(height);
+    self.width =  width;
+    self.height = height;
+    self.parent = null;
+
+    self.setWidth = function (width) {
+        var self = this;
+        Rect.validateWidth(width);
+        self.updateDimen(width, self.height);
     };
 
-    this.setHeight = function (height) {
-        this.updateDimen(this.width, height);
+    self.setHeight = function (height) {
+        var self = this;
+        Rect.validateHeight(height);
+        self.updateDimen(self.width, height);
     };
 
-    this.updateDimen = function (width, height) {
-        this.width = width;
-        this.height = height;
-        this.area = this.width * this.height;
-        var mw = this.width * 0.5;
-        var mh = this.height * 0.5;
-        this.vertices = [
+    self.updateDimen = function (width, height) {
+        var self = this;
+        Rect.validateWidth(width);
+        Rect.validateHeight(height);
+        self.width = width;
+        self.height = height;
+        self.area = self.width * self.height;
+        var mw = self.width * 0.5;
+        var mh = self.height * 0.5;
+        self.vertices = [
             [mw, -mh],
             [-mw, -mh],
             [-mw, mh],
             [mw, mh]
         ];
-        this.updateMinAndMax();
-        if (this.parent != null) {
-            this.parent.update();
+        self.updateMinAndMax();
+        if (self.parent != null) {
+            self.parent.update();
         }
     };
 
-    this.moi = function (mass) {
-        return mass / 12 * (this.height * this.height + this.width * this.width);
+    self.moi = function (mass) {
+        var self = this;
+        return mass / 12 * (self.height * self.height + self.width * self.width);
     };
 
-    this.updateDimen(this.width, this.height);
+    self.updateDimen(self.width, self.height);
 }
 
 

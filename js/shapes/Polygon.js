@@ -1,4 +1,4 @@
-Polygon.prototype = new Shape();
+Polygon.prototype = new Shape([0,0],null,null,0);
 
 function Polygon(center, theta) {
     Shape.call(this, center, new Color('White'), new Border('black', 1), theta);

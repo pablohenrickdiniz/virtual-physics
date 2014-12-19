@@ -6,26 +6,25 @@ $(document).ready(function () {
         return false;
     });
 
-    $('#tipo-header').click(function(){
+    $('#tipo-header').click(function () {
         $('.tipo-area').toggle();
     });
 
-    $('#cor-header').click(function(){
+    $('#cor-header').click(function () {
         $('.cor-area').toggle();
     });
 
-    $('#tools-header').click(function(){
+    $('#tools-header').click(function () {
         $('.tools-group').toggle();
     });
 
-
-    $('#propriedades-header').click(function(){
+    $('#propriedades-header').click(function () {
         $('#tipo-header').toggle();
         $('#cor-header').toggle();
-        if(!$('#tipo-header').is(':visible')){
+        if (!$('#tipo-header').is(':visible')) {
             $('.tipo-area').hide();
         }
-        if(!$('#cor-header').is(':visible')){
+        if (!$('#cor-header').is(':visible')) {
             $('.cor-area').hide();
         }
     });
@@ -38,23 +37,23 @@ $(document).ready(function () {
 
     function refreshDrawing() {
         drawing.clearScreen();
-        drawing.drawShape(menu.shape);
+        drawing.drawShape(Menu.shape);
     }
 
     KeyReader.onkeydown(KeyReader.KEY_ENTER, function () {
-        if (menu.selected == 'convex') {
-            if (!menu.shape.isClockWise()) {
-                menu.shape.invertPath();
+        if (Menu.selected == 'convex') {
+            if (!Menu.shape.isClockWise()) {
+                Menu.shape.invertPath();
             }
-            menu.shape.updateCenter();
-            menu.shape.updateRelative();
+            Menu.shape.updateCenter();
+            Menu.shape.updateRelative();
 
-            var body = new Body(menu.shape, Material.Gold, getType());
+            var body = new Body(Menu.shape, Material.Gold, getType());
             game.world.addBody(body);
-            menu.shape = null;
-            menu.drawing = false;
-            menu.drawPoint = null;
-            menu.auxpoint = null;
+            Menu.shape = null;
+            Menu.drawing = false;
+            Menu.drawPoint = null;
+            Menu.auxpoint = null;
             drawing.clearScreen();
             if (!game.running) {
                 game.canvas.drawWorld(game.world);
@@ -62,10 +61,8 @@ $(document).ready(function () {
         }
     });
 
-
-
     KeyReader.onkeydown(KeyReader.KEY_J, function () {
-        menu.joinSelectedBodies();
+        Menu.joinSelectedBodies();
     });
 
     KeyReader.onkeydown(KeyReader.KEY_T, function () {
@@ -74,8 +71,8 @@ $(document).ready(function () {
         var body;
         var j;
         var k;
-        var bodies = menu.selectedBodies;
-        menu.selectedBodies = [];
+        var bodies = Menu.selectedBodies;
+        Menu.selectedBodies = [];
         for (i = 0; i < bodies.length; i++) {
             polygons.push(bodies[i].shape);
             game.world.removeBody(bodies[i]);
@@ -112,43 +109,43 @@ $(document).ready(function () {
                 body.vLin = bodies[k].vLin;
                 body.vAng = bodies[k].vAng;
                 game.world.addBody(body);
-                menu.selectedBodies.push(body);
+                Menu.selectedBodies.push(body);
             }
         }
     });
 
     KeyReader.onkeydown(KeyReader.KEY_ESC, function () {
-        menu.shape = null;
-        menu.drawing = false;
-        menu.drawPoints = [];
-        for (var i = 0; i < menu.selectedBodies.length; i++) {
-            menu.selectedBodies[i].shape.border.lineDash = [];
+        Menu.shape = null;
+        Menu.drawing = false;
+        Menu.drawPoints = [];
+        for (var i = 0; i < Menu.selectedBodies.length; i++) {
+            Menu.selectedBodies[i].shape.border.lineDash = [];
         }
-        menu.selectedBodies = [];
+        Menu.selectedBodies = [];
         drawing.clearScreen();
     });
 
     KeyReader.onkeydown(KeyReader.KEY_PLUS, function () {
-        if (menu.shape != null && menu.selected == 'regular') {
-            menu.shape.sides++;
-            menu.shape.updateVertices();
+        if (Menu.shape != null && Menu.selected == 'regular') {
+            Menu.shape.sides++;
+            Menu.shape.updateVertices();
             refreshDrawing();
         }
     });
 
     KeyReader.onkeydown(KeyReader.KEY_MINUS, function () {
-        if (menu.shape != null && menu.selected == 'regular') {
-            if (menu.shape.sides > 3) {
-                menu.shape.sides--;
-                menu.shape.updateVertices();
+        if (Menu.shape != null && Menu.selected == 'regular') {
+            if (Menu.shape.sides > 3) {
+                Menu.shape.sides--;
+                Menu.shape.updateVertices();
                 refreshDrawing();
             }
         }
     });
 
     KeyReader.onkeydown(KeyReader.KEY_DEL, function () {
-        for (var i = 0; i < menu.selectedBodies.length; i++) {
-            game.world.removeBody(menu.selectedBodies[i]);
+        for (var i = 0; i < Menu.selectedBodies.length; i++) {
+            game.world.removeBody(Menu.selectedBodies[i]);
         }
         if (!game.running) {
             game.canvas.drawWorld(game.world);
@@ -167,14 +164,14 @@ $(document).ready(function () {
 
 
     $("#game").mouseup(function (event) {
-        if (menu.mousejoint != null) {
-            game.world.removeJoint(menu.mousejoint);
+        if (Menu.mousejoint != null) {
+            game.world.removeJoint(Menu.mousejoint);
             game.world.mouseJoint = null;
         }
     });
 
     $("#game").on('mousewheel', function (event) {
-        if (!active && !menu.drawing) {
+        if (!active && !Menu.drawing) {
             if (event.deltaY > 0 && game.canvas.scale < 20) {
                 game.canvas.scale += 0.1;
                 drawing.scale += 0.1;
@@ -189,15 +186,15 @@ $(document).ready(function () {
                 game.canvas.drawWorld(game.world);
             }
         }
-        if (menu.selected == 'regular' && menu.drawing) {
+        if (Menu.selected == 'regular' && Menu.drawing) {
             var sum = event.deltaY;
             if (sum > 0) {
-                menu.shape.sides++;
+                Menu.shape.sides++;
             }
-            else if (sum < 0 && menu.shape.sides > 3) {
-                menu.shape.sides--;
+            else if (sum < 0 && Menu.shape.sides > 3) {
+                Menu.shape.sides--;
             }
-            menu.shape.updateVertices();
+            Menu.shape.updateVertices();
             refreshDrawing();
         }
     });
@@ -224,8 +221,8 @@ $(document).ready(function () {
         }
     });
 
-    var menu = {
-        itens: ['quadrado', 'regular', 'circulo', 'cursor', 'eraser', 'move', 'convex', 'chain'],
+    var Menu = {
+        itens: ['rect', 'regular', 'circle', 'cursor', 'eraser', 'move', 'convex'],
         selected: 'cursor',
         drawing: false,
         shape: null,
@@ -249,37 +246,37 @@ $(document).ready(function () {
             this.shape = null;
             drawing.clearScreen();
         },
-        getSelectedShapes:function(){
-            var shapes =[];
+        getSelectedShapes: function () {
+            var shapes = [];
             var i;
-            for(i=0;i<this.selectedBodies.length;i++){
-                shapes.push([this.selectedBodies[i].shape,false]);
+            for (i = 0; i < this.selectedBodies.length; i++) {
+                shapes.push([this.selectedBodies[i].shape, false]);
             }
             return shapes;
         },
-        clearSelectedBodies:function(){
-            for(var i = 0; i < this.selectedBodies.length;i++){
+        clearSelectedBodies: function () {
+            for (var i = 0; i < this.selectedBodies.length; i++) {
                 game.world.removeBody(this.selectedBodies[i]);
             }
-            this.selectedBodies =[];
+            this.selectedBodies = [];
         },
-        joinSelectedBodies:function(){
+        joinSelectedBodies: function () {
             var shapes = this.getSelectedShapes();
-            menu.clearSelectedBodies();
+            Menu.clearSelectedBodies();
             shapes = Polygon.joinAll(shapes);
             var body;
             var i;
             var size = shapes.length;
-            for(i = 0; i < size;i++){
-                if(shapes[i][1]){
-                    if(shapes[i][0].isClockWise()){
+            for (i = 0; i < size; i++) {
+                if (shapes[i][1]) {
+                    if (shapes[i][0].isClockWise()) {
                         shapes[i][0].invertPath();
                     }
                     shapes[i][0].updateCenter();
                     shapes[i][0].updateRelative();
                 }
-                shapes[i][0].border.lineDash = [5,5];
-                body = new Body(shapes[i][0],Material.Iron,false);
+                shapes[i][0].border.lineDash = [5, 5];
+                body = new Body(shapes[i][0], Material.Iron, false);
                 game.world.addBody(body);
             }
         }
@@ -332,20 +329,20 @@ $(document).ready(function () {
         return null;
     }
 
-    $("#quadrado,#circulo,#regular,#cursor,#eraser,#move,#convex,#chain").click(function () {
-        menu.select($(this).attr('id'));
+    $("#rect,#circle,#regular,#cursor,#eraser,#move,#convex").click(function () {
+        Menu.select($(this).attr('id'));
     });
 
-    menu.select('cursor');
+    Menu.select('cursor');
 
 
     $("#preenchimento").change(function () {
         var value = document.getElementById('preenchimento').value;
-        if (menu.shape != null) {
-            menu.shape.color = new Color(value);
+        if (Menu.shape != null) {
+            Menu.shape.color = new Color(value);
         }
-        for (var i = 0; i < menu.selectedBodies.length; i++) {
-            menu.selectedBodies[i].shape.color = new Color(value);
+        for (var i = 0; i < Menu.selectedBodies.length; i++) {
+            Menu.selectedBodies[i].shape.color = new Color(value);
         }
         if (!game.running) {
             game.canvas.drawWorld(game.world);
@@ -355,127 +352,120 @@ $(document).ready(function () {
 
     $("input[name=tipo]").change(function () {
         var value = $(this).attr('value') == 'true';
-        for (var i = 0; i < menu.selectedBodies.length; i++) {
-            menu.selectedBodies[i].setDinamic(value);
+        for (var i = 0; i < Menu.selectedBodies.length; i++) {
+            Menu.selectedBodies[i].setDinamic(value);
         }
     });
 
-    function getType(){
+    function getType() {
         return $('.tipo:checked').attr('value') == 'true'
     }
 
+    Menu.toolsAction = {
+        rect: function () {
+            Menu.shape = new Rect([0, 0], 10, 10);
+            Menu.shape.color = new Color(document.getElementById("preenchimento").value);
+            Menu.drawing = true;
+        },
+        convex: function () {
+            var pos = game.getMouse();
+            Menu.shape = new Polygon([0, 0], 0);
+            Menu.shape.vertices[Menu.shape.vertices.length] = [pos[0], pos[1]];
+            Menu.shape.vertices[Menu.shape.vertices.length] = Menu.drawPoint;
+            Menu.shape.color = new Color(document.getElementById("preenchimento").value);
+            Menu.drawing = true;
+        },
+        regular: function () {
+            if (Menu.shape == null) {
+                var pos = game.getMouse();
+                Menu.shape = new Regular([pos[0], pos[1]], 10,3,0);
+                Menu.shape.color = new Color(document.getElementById("preenchimento").value);
+            }
+            Menu.drawing = true;
+        },
+        eraser: function () {
+            var body = findSelectedBody();
+            if (body != null) {
+                game.world.removeBody(body);
+            }
+            if (!game.running) {
+                game.canvas.drawWorld(game.world);
+            }
+        },
+        cursor:function() {
+            Menu.shape = new Rect(game.getMouse(), 1, 1);
+            Menu.shape.color = new Color(255, 255, 255);
+            Menu.shape.border.lineDash = [5, 5];
+            Menu.drawing = true;
+            for (var i = 0; i < Menu.selectedBodies.length; i++) {
+                Menu.selectedBodies[i].shape.border.lineDash = [];
+            }
+            Menu.selectedBodies = [];
 
+            if (!game.running) {
+                game.canvas.drawWorld(game.world);
+            }
+        },
+        move: function() {
+            var bodyB = findSelectedBody();
+            if (bodyB != null && bodyB.dinamic) {
+                var shape = new Shape(Menu.drawPoint,null,null,0);
+                shape.vertices[0] = [0, 0];
+                shape.center = Menu.drawPoint;
+                var bodyA = new MouseBody(shape);
+                bodyA.center = Menu.drawPoint;
+
+                Menu.mousejoint = new Joint(bodyA, 0, bodyB, 0);
+                game.world.addJoint(Menu.mousejoint);
+            }
+        }
+    };
 
     $("#game").mousedown(function (e) {
         switch (event.which) {
             case 1:
-                if (!menu.drawing) {
-                    var pos = game.getMouse();
-                    menu.drawPoint = pos;
-                    if (menu.selected == 'quadrado') {
-                        menu.shape = new Rect([0, 0], 10, 10);
-                        menu.shape.color = new Color(document.getElementById("preenchimento").value);
-                        menu.drawing = true;
-                    }
-                    else if (menu.selected == 'convex') {
-                        menu.shape = new Polygon([0, 0], 0);
-                        menu.shape.vertices[menu.shape.vertices.length] = [pos[0], pos[1]];
-                        menu.shape.vertices[menu.shape.vertices.length] = menu.drawPoint;
-                        menu.shape.color = new Color(document.getElementById("preenchimento").value);
-                        menu.drawing = true;
-                    }
-                    else if (menu.selected == 'regular') {
-                        if (menu.shape == null) {
-                            menu.shape = new Regular([pos[0], pos[1]], 10);
-                            menu.shape.color = new Color(document.getElementById("preenchimento").value);
-                        }
-                        menu.drawing = true;
-                    }
-                    else if (menu.selected == 'eraser') {
-                        var body = findSelectedBody();
-                        if (body != null) {
-                            game.world.removeBody(body);
-                        }
-                        if (!game.running) {
-                            game.canvas.drawWorld(game.world);
-                        }
-                    }
-                    else if (menu.selected == 'cursor') {
-
-                        menu.shape = new Rect(pos, 1, 1);
-                        menu.shape.color = new Color(255, 255, 255);
-                        menu.shape.border.lineDash = [5, 5];
-                        menu.drawing = true;
-                        for (var i = 0; i < menu.selectedBodies.length; i++) {
-                            menu.selectedBodies[i].shape.border.lineDash = [];
-                        }
-                        menu.selectedBodies = [];
-
-                        if (!game.running) {
-                            game.canvas.drawWorld(game.world);
-                        }
-                    }
-                    else if (menu.selected == 'move') {
-                        var bodyB = findSelectedBody();
-                        if (bodyB != null && bodyB.dinamic) {
-                            var shape = new Shape(menu.drawPoint);
-                            shape.vertices[0] = [0, 0];
-                            shape.center = menu.drawPoint;
-                            var bodyA = new MouseBody(shape);
-                            bodyA.center = menu.drawPoint;
-
-                            menu.mousejoint = new Joint(bodyA, 0, bodyB, 0);
-                            game.world.addJoint(menu.mousejoint);
-                        }
-                    }
-                    else if (menu.selected == 'chain') {
-                        var bodyA = findSelectedBody();
-                        if (bodyA != null) {
-                            var pos = game.getMouse();
-                            menu.vertexA = MV.VmV(bodyA.center, pos);
-                            menu.bodyA = bodyA;
-                            menu.drawing = true;
-                        }
+                if (!Menu.drawing) {
+                    Menu.drawPoint = game.getMouse();
+                    if(Menu.toolsAction[Menu.selected] != undefined){
+                        Menu.toolsAction[Menu.selected]();
                     }
                 }
                 else {
-                    switch (menu.selected) {
-                        case 'quadrado':
-                            menu.drawing = false;
+                    switch (Menu.selected) {
+                        case 'rect':
+                            Menu.drawing = false;
                             drawing.clearScreen();
-                            var body = new Body(menu.shape, Material.Iron, getType());
+                            var body = new Body(Menu.shape, Material.Iron, getType());
                             game.world.addBody(body);
-                            menu.drawPoint = null;
+                            Menu.drawPoint = null;
                             if (!game.running) {
                                 game.canvas.drawWorld(game.world);
                             }
                             break;
                         case 'convex':
                             var pos = game.getMouse();
-                            menu.shape.vertices.splice(menu.shape.vertices.length - 1, 1);
-                            if (menu.auxpoint != null) {
-                                menu.shape.vertices[menu.shape.vertices.length] = menu.auxpoint;
-                                menu.auxpoint = null;
+                            Menu.shape.vertices.splice(Menu.shape.vertices.length - 1, 1);
+                            if (Menu.auxpoint != null) {
+                                Menu.shape.vertices[Menu.shape.vertices.length] = Menu.auxpoint;
+                                Menu.auxpoint = null;
                             }
                             else {
-                                menu.shape.vertices[menu.shape.vertices.length] = pos;
+                                Menu.shape.vertices[Menu.shape.vertices.length] = pos;
                             }
 
-                            menu.shape.vertices[menu.shape.vertices.length] = menu.drawPoint;
+                            Menu.shape.vertices[Menu.shape.vertices.length] = Menu.drawPoint;
                             break;
                         case 'regular':
-                            menu.drawing = false;
+                            Menu.drawing = false;
                             drawing.clearScreen();
-                            var body = new Body(menu.shape, Material.Iron, getType());
+                            var body = new Body(Menu.shape, Material.Iron, getType());
                             game.world.addBody(body);
-                            menu.shape = null;
-                            menu.drawPoint = null;
+                            Menu.shape = null;
+                            Menu.drawPoint = null;
                             if (!game.running) {
                                 game.canvas.drawWorld(game.world);
                             }
                             break;
-                        case 'chain':
-
                     }
                 }
                 break;
@@ -485,9 +475,9 @@ $(document).ready(function () {
     $("#game").mouseup(function (e) {
         switch (e.which) {
             case 1:
-                switch (menu.selected) {
+                switch (Menu.selected) {
                     case 'cursor':
-                        menu.drawing = false;
+                        Menu.drawing = false;
                         drawing.clearScreen();
                         break;
                 }
@@ -497,49 +487,55 @@ $(document).ready(function () {
 
     $("#game").mousemove(function () {
         var pos = game.getMouse();
-        if (menu.drawing && menu.shape != null) {
+        if (Menu.drawing && Menu.shape != null) {
             drawing.clearScreen();
-            switch (menu.selected) {
-                case 'quadrado':
-                    var dim = MV.VmV(pos, menu.drawPoint);
-                    menu.shape.updateDimen(Math.abs(dim[0]), Math.abs(dim[1]));
-                    menu.shape.center = [menu.drawPoint[0] + (dim[0] / 2), menu.drawPoint[1] + (dim[1] / 2)];
-                    drawing.drawShape(menu.shape);
+            switch (Menu.selected) {
+                case 'rect':
+                    var dim = MV.VmV(pos, Menu.drawPoint);
+                    try {
+                        Menu.shape.updateDimen(Math.abs(dim[0]), Math.abs(dim[1]));
+                        Menu.shape.center = [Menu.drawPoint[0] + (dim[0] / 2), Menu.drawPoint[1] + (dim[1] / 2)];
+                        drawing.drawShape(Menu.shape);
+                    }
+                    catch (ex) {
+
+                    }
+
                     break;
                 case 'convex':
-                    var xo = menu.drawPoint[0];
-                    var yo = menu.drawPoint[1];
-                    menu.drawPoint[0] = pos[0];
-                    menu.drawPoint[1] = pos[1];
-                    if (menu.shape.isConvex()) {
-                        menu.drawPoint[0] = xo;
-                        menu.drawPoint[1] = yo;
-                        menu.auxpoint = [xo, yo];
+                    var xo = Menu.drawPoint[0];
+                    var yo = Menu.drawPoint[1];
+                    Menu.drawPoint[0] = pos[0];
+                    Menu.drawPoint[1] = pos[1];
+                    if (Menu.shape.isConvex()) {
+                        Menu.drawPoint[0] = xo;
+                        Menu.drawPoint[1] = yo;
+                        Menu.auxpoint = [xo, yo];
                     }
-                    drawing.drawShape(menu.shape);
+                    drawing.drawShape(Menu.shape);
                     break;
                 case 'regular':
-                    var r = Math.abs(MV.distance(pos, menu.drawPoint));
-                    menu.shape.setRadius(r);
+                    var r = Math.abs(MV.distance(pos, Menu.drawPoint));
+                    Menu.shape.setRadius(r);
                     // menu.shape.theta = MV.getDegree([x,y],menu.drawPoint);
-                    drawing.drawShape(menu.shape);
+                    drawing.drawShape(Menu.shape);
                     break;
-                case 'circulo':
-                    var r = Math.abs(MV.distance(pos, menu.drawPoint));
-                    menu.shape.setRadius(r);
-                    drawing.drawShape(menu.shape);
+                case 'circle':
+                    var r = Math.abs(MV.distance(pos, Menu.drawPoint));
+                    Menu.shape.setRadius(r);
+                    drawing.drawShape(Menu.shape);
                     break;
                 case 'cursor':
                     if (CanvasMouseReader.left) {
-                        var dim = MV.VmV(pos, menu.drawPoint);
-                        menu.shape.updateDimen(Math.abs(dim[0]), Math.abs(dim[1]));
-                        menu.shape.center = [menu.drawPoint[0] + (dim[0] / 2), menu.drawPoint[1] + (dim[1] / 2)];
-                        drawing.drawShape(menu.shape);
-                        for (var i = 0; i < menu.selectedBodies.length; i++) {
-                            menu.selectedBodies[i].shape.border.lineDash = [];
+                        var dim = MV.VmV(pos, Menu.drawPoint);
+                        Menu.shape.updateDimen(Math.abs(dim[0]), Math.abs(dim[1]));
+                        Menu.shape.center = [Menu.drawPoint[0] + (dim[0] / 2), Menu.drawPoint[1] + (dim[1] / 2)];
+                        drawing.drawShape(Menu.shape);
+                        for (var i = 0; i < Menu.selectedBodies.length; i++) {
+                            Menu.selectedBodies[i].shape.border.lineDash = [];
                         }
-                        var bodies = findSelectedBodies(menu.shape);
-                        menu.selectedBodies = bodies;
+                        var bodies = findSelectedBodies(Menu.shape);
+                        Menu.selectedBodies = bodies;
                         if (!game.running) {
                             game.canvas.drawWorld(game.world);
                         }
@@ -547,12 +543,12 @@ $(document).ready(function () {
 
             }
         }
-        else if (menu.selected != null) {
-            switch (menu.selected) {
+        else if (Menu.selected != null) {
+            switch (Menu.selected) {
                 case 'move':
-                    if (menu.drawPoint != null) {
-                        menu.drawPoint[0] = pos[0];
-                        menu.drawPoint[1] = pos[1];
+                    if (Menu.drawPoint != null) {
+                        Menu.drawPoint[0] = pos[0];
+                        Menu.drawPoint[1] = pos[1];
                     }
             }
         }
@@ -566,25 +562,25 @@ $(document).ready(function () {
         game.pause();
     });
 
-    $('#friction-text').change(function(){
+    $('#friction-text').change(function () {
         var friction = document.getElementById('friction-text').value;
-        console.log('friction:'+friction);
+        console.log('friction:' + friction);
         game.world.setFriction(friction);
     });
 
-    $('#gravity-text').change(function(){
+    $('#gravity-text').change(function () {
         var gravity = document.getElementById('gravity-text').value;
-        console.log('gravity:'+gravity);
+        console.log('gravity:' + gravity);
         game.world.setGravity(gravity);
     });
 });
 
-function frictionUpdate(value){
+function frictionUpdate(value) {
     document.getElementById('friction-text').value = value;
     $('#friction-text').change();
 }
 
-function gravityUpdate(value){
+function gravityUpdate(value) {
     document.getElementById('gravity-text').value = value;
     $('#gravity-text').change();
 }
