@@ -16,6 +16,6 @@ function Joint(bodyA, vertexA, bodyB, vertexB) {
 
 Joint.validateBody = function(body){
     if(!(body instanceof Body)){
-        throw new TypeError('body must be a instance of Body');
+        throw new TypeError('body must be a instance of Body:body='+body);
     }
 };

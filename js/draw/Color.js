@@ -526,6 +526,17 @@ Color.Patterns = {
     NAME: '^[A-Z]{1}[a-zA-z0-9]{2,15}$'
 };
 
+Color.validate = function(color){
+    if(!(color instanceof Color)){
+        color = Color.parse(color);
+        if(color == null){
+            throw new TypeError('the color must be a a rgb, rgba, hexadecimal, color name ou instance of Color');
+        }
+    }
+};
+
+
+
 Color.parse = function (str) {
     var exp = new RegExp(Color.Patterns.HEXADECIMAL);
     var color = null;
@@ -559,9 +570,6 @@ Color.parse = function (str) {
                 exp = new RegExp(Color.Patterns.NAME);
                 if (exp.test(str)) {
                     color = Color.parse(Color.Name[str]);
-                } else {
-                    throw new TypeError(
-                        'A cor passada como parametro e invalida');
                 }
             }
         }

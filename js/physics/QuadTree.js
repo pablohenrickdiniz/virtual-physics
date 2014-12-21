@@ -41,7 +41,7 @@ function QuadTree(AABB, l) {
     };
 
 
-    self.addBody = function (body, AABB) {
+    self.add = function (body, AABB) {
         var self = this;
         Body.validateBody(body);
         AABB = AABB == undefined ? getAABB(body) : AABB;
@@ -67,7 +67,7 @@ function QuadTree(AABB, l) {
         self.qtd++;
     };
 
-    self.removeBody = function (body) {
+    self.remove = function (body) {
         Body.validateBody(body);
         var self = this;
         var removed = false;
@@ -85,7 +85,7 @@ function QuadTree(AABB, l) {
             var i;
             for (i = 0; i < size; i++) {
                 node = self.nodes[i];
-                if (node != null && node.removeBody(body)) {
+                if (node != null && node.remove(body)) {
                     removed = true;
                 }
             }
@@ -104,7 +104,7 @@ function QuadTree(AABB, l) {
         for (i = 0; i < size; i++) {
             node = self.nodes[i];
             if (AABBoverlap(node.AABB, AABB, 0)) {
-                node.addBody(body, AABB);
+                node.add(body, AABB);
             }
         }
     };

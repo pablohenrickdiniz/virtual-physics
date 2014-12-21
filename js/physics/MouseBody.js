@@ -1,8 +1,11 @@
 /**
  * Created by Pablo Henrick Diniz on 12/10/14.
  */
+
+MouseBody.prototype = new Body(new Rect([0,0],1,1),Material.Iron,true);
 function MouseBody(shape) {
     var self = this;
+    Body.call(self,new Rect([0,0],1,1),Material.Iron,true);
     Shape.validateShape(shape);
     self.vLin = [0, 0];
     self.vAng = 0;

@@ -1,4 +1,6 @@
 function Body(shape, material, dinamic, vLin, vAng) {
+    Shape.validateShape(shape);
+    Material.validate(material);
     var self = this;
     self.shape = shape;
     self.center = shape.center;
@@ -58,6 +60,11 @@ function Body(shape, material, dinamic, vLin, vAng) {
         var self = this;
         self.material = material;
         self.update();
+    };
+
+    self.setCenter = function(center){
+        Point.validatePoint(center);
+        self.center = center;
     };
 
     self.addForce = function (force, forcePoint) {

@@ -1,13 +1,54 @@
 function Shape(center, color, border, theta) {
     Shape.validateCenter(center);
     Shape.validateTheta(theta);
-    this.center = center;
-    this.color = color == undefined ? null : color;
-    this.border = border == undefined ? null : border;
-    this.shadow = null;
-    this.theta = isNaN(theta) ? 0 : theta;
-    this.vertices = [];
+    var self = this;
+    self.center = center;
+    self.color = color == undefined ? null : color;
+    self.border = border == undefined ? null : border;
+    self.shadow = null;
+    self.theta = theta;
+    self.vertices = [];
+
+    self.setColor = function(color){
+        Color.validate(color);
+        self.color = color;
+    };
+
+    self.setVertices = function(vertices){
+        Shape.validateVertices(vertices);
+        var self = this;
+        self.vertices = vertices;
+    };
+
+    self.setCenter = function(center){
+        Point.validatePoint(center);
+        var self = this;
+        self.center = center;
+    };
+
+    self.add = function(vertice){
+        Point.validatePoint(vertice);
+        var self = this;
+        self.vertices.push(vertice);
+    };
 }
+
+Shape.validateVertices = function(vertices){
+    var valid = true;
+    if(vertices instanceof Array){
+        var size = vertices.length;
+        var i;
+        for(i=0;i< size;i++){
+            Point.validatePoint(vertices[i]);
+        }
+    }
+    else{
+        valid = false;
+    }
+    if(!valid){
+        throw new TypeError('vertices must be a array of vertices:vertices='+vertices);
+    }
+};
 
 Shape.validateCenter = function(center){
     if(!(center instanceof Array)||isNaN(center[0])|| isNaN(center[1])){

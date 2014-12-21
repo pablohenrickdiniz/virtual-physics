@@ -1,15 +1,86 @@
+Game.MAX_SCALE = 20;
+Game.MIN_SCALE = 0.1;
+
 function Game() {
     var self = this;
     self.world = new World();
     self.canvas = new Canvas('game');
     self.quad = new Canvas('quad');
+    self.drawing =  new Canvas('drawing');
     self.running = false;
     self.readFrame = null;
-    self.reader = CanvasMouseReader;
+    self.scalevar = 1;
+
+    self.refreshDraw = function(){
+        var self = this;
+         self.drawWorld();
+         self.drawQuadTree();
+    };
+
+    self.scale = function(qtd){
+        var self = this;
+        var scale = self.scalevar+qtd;
+        if(scale <= Game.MAX_SCALE && scale >= Game.MIN_SCALE){
+            self.canvas.scale += qtd;
+            self.quad.scale += qtd;
+            self.drawing.scale += qtd;
+            self.scalevar += qtd;
+            if(!self.running){
+                self.refreshDraw();
+            }
+        }
+    };
+
+    self.moveCamera = function(center){
+        var self = this;
+        self.canvas.move(center);
+        self.drawing.move(center);
+        self.quad.move(center);
+
+        if (!game.running) {
+            self.refreshDraw();
+        }
+    };
+
+    self.add = function(body){
+        var self = this;
+        self.world.add(body);
+        if(!self.running){
+            self.refreshDraw();
+        }
+    };
+
+    self.remove = function(body){
+        var self = this;
+        self.world.remove(body,!self.running);
+        if(!self.running){
+            self.refreshDraw();
+        }
+    };
+
+    self.removeAll = function(bodies){
+        var self = this;
+        bodies.forEach(function(body){
+            self.world.remove(body,!self.running);
+        });
+        if(!self.running){
+            self.refreshDraw();
+        }
+    };
+
+    self.drawWorld = function(){
+        var self = this;
+        self.canvas.drawWorld(self.world);
+    };
+
+
+    self.drawQuadTree = function(){
+        var self  = this;
+        self.quad.drawQuadTree(self.world.quadTree);
+    };
 
     self.start = function () {
         var self = this;
-        self.reader.start();
         self.restart();
     };
 
@@ -36,14 +107,14 @@ function Game() {
                     self.loop(self);
                 });
                 self.world.step();
-                self.canvas.drawWorld(self.world);
-                self.quad.drawQuadTree(self.world.quadTree);
+                self.refreshDraw();
             }, self.dt * 1000);
         }
     };
 
-    self.getMouse = function () {
-        return MV.VdV(MV.VpV(self.reader.vertex, self.canvas.min), [self.canvas.scale, self.canvas.scale]);
+    self.getPosition = function () {
+        var self = this;
+        return MV.VdV(MV.VpV(Reader.vertex, self.canvas.min), [self.scalevar, self.scalevar]);
     };
 }
 

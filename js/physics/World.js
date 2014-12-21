@@ -91,7 +91,7 @@ var World = function () {
                 c = getAABB(f);
                 AABBoverlap(c, d.quadTree.AABB, 0) || (h.splice(e, 1), a = !1)
             }
-            a && d.quadTree.addBody(f);
+            a && d.quadTree.add(f);
             f.vertsAbsolute = null;
             f.AABB = null;
         })
@@ -101,11 +101,11 @@ var World = function () {
         var self = this;
         var i;
         for(i = 0; i < self.bodies.length;i++){
-            self.removeBody(self.bodies[i]);
+            self.remove(self.bodies[i]);
         }
     };
 
-    self.addBody = function (body) {
+    self.add = function (body) {
         var self = this;
         if (body.dinamic) {
             body.forces= [[0,self.gravity*body.mass]];
@@ -113,7 +113,7 @@ var World = function () {
         }
 
         self.bodies.push(body);
-        self.quadTree.addBody(body);
+        self.quadTree.add(body);
         body.index = self.bodies.length - 1;
     };
 
@@ -133,9 +133,19 @@ var World = function () {
         }
     };
 
-    self.removeBody = function (body) {
+    self.remove = function (body,paused) {
         var self = this;
-        self.removes.push(body);
+        paused = paused==undefined?false:paused;
+        if(!paused){
+            self.removes.push(body);
+        }
+        else{
+            var index = self.bodies.indexOf(body);
+            if(index != -1){
+                self.bodies.splice(index,1);
+                self.quadTree.remove(body);
+            }
+        }
     };
 
     self.addJoint = function (joint) {
@@ -351,7 +361,6 @@ var World = function () {
         var c;
         var d;
         var k;
-        var tmp;
 
         for (i = 0; i < size; i++) {
             // assemble the inverse mass vector (usually a matrix,
@@ -361,6 +370,10 @@ var World = function () {
             pB = contact.pB;
             bodyA = contact.bodyA;
             bodyB = contact.bodyB;
+            vLinA = bodyA.vLin;
+            vLinB = bodyB.vLin;
+            vAngA = bodyA.vAng;
+            vAngB = bodyB.vAng;
             cA = bodyA.center;
             cB = bodyB.center;
             mInvA = bodyA.mInv;
@@ -377,13 +390,7 @@ var World = function () {
             // Jacobian for friction - like Jacobian for collision,
             // but with tangent in place of normal
             Jt[i] = [-normal[1],normal[0],pAcA[0]*normal[0]-pAcA[1]*-normal[1],normal[1],-normal[0],-((pB[0]-cB[0])*-normal[1]-(pB[1]-cB[1])*-normal[1])];
-
-             tmp = [pB[0]-cB[0],pB[1]-cB[1]];
-             var vB = MV.VpV(contact.bodyB.vLin, MV.SxV(contact.bodyB.vAng, [-tmp[1], tmp[0]]));
-             tmp = MV.VmV(contact.pA, contact.bodyA.center);
-             var vA = MV.VpV(contact.bodyA.vLin, MV.SxV(contact.bodyA.vAng, [-tmp[1], tmp[0]]));
-
-            vPreNormal = MV.dot(MV.VmV(vA, vB), contact.normal);
+            vPreNormal = ((-(pA[1]-cA[1])*vAngA+vLinA[0])-(-(pB[1]-cB[1])*vAngB+vLinB[0])*normal[0])+(((pA[0]-cA[0])*vAngA+vLinA[1])-((pB[0]-cB[0])*vAngB+vLinB[1])*normal[1]);
             C = (pA[0]-pB[0])*normal[0]+(pA[1]-pB[1])*normal[1];
             bias[i] = beta / dt * ((C < 0) ? C : 0) + 0.2 * vPreNormal;
             lambdaAccumulated[i] = 0;
@@ -403,11 +410,12 @@ var World = function () {
                 b = 0;
                 c = 0;
                 d = 0;
+
                 for(k=0;k<=5;k++){
-                    a += Jn[j][k]*v[k];
-                    b += MInv[j][k]*Jn[j][k]*Jn[j][k];
-                    c += Jt[j][k]*v[k];
-                    d += MInv[j][k]*Jt[j][k]*Jt[j][k];
+                   a += Jn[j][k]*v[k];
+                   b += MInv[j][k]*Jn[j][k]*Jn[j][k];
+                   c += Jt[j][k]*v[k];
+                   d += MInv[j][k]*Jt[j][k]*Jt[j][k];
                 }
 
                 lambda = -(a+bias[j])/b;
@@ -426,7 +434,7 @@ var World = function () {
 
                 lambdaAccumulated[j] += lambda;
                 for(k=0;k<=5;k++){
-                    v[k] = (MInv[j][k]* lambdaFriction*Jt[j][k])+((MInv[j][k]*lambda*Jn[j][k])+v[k]);
+                    v[k] = (MInv[j][k]*lambdaFriction*Jt[j][k])+((MInv[j][k]*lambda*Jn[j][k])+v[k]);
                 }
                 bodyA.vLin = [v[0], v[1]];
                 bodyA.vAng = v[2];

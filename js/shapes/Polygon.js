@@ -239,8 +239,9 @@ function Polygon(center, theta) {
         var self = this;
         return self.sumAngles() > 360;
     };
-
 }
+
+
 
 Polygon.join = function (a,b) {
     var vas = a.getVerticesInWorldCoords();

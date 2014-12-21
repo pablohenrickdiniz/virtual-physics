@@ -130,6 +130,9 @@ function computeFaceNormals(bodies, collisionCandidates) {
         });
     var size = sortedBodies.length;
     for (var i = 0; i < size; i++) {
+        if(sortedBodies[i]== undefined){
+            throw new TypeError('body cannot be undefined');
+        }
         bodies[sortedBodies[i]].faceNormals = getFaceNormals(bodies[sortedBodies[i]].getVerticesInWorldCoords());
     }
 }

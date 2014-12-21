@@ -1,6 +1,3 @@
-
-
-
 .img-thumbnail:hover {
     cursor: pointer;
 }
@@ -27,11 +24,10 @@
 }
 
 .tools-area {
-    width: 250px;
+    max-width: 300px;
     height: 600px;
     position: absolute;
     left: 618px;
-    text-align: center;
     background-color:white;
 }
 
@@ -71,14 +67,6 @@
     height:50px;
 }
 
-.tipo-area,.cor-area{
-    display:none;
-}
-
-.properties th,.properties td,.tools th, .tools td,.properties,.world td, .world th{
-    text-align:center;
-}
-
 .table th:hover{
     cursor:pointer;
     background-color:#d9edf7 !important;
@@ -97,21 +85,22 @@
     cursor:pointer;
 }
 
-.tools-group{
-    display:none;
-}
-
 .table{
     margin-bottom:0;
 }
 
-#tipo-header,#cor-header{
-    display:none;
-}
-.friction,.gravity{
-    border:none;
+#preenchimento{
+    width:100%;
 }
 
-.friction:focus,.gravity:focus{
-    outline:0;
+#gravitiy-range,#friction-range,#gravity-text,#friction-text{
+    width:100px;
+}
+
+input{
+    min-width:100px;
+}
+
+.table-header{
+    text-align:center;
 }
