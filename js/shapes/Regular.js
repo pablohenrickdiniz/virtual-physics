@@ -1,4 +1,4 @@
-Regular.prototype = new Polygon([0,0],null,null,0);
+Regular.prototype = new Polygon([0, 0], null, null, 0);
 function Regular(center, radius, sides, theta) {
     var self = this;
     Polygon.call(self, center, theta);
@@ -42,52 +42,46 @@ function Regular(center, radius, sides, theta) {
 
     self.moi = function (mass) {
         var self = this;
-        if (self.vertices.length == 4) {
-            var width = self.max[0] - self.min[0];
-            var height = self.max[1] - self.min[1];
-            return mass / 12 * (height * height + width * width)
+        var sum1 = 0;
+        var sum2 = 0;
+        var size = self.vertices.length;
+        var n;
+        var pn;
+        var pn1;
+        var norm;
+        var pos;
+        for (n = 0; n < size; n++) {
+            pos = n + 1 == size ? 0 : n + 1;
+            pn = self.vertices[n];
+            pn1 = self.vertices[pos];
+            norm = MV.norm(MV.VxV(pn, pn1));
+            sum1 += norm * MV.dot(pn1, pn1) + MV.dot(pn1, pn) + MV.dot(pn, pn);
+            sum2 += norm;
         }
-        else {
-            var sum1 = 0;
-            var sum2 = 0;
-            var size = self.vertices.length;
-            var n;
-            var pn;
-            var pn1;
-            var norm;
-            var pos;
-            for (n = 0; n < size; n++) {
-                pos = n + 1 == size ? 0 : n + 1;
-                pn = self.vertices[n];
-                pn1 = self.vertices[pos];
-                norm = MV.norm(MV.VxV(pn, pn1));
-                sum1 += norm * MV.dot(pn1, pn1) + MV.dot(pn1, pn) + MV.dot(pn, pn);
-                sum2 += norm;
-            }
-            return (mass / 6) * (sum1 / sum2);
-        }
+        return (mass / 6) * (sum1 / sum2);
+
     };
     self.updateVertices();
 }
 
-Regular.validateAngle = function(angle){
-    if(isNaN(angle) || angle < 0 || angle > 360){
-        throw new TypeError('angle must be a positive double value between 0 and 360:angle='+angle);
+Regular.validateAngle = function (angle) {
+    if (isNaN(angle) || angle < 0 || angle > 360) {
+        throw new TypeError('angle must be a positive double value between 0 and 360:angle=' + angle);
     }
 };
 
-Regular.validateRadius = function(radius){
-    if(isNaN(radius) || radius <= 0){
-        throw new TypeError('radius must be a double value lager than 0:radius='+radius);
+Regular.validateRadius = function (radius) {
+    if (isNaN(radius) || radius <= 0) {
+        throw new TypeError('radius must be a double value lager than 0:radius=' + radius);
     }
 };
 
-Regular.validateSides = function(sides){
-    if(isNaN(sides) || sides < 3 || !Number.isInt(sides)){
-        throw new TypeError('sides must be a integer value larger or equal than 3:sides='+sides);
+Regular.validateSides = function (sides) {
+    if (isNaN(sides) || sides < 3 || !Number.isInt(sides)) {
+        throw new TypeError('sides must be a integer value larger or equal than 3:sides=' + sides);
     }
 };
 
-Number.isInt = function(value){
-    return !isNaN(value) &&  parseInt(value)  === value;
+Number.isInt = function (value) {
+    return !isNaN(value) && parseInt(value) === value;
 };

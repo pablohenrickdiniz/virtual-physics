@@ -591,6 +591,14 @@ $(document).ready(function () {
                 break;
         }
     });
+
+    $('#show-quadtree').change(function(){
+        game.setShowQuadTree($(this).is(':checked'));
+    });
+
+    $('#show-aabb').change(function(){
+        game.setShowAABBS($(this).is(':checked'));
+    });
 });
 
 function frictionUpdate(value) {

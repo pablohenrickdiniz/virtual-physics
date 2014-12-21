@@ -1,5 +1,5 @@
 QuadTree.maxl = 8;
-QuadTree.maxo = 8;
+QuadTree.maxo = 5;
 
 function QuadTree(AABB, l) {
     var self = this;

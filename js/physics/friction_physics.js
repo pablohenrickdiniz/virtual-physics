@@ -50,6 +50,11 @@ function AABBoverlap(b1, b2, threshold) {
 
     return !((b1[0] + threshold) >= b2[2] || b1[2] <= (b2[0] + threshold) || (b1[1] + threshold) >= b2[3] || b1[3] <= (b2[1] + threshold));
 }
+
+function AABBInside(b1,b2){
+    return ((b1[0] >= b2[0] && b1[2] <= b2[2] && b1[1] >= b2[1] && b1[3] <= b2[3])||(b2[0] >= b1[0] && b2[2] <= b1[2] && b2[1] >= b1[1] && b2[3] <= b1[3]));
+}
+
 /*
 function circleIntersectLine(cc, r, va, vb) {
     var med = MV.med(va, vb);
@@ -158,9 +163,36 @@ function linesIntersect(X, Y, A, B) {
     if (lambda < 0 || lambda > 1)
         return false;
     var alphaNominator = (Y[1] - X[1]) * (A[0] - X[0]) - (Y[0] - X[0]) * (A[1] - X[1]),alpha = alphaNominator / denominator;
-    if (alpha < 0 || alpha > 1)
-        return false;
-    return true;
+    return !(alpha < 0 || alpha > 1);
+}
+
+function line_intersects(pa, pb, pc, pd) {
+    var p0_x = pa[0];
+    var p0_y = pa[1];
+    var p1_x = pb[0];
+    var p1_y = pb[1];
+    var p2_x = pc[0];
+    var p2_y = pc[1];
+    var p3_x = pd[0];
+    var p3_y = pd[1];
+
+    var s1_x, s1_y, s2_x, s2_y;
+    s1_x = p1_x - p0_x;
+    s1_y = p1_y - p0_y;
+    s2_x = p3_x - p2_x;
+    s2_y = p3_y - p2_y;
+
+    var s, t;
+    s = (-s1_y * (p0_x - p2_x) + s1_x * (p0_y - p2_y)) / (-s2_x * s1_y + s1_x * s2_y);
+    t = ( s2_x * (p0_y - p2_y) - s2_y * (p0_x - p2_x)) / (-s2_x * s1_y + s1_x * s2_y);
+
+    if (s >= 0 && s <= 1 && t >= 0 && t <= 1)
+    {
+        // Collision detected
+        return 1;
+    }
+
+    return 0; // No collision
 }
 
 /*
@@ -191,9 +223,18 @@ function polygonsIntersect(polygonA, polygonB){
 };*/
 
 function getContactsFromBodyPair(bodyA, bodyB) {
-    var contacts = [], pAs = bodyA.getVerticesInWorldCoords(), pBs = bodyB.getVerticesInWorldCoords(),
-        distances = [], normals = bodyB.faceNormals, sizeA = pAs.length, sizeB = pBs.length, i, j, pA, pB,
-        collisionFace;
+    var contacts = [];
+    var pAs = bodyA.getVerticesInWorldCoords();
+    var pBs = bodyB.getVerticesInWorldCoords();
+    var distances = [];
+    var normals = bodyB.faceNormals;
+    var sizeA = pAs.length;
+    var sizeB = pBs.length;
+    var i;
+    var j;
+    var pA;
+    var pB;
+    var collisionFace;
     // test for each point of body A whether it lies inside body B
 
     for (i = 0; i < sizeA; i++) {

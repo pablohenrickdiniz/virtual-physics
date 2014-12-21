@@ -10,12 +10,34 @@ function Game() {
     self.running = false;
     self.readFrame = null;
     self.scalevar = 1;
+    self.showQuadTree = false;
+    self.showAABBS = false;
 
     self.refreshDraw = function(){
         var self = this;
-         self.drawWorld();
-         self.drawQuadTree();
+        self.drawWorld();
+        if(self.showQuadTree){
+            self.drawQuadTree();
+        }
+        if(self.showAABBS){
+            self.drawAABBS();
+        }
     };
+
+    self.setShowQuadTree = function(show){
+        var self = this;
+        self.showQuadTree = show;
+        self.quad.clearScreen();
+    };
+
+    self.setShowAABBS = function(show){
+        var self = this;
+        self.showAABBS = show;
+        if(!self.running){
+            self.canvas.clearScreen();
+        }
+    };
+
 
     self.scale = function(qtd){
         var self = this;
@@ -71,6 +93,13 @@ function Game() {
     self.drawWorld = function(){
         var self = this;
         self.canvas.drawWorld(self.world);
+    };
+
+    self.drawAABBS = function(){
+        var self = this;
+        self.world.bodies.forEach(function(body){
+            self.canvas.drawAABB(body.getAABB());
+        });
     };
 
 

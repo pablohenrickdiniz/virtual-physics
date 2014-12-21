@@ -167,7 +167,6 @@ var World = function () {
 
     };
 
-
     self.setFriction = function(friction){
         var self = this;
         self.friction = friction;
@@ -314,7 +313,6 @@ var World = function () {
         }
     }
 
-
     function applyImpulses() {
         // precompute MInv and bias for each contact - they don't change
         // across iterations
@@ -386,7 +384,7 @@ var World = function () {
             pBcB = [pB[0]-cB[0],pB[1]-cB[1]];
 
             // compute the Jacobians (they don't change in the iterations)
-            Jn[i] = [normal[0], normal[1], pAcA[0] * normal[1] - pAcA[1] * normal[0],normal[0]*-1, normal[1]*-1, -(pBcB[0] * normal[1] - pBcB[1] * normal[0])];
+            Jn[i] = [normal[0], normal[1], pAcA[0] * normal[1] - pAcA[1] * normal[0],-normal[0], -normal[1], -(pBcB[0] * normal[1] - pBcB[1] * normal[0])];
             // Jacobian for friction - like Jacobian for collision,
             // but with tangent in place of normal
             Jt[i] = [-normal[1],normal[0],pAcA[0]*normal[0]-pAcA[1]*-normal[1],normal[1],-normal[0],-((pB[0]-cB[0])*-normal[1]-(pB[1]-cB[1])*-normal[1])];
