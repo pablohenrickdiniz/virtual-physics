@@ -42,24 +42,30 @@ function Regular(center, radius, sides, theta) {
 
     self.moi = function (mass) {
         var self = this;
-        var sum1 = 0;
-        var sum2 = 0;
-        var size = self.vertices.length;
-        var n;
-        var pn;
-        var pn1;
-        var norm;
-        var pos;
-        for (n = 0; n < size; n++) {
-            pos = n + 1 == size ? 0 : n + 1;
-            pn = self.vertices[n];
-            pn1 = self.vertices[pos];
-            norm = MV.norm(MV.VxV(pn, pn1));
-            sum1 += norm * MV.dot(pn1, pn1) + MV.dot(pn1, pn) + MV.dot(pn, pn);
-            sum2 += norm;
+        var size;
+        if(self.vertices.length == 4){
+            size = MV.distance(self.vertices[0],self.vertices[1]);
+            return mass / 12 * (size * size + size * size);
         }
-        return (mass / 6) * (sum1 / sum2);
-
+        else{
+            var sum1 = 0;
+            var sum2 = 0;
+            size = self.vertices.length;
+            var n;
+            var pn;
+            var pn1;
+            var norm;
+            var pos;
+            for (n = 0; n < size; n++) {
+                pos = n + 1 == size ? 0 : n + 1;
+                pn = self.vertices[n];
+                pn1 = self.vertices[pos];
+                norm = MV.norm(MV.VxV(pn, pn1));
+                sum1 += norm * MV.dot(pn1, pn1) + MV.dot(pn1, pn) + MV.dot(pn, pn);
+                sum2 += norm;
+            }
+            return (mass / 6) * (sum1 / sum2);
+        }
     };
     self.updateVertices();
 }

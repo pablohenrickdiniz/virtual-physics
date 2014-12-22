@@ -85,6 +85,10 @@
     cursor:pointer;
 }
 
+.tools td{
+       text-align:center;
+}
+
 .table{
     margin-bottom:0;
 }

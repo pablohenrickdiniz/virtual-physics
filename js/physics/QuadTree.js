@@ -46,6 +46,7 @@ function QuadTree(AABB, l) {
         Body.validateBody(body);
         AABB = AABB == undefined ? getAABB(body) : AABB;
         if (self.qtd <= QuadTree.maxo || self.l == QuadTree.maxl) {
+            body.addLeaf(this);
             self.bodies.push(body);
             self.AABBs.push(AABB);
         }
@@ -57,6 +58,7 @@ function QuadTree(AABB, l) {
             if (size > 0) {
                 var i ;
                 for (i = 0; i < size; i++) {
+                    self.bodies[i].inLeaf = [];
                     self.insert(self.bodies[i], self.AABBs[i]);
                 }
                 self.bodies = [];

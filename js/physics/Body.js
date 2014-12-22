@@ -14,10 +14,16 @@ function Body(shape, material, dinamic, vLin, vAng) {
     self.groups = ['A'];
     self.AABB = null;
     self.vertsAbsolute = null;
+    self.inLeaf = [];
     // undefined is center of mass.
 
     var rotMatTheta; // used to avoid unnecessary rotation matrix computations
     var rotationMatrix;
+
+    self.addLeaf = function(quad){
+        var self = this;
+        self.inLeaf.push(quad);
+    };
 
     self.update = function () {
         var self = this;

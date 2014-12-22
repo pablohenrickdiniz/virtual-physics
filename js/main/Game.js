@@ -28,14 +28,15 @@ function Game() {
         var self = this;
         self.showQuadTree = show;
         self.quad.clearScreen();
+        if(!self.running && show){
+            self.drawQuadTree();
+        }
     };
 
     self.setShowAABBS = function(show){
         var self = this;
         self.showAABBS = show;
-        if(!self.running){
-            self.canvas.clearScreen();
-        }
+        self.refreshDraw();
     };
 
 
