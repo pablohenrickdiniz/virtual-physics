@@ -8,30 +8,31 @@ function Shape(center, color, border, theta) {
     self.shadow = null;
     self.theta = theta;
     self.vertices = [];
-
-    self.setColor = function(color){
-        Color.validate(color);
-        self.color = color;
-    };
-
-    self.setVertices = function(vertices){
-        Shape.validateVertices(vertices);
-        var self = this;
-        self.vertices = vertices;
-    };
-
-    self.setCenter = function(center){
-        Point.validatePoint(center);
-        var self = this;
-        self.center = center;
-    };
-
-    self.add = function(vertice){
-        Point.validatePoint(vertice);
-        var self = this;
-        self.vertices.push(vertice);
-    };
 }
+
+Shape.prototype.setColor = function(color){
+    Color.validate(color);
+    var self = this;
+    self.color = color;
+};
+
+Shape.prototype.setVertices = function(vertices){
+    Shape.validateVertices(vertices);
+    var self = this;
+    self.vertices = vertices;
+};
+
+Shape.prototype.setCenter = function(center){
+    Point.validatePoint(center);
+    var self = this;
+    self.center = center;
+};
+
+Shape.prototype.add =  function(vertice){
+    Point.validatePoint(vertice);
+    var self = this;
+    self.vertices.push(vertice);
+};
 
 Shape.validateVertices = function(vertices){
     var valid = true;
