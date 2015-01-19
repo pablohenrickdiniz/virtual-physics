@@ -4,13 +4,13 @@ function Border(color, thickness) {
     self.thickness = thickness == undefined ? 1 : thickness;
     self.lineDash = [];
     self.lineCap = 'butt';
-
-    self.setLineDash = function(lineDash){
-        var self = this;
-        Border.validateLineDash(lineDash);
-        self.lineDash = lineDash;
-    };
 }
+
+Border.prototype.setLineDash = function(lineDash){
+    var self = this;
+    Border.validateLineDash(lineDash);
+    self.lineDash = lineDash;
+};
 
 Border.BUTT = 'butt';
 Border.ROUND = 'round';
