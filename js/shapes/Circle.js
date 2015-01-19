@@ -2,7 +2,7 @@ Circle.prototype = new Arc([0,0],1,0,360);
 
 function Circle(center, radius) {
     var self = this;
-    Arc.call(this, center, radius, 0, 360);
+    Arc.call(self, center, radius, 0, 360);
 }
 
 Circle.prototype.update = function () {
