@@ -12,54 +12,55 @@ function Color(red, blue, green, alpha) {
         self.green = isNaN(green) || green < 0 ? 0 : green > 255 ? 255 : green;
         self.alpha = isNaN(alpha) || alpha < 0 || alpha > 1 ? 1 : alpha;
     }
-
-    self.toRGB = function () {
-        var self = this;
-        return "rgb(" + self.red + "," + self.blue + "," + self.green + ")";
-    };
-
-    self.toRGBA = function () {
-        var self = this;
-        return "rgba(" + self.red + "," + self.blue + "," + self.green + ","
-            + self.alpha + ")";
-    };
-
-    self.toHEX = function () {
-        var self = this;
-        var r = self.red.toString(16);
-        var g = self.blue.toString(16);
-        var b = self.green.toString(16);
-        r = r.length < 2 ? r + "0" : r;
-        g = g.length < 2 ? g + "0" : g;
-        b = b.length < 2 ? b + "0" : b;
-        return ("#" + r + g + b).toUpperCase();
-    };
-
-    self.toString = function () {
-        var self = this;
-        return self.toRGBA();
-    };
-
-    self.reverse = function () {
-        var self = this;
-        self.red = self.red < 128 ? 128 + (128 - self.red)
-            : 128 - (self.red - 128);
-        self.blue = self.blue < 128 ? 128 + (128 - self.blue)
-            : 128 - (self.blue - 128);
-        self.green = self.green < 128 ? 128 + (128 - self.green)
-            : 128 - (self.green - 128);
-    };
-
-    self.asName = function () {
-        var self = this;
-        for (var index in Color.Name) {
-            if (Color.Name[index] == self.toHEX()) {
-                return index;
-            }
-        }
-        return "";
-    };
 }
+
+
+Color.prototype.toRGB = function () {
+    var self = this;
+    return "rgb(" + self.red + "," + self.blue + "," + self.green + ")";
+};
+
+Color.prototype.toRGBA= function () {
+    var self = this;
+    return "rgba(" + self.red + "," + self.blue + "," + self.green + ","
+        + self.alpha + ")";
+};
+
+Color.prototype.toHEX = function () {
+    var self = this;
+    var r = self.red.toString(16);
+    var g = self.blue.toString(16);
+    var b = self.green.toString(16);
+    r = r.length < 2 ? r + "0" : r;
+    g = g.length < 2 ? g + "0" : g;
+    b = b.length < 2 ? b + "0" : b;
+    return ("#" + r + g + b).toUpperCase();
+};
+
+Color.prototype.toString = function () {
+    var self = this;
+    return self.toRGBA();
+};
+
+Color.prototype.reverse = function () {
+    var self = this;
+    self.red = self.red < 128 ? 128 + (128 - self.red)
+        : 128 - (self.red - 128);
+    self.blue = self.blue < 128 ? 128 + (128 - self.blue)
+        : 128 - (self.blue - 128);
+    self.green = self.green < 128 ? 128 + (128 - self.green)
+        : 128 - (self.green - 128);
+};
+
+Color.asName = function () {
+    var self = this;
+    for (var index in Color.Name) {
+        if (Color.Name[index] == self.toHEX()) {
+            return index;
+        }
+    }
+    return "";
+};
 
 Color.Name = {
     Snow: '#FFFAFA',
