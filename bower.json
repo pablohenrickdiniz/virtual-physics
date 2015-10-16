@@ -1,0 +1,32 @@
+{
+  "name": "Virtual-Physics",
+  "version": "1.1",
+  "homepage": "https://github.com/pablohenrickdiniz/Virtual-Physics",
+  "authors": [
+    "Pablo Henrick <phydokz@hotmail.com>"
+  ],
+  "description": "",
+  "main": "",
+  "moduleType": [],
+  "keywords": [
+    "teste"
+  ],
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "AdminLTE": "admin-lte#~2.3.0",
+    "CanvasEngine": "https://github.com/pablohenrickdiniz/CanvasEngine.git",
+    "MathLib": "https://github.com/pablohenrickdiniz/MathLib.git",
+    "ReactElements": "https://github.com/pablohenrickdiniz/ReactElements.git",
+    "jquery": "~2.1.4",
+    "react": "~0.14.0",
+    "requirejs": "~2.1.20"
+  }
+}
