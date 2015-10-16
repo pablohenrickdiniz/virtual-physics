@@ -1,64 +1,67 @@
-Rect.prototype = new Polygon([0,0],0);
-Rect.validateWidth = function(width){
-    if(isNaN(width) || width < 1){
-        throw new TypeError('width must be a double larger than 1:width='+width);
-    }
-};
-Rect.validateHeight = function(height){
-    if(isNaN(height) || height < 1){
-        throw new TypeError('height must be a double larger than 1:height='+height);
-    }
-};
+define(['Polygon'],function(Polygon){
+    var Rect = function(properties) {
+        var self = this;
+        Polygon.apply(self);
+        self.width =  10;
+        self.height = 10;
+        self.parent = null;
+        self.bindProperties();
+        self.set(properties);
+        self.updateDimen(self.width,self.height);
+    };
 
+    Rect.prototype = new Polygon;
 
-function Rect(center, width, height) {
-    var self = this;
-    Polygon.call(self, center, 0);
-    Rect.validateWidth(width);
-    Rect.validateHeight(height);
-    self.width =  width;
-    self.height = height;
-    self.parent = null;
+    Rect.prototype.bindProperties = function(){
+        var self = this;
+        self.onChange('width',function(width){
+            self.updateDimen(width, self.height);
+        });
+        self.onChange('height',function(height){
+            self.updateDimen(self.width, height);
+        });
 
-    self.updateDimen(self.width, self.height);
-}
+        self.beforeSet('width',function(oldVal,newVal){
+            newVal = parseFloat(newVal);
+            if(isNaN(newVal) || newVal < 10){
+                return oldVal;
+            }
+            return newVal;
+        });
 
-Rect.prototype.setWidth = function(width){
-    var self = this;
-    Rect.validateWidth(width);
-    self.updateDimen(width, self.height);
-};
+        self.beforeSet('height',function(oldVal,newVal){
+            newVal = parseFloat(newVal);
+            if(isNaN(newVal) || newVal < 10){
+                return oldVal;
+            }
+            return newVal;
+        });
+    };
 
-Rect.prototype.setHeight = function(height){
-    var self = this;
-    Rect.validateHeight(height);
-    self.updateDimen(self.width, height);
-};
+    Rect.prototype.moi = function(mass){
+        var self = this;
+        return mass / 12 * (self.height * self.height + self.width * self.width);
+    };
 
-Rect.prototype.moi = function(mass){
-    var self = this;
-    return mass / 12 * (self.height * self.height + self.width * self.width);
-};
+    Rect.prototype.updateDimen = function(width,height){
+        var self = this;
+        self.width = width;
+        self.height = height;
+        self.area = self.width * self.height;
+        var mw = self.width * 0.5;
+        var mh = self.height * 0.5;
+        self.vertices =[
+            [mw, -mh],
+            [-mw, -mh],
+            [-mw, mh],
+            [mw, mh]
+        ];
+        self.updateMinAndMax();
+        if (self.parent != null) {
+            self.parent.update();
+        }
+    };
 
-Rect.prototype.updateDimen = function(width,height){
-    var self = this;
-    Rect.validateWidth(width);
-    Rect.validateHeight(height);
-    self.width = width;
-    self.height = height;
-    self.area = self.width * self.height;
-    var mw = self.width * 0.5;
-    var mh = self.height * 0.5;
-    self.vertices = [
-        [mw, -mh],
-        [-mw, -mh],
-        [-mw, mh],
-        [mw, mh]
-    ];
-    self.updateMinAndMax();
-    if (self.parent != null) {
-        self.parent.update();
-    }
-};
-
+    return Rect;
+});
 

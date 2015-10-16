@@ -7,125 +7,118 @@
     <link rel="stylesheet" href="css/bootstrap.min.css"/>
     <link rel="stylesheet" href="css/bootstrap.icon-large.min.css"/>
     <link rel="stylesheet" href="css/font-awesome.min.css"/>
-    <link rel="stylesheet" href="css/index.css"/>
-    <script type="text/javascript" src="js/utils/jquery.min.js"></script>
-    <script type="text/javascript" src="js/utils/bootstrap.min.js"></script>
-    <script type="text/javascript" src="js/utils/jquery.mousewheel.min.js"></script>
-    <script type="text/javascript" src="js/utils/clipper.js"></script>
-    <script type="text/javascript" src="js/utils/poly2tri.min.js"></script>
-    <script type="text/javascript" src="js/utils/KeyReader.js"></script>
-    <script type="text/javascript" src="js/utils/MouseReader.js"></script>
-    <script type="text/javascript" src="js/shapes/Point.js"></script>
-    <script type="text/javascript" src="js/draw/Color.js"></script>
-    <script type="text/javascript" src="js/draw/RadialGradient.js"></script>
-    <script type="text/javascript" src="js/draw/LinearGradient.js"></script>
-    <script type="text/javascript" src="js/draw/Canvas.js"></script>
-    <script type="text/javascript" src="js/draw/Border.js"></script>
-    <script type="text/javascript" src="js/physics/MV.js"></script>
-    <script type="text/javascript" src="js/shapes/Shape.js"></script>
-    <script type="text/javascript" src="js/shapes/Polygon.js"></script>
-    <script type="text/javascript" src="js/shapes/Regular.js"></script>
-    <script type="text/javascript" src="js/shapes/Arc.js"></script>
-    <script type="text/javascript" src="js/shapes/Circle.js"></script>
-    <script type="text/javascript" src="js/shapes/Trapezius.js"></script>
-    <script type="text/javascript" src="js/shapes/Rect.js"></script>
-    <script type="text/javascript" src="js/physics/Material.js"></script>
-    <script type="text/javascript" src="js/physics/QuadTree.js"></script>
-    <script type="text/javascript" src="js/physics/Body.js"></script>
-    <script type="text/javascript" src="js/physics/MouseBody.js"></script>
-    <script type="text/javascript" src="js/physics/Joint.js"></script>
-    <script type="text/javascript" src="js/physics/World.js"></script>
-    <script type="text/javascript" src="js/physics/friction_physics.js"></script>
-    <script type="text/javascript" src="js/main/Game.js"></script>
+    <link rel="stylesheet" href="bower_components/AdminLTE/dist/css/AdminLTE.min.css"/>
+    <link rel="stylesheet" href="bower_components/AdminLTE/dist/css/skins/_all-skins.min.css"/>
+    <link rel="stylesheet" href="bower_components/AdminLTE/plugins/iCheck/flat/blue.css"/>
+    <link rel="stylesheet" href="bower_components/AdminLTE/plugins/jvectormap/jquery-jvectormap-1.2.2.css"/>
+    <link rel="stylesheet" href="bower_components/AdminLTE/plugins/datepicker/datepicker3.css"/>
+    <link rel="stylesheet" href="bower_components/AdminLTE/plugins/daterangepicker/daterangepicker-bs3.css"/>
+    <link rel="stylesheet" href="bower_components/AdminLTE/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css"/>
+    <script type="text/javascript">
+        Global = {
+            maxBodies:1000
+        };
+    </script>
+    <script type="text/javascript" src="bower_components/requirejs/require.js"></script>
     <script type="text/javascript" src="js/main/main.js"></script>
 </head>
 <body>
-<div class="row" style="position:relative;min-height:670px;">
-    <div class="col-md-12 simulation">
-        <div class="canvas-area">
-            <canvas id="drawing" width="600px" height="600px"></canvas>
-            <canvas id="game" width="600px" height="600px"></canvas>
-            <canvas id="quad" width="600px" height="600px"></canvas>
+<div class="row">
+    <div class="col-md-6">
+        <div id="canvas-container">
+
         </div>
-        <div class="tools-area">
-            <table class="table table-condensed tools">
-                <tr>
-                    <th colspan="4"  class="table-header">Desenho</th>
-                </tr>
-                <tr>
-                    <td><span id="cursor" class="fa fa-2x fa-hand-o-up"></span></td>
-                    <td><span id="move" class="fa fa-2x fa-arrows"></span></td>
-                    <td><span id="convex" class="fa fa-2x fa-pencil"></span></td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td><span id="rect" class="fa fa-2x fa-square"></span></td>
-                    <td><span id="circle" class="fa fa-2x fa-circle"></span></td>
-                    <td><span id="regular" class="fa fa-2x fa-star"></span></td>
-                    <td></td>
-                </tr>
-            </table>
-            <table class="table table-condensed properties">
-                <tr>
-                    <th colspan="3"  class="table-header">Propriedades do objeto</th>
-                </tr>
-                <tr>
-                    <td>Dinâmico</td>
-                    <td colspan="2">
-                        <input class='tipo' type="checkbox" value="false" name="tipo" checked/>
-                    </td>
-                </tr>
-                <tr>
-                    <td>Cor</td>
-                    <td colspan="2"><input type="color" id="preenchimento" value="#ffffff"/></td>
-                </tr>
-            </table>
-            <table class="table table-condensed world">
-                <tr>
-                    <th colspan='3'  class="table-header">Propriedades do mundo</th>
-                </tr>
-                <tr>
-                    <td>Fricção</td>
-                    <td><input id='friction-range' type="range" value="0.1" min="0.01" max="1" step="0.01" onchange="frictionUpdate(value)"/></td>
-                    <td><input class='text-center friction' id="friction-text" value="0.2" type="number" min="0.01" max="1" step="0.01"/></td>
-                </tr>
-                <tr>
-                    <td>Gravidade</td>
-                    <td><input id='gravity-range' type="range" value="0.1" min="-100" max="100" step="0.1" onchange="gravityUpdate(value)"/></td>
-                    <td><input class='text-center' id="gravity-text" value="9.81" type="number"/></td>
-                </tr>
-            </table>
-            <table class="table table-condensed config">
-                <tr>
-                    <th colspan="3" class="table-header">Configurações</th>
-                </tr>
-                <tr>
-                    <td>Mostrar QuadTree</td>
-                    <td><input type="checkbox" id="show-quadtree"></td>
-                </tr>
-                <tr>
-                    <td>Mostrar AABBS</td>
-                    <td><input type="checkbox" id="show-aabb"></td>
-                </tr>
-            </table>
-            <table class="table table-condensed control">
-                <tr>
-                    <th colspan="2" class="table-header">Controles</th>
-                </tr>
-                <tr>
-                    <td class="text-right">
+    </div>
+    <div class="col-md-6">
+        <div class="col-sm-1" id="tool-menu">
+            <div class="btn-group-vertical">
+                <button class="btn btn-default btn-flat">
+                    <span id="cursor" class="fa fa-2x fa-hand-o-up"></span>
+                </button>
+                <button class="btn btn-default btn-flat">
+                    <span id="move" class="fa fa-2x fa-arrows"></span>
+                </button>
+                <button class="btn btn-default btn-flat">
+                    <span id="convex" class="fa fa-2x fa-pencil"></span>
+                </button>
+                <button class="btn btn-default btn-flat">
+                    <span id="rect" class="fa fa-2x fa-square"></span>
+                </button>
+                <button class="btn btn-default btn-flat">
+                    <span id="circle" class="fa fa-2x fa-circle"></span>
+                </button>
+
+                <button class="btn btn-default btn-flat">
+                    <span id="regular" class="fa fa-2x fa-star"></span>
+                </button>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="box">
+                <div class="box-header with-border">
+                    <div class="box-title">
+                        Propriedades
+                    </div>
+                </div>
+                <div class="box-body" id="options-attributes">
+                    <div class="form-group">
+                        <div class="checkbox">
+                            <input id="dinamico" type="checkbox" name="tipo" checked/>
+                            <label for="">Dinamico</label>
+                        </div>
+                        <div class="form-group">
+                            <label for="">Cor</label>
+                            <input type="color" id="color" style="width:100%;" value="#FFFFFF"/>
+                        </div>
+                        <div class="form-group">
+                            <label for="">Fricção</label>
+                            <input id="friccao" type="number" min="0.1" max="1" step="0.1" style="width:100%;" value="0.8"/>
+                        </div>
+                        <div class="form-group">
+                            <label for="">Gravidade</label>
+                            <input id="gravidade" type="number" min="-100" max="100" step="1" style="width:100%;" value="9.8"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="box">
+                <div class="box-header with-border">
+                    <div class="box-title">
+                       Configurações
+                    </div>
+                </div>
+                <div class="box-body">
+                   <div class="checkbox">
+                       <label for="">Mostrar QuadTree</label>
+                       <input type="checkbox" id="show-quadtree">
+                   </div>
+                    <div class="checkbox">
+                        <label for="">Mostrar AABBs</label>
+                        <input type="checkbox" id="show-aabb">
+                    </div>
+                </div>
+            </div>
+            <div class="box">
+                <div class="box-header with-border">
+                    <div class="box-title">
+                       Controles
+                    </div>
+                </div>
+                <div class="box-body">
+                    <div class="btn-group">
                         <button id="pause-btn" class="btn btn-default btn-sm">
                             <span class="fa fa-pause"></span>
                         </button>
-                    </td>
-                    <td>
                         <button id="play-btn" class="btn btn-default btn-sm">
                             <span class="fa fa-play"></span>
                         </button>
-                    </td>
-                </tr>
-            </table>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
+</div>
+<div class="row">
+    <canvas id="chart"  width="800" height="400"></canvas>
 </div>
 </body>

@@ -1,19 +1,72 @@
-Game.MAX_SCALE = 20;
-Game.MIN_SCALE = 0.1;
+define(['World','CanvasEngine','MV','AppObject','Canvas'],function(World,CanvasEngine,MV,AppObject,Canvas){
+    var Game = function(options) {
+        var self = this;
+        self.canvasEngine = null;
+        self.container = null;
+        self.world = null;
+        self.objectsLayer = null;
+        self.quadLayer = null;
+        self.drawLayer =  null;
+        self.running = false;
+        self.readFrame = null;
+        self.scalevar = 1;
+        self.showQuadTree = false;
+        self.showAABBS = false;
+        self.loopCallback = null;
+        self.useQuadTree = true;
+        self.set(options);
+    };
 
-function Game() {
-    var self = this;
-    self.world = new World();
-    self.canvas = new Canvas('game');
-    self.quad = new Canvas('quad');
-    self.drawing =  new Canvas('drawing');
-    self.running = false;
-    self.readFrame = null;
-    self.scalevar = 1;
-    self.showQuadTree = false;
-    self.showAABBS = false;
+    Game.prototype = new AppObject;
 
-    self.refreshDraw = function(){
+    Game.prototype.getDrawLayer = function(){
+        var self = this;
+        if(self.drawLayer == null){
+            self.drawLayer = self.getCanvasEngine().createLayer({width:10000, height:10000},Canvas);
+        }
+        return self.drawLayer;
+    };
+
+    Game.prototype.getQuadLayer = function(){
+        var self = this;
+        if(self.quadLayer == null){
+            self.quadLayer = self.getCanvasEngine().createLayer({width:10000, height:10000},Canvas);
+        }
+        return self.quadLayer;
+    };
+
+    Game.prototype.getObjectsLayer = function(){
+        var self = this;
+        if(self.objectsLayer == null){
+            self.objectsLayer = self.getCanvasEngine().createLayer({width:10000, height:10000},Canvas);
+        }
+        return self.objectsLayer;
+    };
+
+    Game.prototype.getWorld = function(){
+        var self = this;
+        if(self.world == null){
+            self.world = new World({
+                useQuadTree:self.useQuadTree
+            });
+        }
+        return self.world;
+    };
+
+    Game.prototype.getCanvasEngine = function(){
+        var self = this;
+        if(self.canvasEngine == null){
+            self.canvasEngine = CanvasEngine.createEngine({
+                width:'100%',
+                height:600,
+                container:self.container,
+                scalable:true
+            });
+        }
+        return self.canvasEngine;
+    };
+
+    Game.prototype.refreshDraw = function(){
         var self = this;
         self.drawWorld();
         if(self.showQuadTree){
@@ -24,105 +77,90 @@ function Game() {
         }
     };
 
-    self.setShowQuadTree = function(show){
+    Game.prototype.setShowQuadTree = function(show){
         var self = this;
         self.showQuadTree = show;
-        self.quad.clearScreen();
+        self.getQuadLayer().clear();
         if(!self.running && show){
             self.drawQuadTree();
         }
     };
 
-    self.setShowAABBS = function(show){
+    Game.prototype.setShowAABBS = function(show){
         var self = this;
         self.showAABBS = show;
         self.refreshDraw();
     };
 
-
-    self.scale = function(qtd){
+    Game.prototype.scale = function(qtd){
         var self = this;
         var scale = self.scalevar+qtd;
         if(scale <= Game.MAX_SCALE && scale >= Game.MIN_SCALE){
-            self.canvas.scale += qtd;
-            self.quad.scale += qtd;
-            self.drawing.scale += qtd;
-            self.scalevar += qtd;
-            if(!self.running){
-                self.refreshDraw();
-            }
+            self.getCanvasEngine().set({
+                scale:scale
+            });
         }
     };
-
-    self.moveCamera = function(center){
+    Game.prototype.add = function(body){
         var self = this;
-        self.canvas.move(center);
-        self.drawing.move(center);
-        self.quad.move(center);
-
-        if (!game.running) {
-            self.refreshDraw();
-        }
-    };
-
-    self.add = function(body){
-        var self = this;
-        self.world.add(body);
+        self.getWorld().add(body);
         if(!self.running){
             self.refreshDraw();
         }
     };
 
-    self.remove = function(body){
+    Game.prototype.remove = function(body){
         var self = this;
-        self.world.remove(body,!self.running);
+        self.getWorld().remove(body,!self.running);
         if(!self.running){
             self.refreshDraw();
         }
     };
 
-    self.removeAll = function(bodies){
+    Game.prototype.removeAll = function(bodies){
         var self = this;
+        var world = self.getWorld();
         bodies.forEach(function(body){
-            self.world.remove(body,!self.running);
+            world.remove(body,!self.running);
         });
         if(!self.running){
             self.refreshDraw();
         }
     };
 
-    self.drawWorld = function(){
+    Game.prototype.drawWorld = function(){
         var self = this;
-        self.canvas.drawWorld(self.world);
+        self.getObjectsLayer().drawWorld(self.world);
     };
 
-    self.drawAABBS = function(){
+    Game.prototype.drawAABBS = function(){
         var self = this;
+        var canvas = self.getObjectsLayer();
         self.world.bodies.forEach(function(body){
-            self.canvas.drawAABB(body.getAABB());
+            canvas.drawAABB(body.getAABB());
         });
     };
 
-
-    self.drawQuadTree = function(){
+    Game.prototype.drawQuadTree = function(){
         var self  = this;
-        self.quad.drawQuadTree(self.world.quadTree);
+        self.getQuadLayer().drawQuadTree(self.world.quadTree);
     };
 
-    self.start = function () {
+    Game.prototype.start = function(){
         var self = this;
         self.restart();
     };
 
-    self.pause = function () {
+    Game.prototype.pause = function(){
         var self = this;
         if (self.running) {
             self.running = false;
             clearInterval(self.readFrame);
         }
+        return self;
     };
 
-    self.restart = function () {
+    Game.prototype.restart = function(){
         var self = this;
         if (!self.running) {
             self.running = true;
@@ -130,23 +168,31 @@ function Game() {
         }
     };
 
-    self.loop = function (self) {
+    Game.prototype.loop = function(self){
         if (self.running) {
             setTimeout(function () {
                 requestAnimationFrame(function () {
                     self.loop(self);
                 });
-                self.world.step();
+                self.getWorld().step();
                 self.refreshDraw();
+                if(self.loopCallback != null){
+                    self.loopCallback();
+                }
             }, self.dt * 1000);
         }
     };
 
-    self.getPosition = function () {
+
+    Game.prototype.getPosition = function(vertex){
         var self = this;
-        return MV.VdV(MV.VpV(Reader.vertex, self.canvas.min), [self.scalevar, self.scalevar]);
+        return MV.VdV(MV.VpV(vertex, self.canvas.min), [self.scalevar, self.scalevar]);
     };
-}
+
+    Game.MAX_SCALE = 20;
+    Game.MIN_SCALE = 0.1;
 
 
+    return Game;
+});
 
