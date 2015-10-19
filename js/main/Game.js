@@ -1,5 +1,11 @@
 define(['World','CanvasEngine','MV','AppObject','Canvas'],function(World,CanvasEngine,MV,AppObject,Canvas){
     var Game = function(options) {
+        this.initialize(options);
+    };
+
+    Game.prototype = new AppObject;
+
+    Game.prototype.initialize = function(options){
         var self = this;
         self.canvasEngine = null;
         self.container = null;
@@ -16,8 +22,6 @@ define(['World','CanvasEngine','MV','AppObject','Canvas'],function(World,CanvasE
         self.useQuadTree = true;
         self.set(options);
     };
-
-    Game.prototype = new AppObject;
 
     Game.prototype.getDrawLayer = function(){
         var self = this;

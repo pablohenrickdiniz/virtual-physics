@@ -8,7 +8,6 @@ define(['Color'],function(Color){
         self.colorsStop = [];
     };
 
-
     LinearGradient.prototype.addColorStop = function (stop, color) {
         var self = this;
         if (isNaN(stop) || stop < 0 || stop > 100) {

@@ -4,8 +4,6 @@
 define(['Body','Material','Shape','MV','Rect'],function(Body,Material,Shape,MV,Rect){
     var MouseBody = function(shape) {
         var self = this;
-        Body.apply(self,new Rect([0,0],1,1),Material.Iron,true);
-        Shape.validateShape(shape);
         self.vLin = [0, 0];
         self.vAng = 0;
         self.mInv = 0;
@@ -18,7 +16,6 @@ define(['Body','Material','Shape','MV','Rect'],function(Body,Material,Shape,MV,R
     };
 
     MouseBody.prototype = new Body(new Rect([0,0],1,1),Material.Iron,true);
-
 
     MouseBody.prototype.getVerticesInWorldCoords = function () {
         var self = this;

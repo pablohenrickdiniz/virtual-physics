@@ -12,7 +12,6 @@ define(['Color','Point','Border','AppObject'],function(Color,Point,Border,AppObj
 
     Shape.prototype = new AppObject;
 
-
     return Shape;
 });
 

@@ -23,7 +23,6 @@ define(['Border','Shape'],function(Border,Shape){
         }
     };
 
-
     return Arc;
 });
 

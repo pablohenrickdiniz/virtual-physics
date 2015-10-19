@@ -1,14 +1,12 @@
 define(['Shape','Material','MV','FrictionPhysics','AppObject'],function(Shape,Material,MV,FrictionPhysics,AppObject){
-    var Body = function(shape, material, dinamic, vLin, vAng) {
-        Material.validate(material);
+    var Body = function(properties) {
         var self = this;
-        self.shape = shape;
-        self.center = shape.center;
-        self.shape.parent = this;
-        self.dinamic = dinamic;
-        self.material = material;
-        self.vLin = vLin == undefined ? [0, 0] : vLin; // linear (translational) velocity
-        self.vAng = vAng == undefined ? 0 : vAng; // angular (rotational) velocity
+        self.shape = new Shape();
+        self.center = [0,0];
+        self.dinamic = true;
+        self.material = Material.Iron;
+        self.vLin =  [0, 0]; // linear (translational) velocity
+        self.vAng = 0; // angular (rotational) velocity
         self.forces = []; // array of forces...
         self.forcePoints = []; // ... and the vertex index of force application.
         self.groups = ['A'];
@@ -18,11 +16,35 @@ define(['Shape','Material','MV','FrictionPhysics','AppObject'],function(Shape,Ma
         // undefined is center of mass.
         self.rotMatTheta = null; // used to avoid unnecessary rotation matrix computations
         self.rotationMatrix = null;
-        self.update();
+        self.bindProperties();
+        self.set(properties);
         self.getRotationMatrix();
     };
 
     Body.prototype = new AppObject;
+    
+    Body.prototype.bindProperties = function(){
+        var self = this;
+        self.onChange('shape',function(shape){
+            self.center = shape.center;
+            shape.parent = self;
+            self.update();
+        });
+
+        self.onChange('dinamic',function(dinamic){
+            self.update();
+        });
+
+        self.onChange('mass',function(mass){
+            self.mInv = mass == 0 ? 0 : 1 / mass; // inverse of the mass
+            self.moiInv = mass == 0 ? 0 : 1 / self.shape.moi(mass);// inverse of the moment of inertia
+            self.rotationMatrix = null;
+        });
+
+        self.onChange('material',function(material){
+            self.update();
+        });
+    };
 
     Body.prototype.addLeaf = function(quad){
         var self = this;
@@ -45,38 +67,6 @@ define(['Shape','Material','MV','FrictionPhysics','AppObject'],function(Shape,Ma
         self.rotationMatrix = null;
     };
 
-    Body.prototype.setDinamic = function (dinamic) {
-        var self = this;
-        self.dinamic = dinamic;
-        self.update();
-    };
-
-    Body.prototype.setMass = function (mass) {
-        var self = this;
-        self.mass = mass;
-        self.mInv = self.mass == 0 ? 0 : 1 / self.mass; // inverse of the mass
-        self.moiInv = self.mass == 0 ? 0 : 1 / self.shape.moi(self.mass);// inverse of the moment of inertia
-        self.rotationMatrix = null;
-    };
-
-    Body.prototype.setShape = function (shape) {
-        var self = this;
-        self.shape = shape;
-        self.shape.parent = self;
-        self.update();
-    };
-
-    Body.prototype.setMaterial = function (material) {
-        var self = this;
-        self.material = material;
-        self.update();
-    };
-
-    Body.prototype.setCenter = function(center){
-        Point.validatePoint(center);
-        var self = this;
-        self.center = center;
-    };
 
     Body.prototype.addForce = function (force, forcePoint) {
         var self = this;
@@ -126,12 +116,6 @@ define(['Shape','Material','MV','FrictionPhysics','AppObject'],function(Shape,Ma
         return self.vertsAbsolute;
     };
 
-
-    Body.validateBody = function(body){
-        if(!(body instanceof Body)){
-            throw new TypeError('body must be a instance of Body');
-        }
-    };
 
     return Body;
 });

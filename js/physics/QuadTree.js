@@ -42,7 +42,6 @@ define(['Body','FrictionPhysics'],function(Body,FrictionPhysics){
 
     QuadTree.prototype.add = function (body, AABB) {
         var self = this;
-        Body.validateBody(body);
         AABB = AABB == undefined ? FrictionPhysics.getAABB(body) : AABB;
         if (self.qtd <= QuadTree.maxo || self.l == QuadTree.maxl) {
             body.addLeaf(this);
@@ -69,7 +68,6 @@ define(['Body','FrictionPhysics'],function(Body,FrictionPhysics){
     };
 
     QuadTree.prototype.remove = function (body) {
-        Body.validateBody(body);
         var self = this;
         var removed = false;
         if (self.bodies.length > 0 && self.qtd > 0) {
@@ -127,8 +125,8 @@ define(['Body','FrictionPhysics'],function(Body,FrictionPhysics){
         self.nodes[3] = new QuadTree([x0, yh, xw, y1], l);
     };
 
-    QuadTree.maxl = 1;
-    QuadTree.maxo = 2;
+    QuadTree.maxl = 5;
+    QuadTree.maxo = 3;
 
 
     return QuadTree;

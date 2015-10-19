@@ -199,7 +199,7 @@ define([
             });
 
             React.render(
-                <ToolMenu items={self.tools} onItemCheck={self.onToolSelect}/>,
+                React.createElement(ToolMenu, {items: self.tools, onItemCheck: self.onToolSelect}),
                 document.getElementById('tool-menu')
             );
 

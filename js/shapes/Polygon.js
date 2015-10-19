@@ -166,8 +166,6 @@ define(['Shape','Color','Border','MV'],function(Shape,Color,Border,MV){
         var moit;
         var masst;
 
-
-
         for (i = 0; i < size; i++) {
             pos = i + 1 == size ? 0 : i + 1;
             va = self.vertices[i];
