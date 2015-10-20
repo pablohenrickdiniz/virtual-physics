@@ -20,6 +20,7 @@ define(['World','CanvasEngine','MV','AppObject','Canvas'],function(World,CanvasE
         self.showAABBS = false;
         self.loopCallback = null;
         self.useQuadTree = true;
+        self.dt = 1/60;
         self.set(options);
     };
 

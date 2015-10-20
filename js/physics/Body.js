@@ -16,6 +16,7 @@ define(['Shape','Material','MV','FrictionPhysics','AppObject'],function(Shape,Ma
         // undefined is center of mass.
         self.rotMatTheta = null; // used to avoid unnecessary rotation matrix computations
         self.rotationMatrix = null;
+        self.index = null;
         self.bindProperties();
         self.set(properties);
         self.getRotationMatrix();
@@ -53,7 +54,7 @@ define(['Shape','Material','MV','FrictionPhysics','AppObject'],function(Shape,Ma
 
     Body.prototype.update = function () {
         var self = this;
-        self.mass = self.dinamic ? self.material.density * self.shape.area : 0;
+        self.mass = self.dinamic ? self.material.density * self.shape.area*2 : 0;
         self.mInv = self.mass == 0 ? 0 : 1 / self.mass; // inverse of the mass
         self.moiInv = self.mass == 0 ? 0 : 1 / self.shape.moi(self.mass);// inverse of the moment of inertia
         self.forces = [];

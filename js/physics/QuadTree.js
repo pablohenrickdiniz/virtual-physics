@@ -125,7 +125,7 @@ define(['Body','FrictionPhysics'],function(Body,FrictionPhysics){
         self.nodes[3] = new QuadTree([x0, yh, xw, y1], l);
     };
 
-    QuadTree.maxl = 5;
+    QuadTree.maxl = 8;
     QuadTree.maxo = 3;
 
 

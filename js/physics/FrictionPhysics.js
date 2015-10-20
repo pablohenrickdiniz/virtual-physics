@@ -91,6 +91,7 @@ define(['MV','Contact'],function(MV,Contact){
                 AABBsGroup = AABBsGroups[g];
                 bodies = AABBsGroup[0];
                 AABBs = AABBsGroup[1];
+
                 size2 = bodies.length;
                 for (i = 0; i < size2 - 1; i++) {
                     for (j = i + 1; j < size2; j++) {

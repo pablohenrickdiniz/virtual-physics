@@ -13,7 +13,7 @@ requirejs.config({
         "Contact":"js/physics/Contact.min",
         "DistanceJoin":"js/physics/DistanceJoint.min",
         "Friction":"js/physics/Friction.min",
-        "FrictionPhysics":"js/physics/FrictionPhysics.min",
+        "FrictionPhysics":"js/physics/FrictionPhysics",
         "Join":"js/physics/Joint.min",
         "Material":"js/physics/Material.min",
         "MouseBody":"js/physics/MouseBody.min",

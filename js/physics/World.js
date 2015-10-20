@@ -16,6 +16,7 @@ define(['QuadTree','MV','FrictionPhysics','AppObject'],function(QuadTree,MV,Fric
         self.quadTree = new QuadTree([0, 0, self.width, self.height], 1);
         self.removes = [];
         self.useQuadTree = true;
+        self.debug = false;
         self.set(properties);
     };
 
@@ -61,7 +62,11 @@ define(['QuadTree','MV','FrictionPhysics','AppObject'],function(QuadTree,MV,Fric
                     force = forces[j];
                     // linear motion is simply the integrated force, divided by the mass
                     scalar = dt * mInv;
-                    body.vLin = [body.vLin[0]+force[0]*scalar,body.vLin[1]+force[1]*scalar];
+
+                    body.set({
+                        vLin:[body.vLin[0]+force[0]*scalar,body.vLin[1]+force[1]*scalar]
+                    });
+
                     // angular motion depends on the force application point as well via the torque
 
                     if (forcePoint !== undefined) { // 'undefined' means center of mass
@@ -117,8 +122,10 @@ define(['QuadTree','MV','FrictionPhysics','AppObject'],function(QuadTree,MV,Fric
     World.prototype.add = function (body) {
         var self = this;
         if (body.dinamic) {
-            body.forces= [[0,self.gravity*body.mass]];
-            body.forcePoints = [];
+            body.set({
+                forces:[[0,self.gravity*body.mass]],
+                forcePoints:[]
+            });
         }
 
         self.bodies.push(body);
@@ -126,7 +133,10 @@ define(['QuadTree','MV','FrictionPhysics','AppObject'],function(QuadTree,MV,Fric
             self.quadTree.add(body);
         }
 
-        body.index = self.bodies.length - 1;
+        body.set({
+            index:self.bodies.length - 1
+        });
+
         return self;
     };
 
@@ -140,8 +150,10 @@ define(['QuadTree','MV','FrictionPhysics','AppObject'],function(QuadTree,MV,Fric
         for(i = 0; i < size;i++){
             body = self.bodies[i];
             if(body.dinamic){
-                body.forces= [[0,self.gravity*body.mass]];
-                body.forcePoints = [];
+                body.set({
+                    forces: [[0,self.gravity*body.mass]],
+                    forcePoints : []
+                });
             }
         }
     };
@@ -197,7 +209,6 @@ define(['QuadTree','MV','FrictionPhysics','AppObject'],function(QuadTree,MV,Fric
         // [Ai, Bi] and [Bi, Ai] are added to the result.
         var self = this;
         var collisionCandidates = FrictionPhysics.getCollisionCandidates(self);
-
         FrictionPhysics.computeFaceNormals(self.bodies, collisionCandidates);
 
         // later, reuse contacts?
@@ -319,10 +330,25 @@ define(['QuadTree','MV','FrictionPhysics','AppObject'],function(QuadTree,MV,Fric
                     for(k=0;k<=5;k++){
                         v[k] = lambda*J[j][k]*MInv[j][k]+v[k];
                     }
-                    bodyB.vLin = [v[0], v[1]];
-                    bodyB.vAng = v[2];
-                    bodyA.vLin = [v[3], v[4]];
-                    bodyA.vAng = v[5];
+
+
+                    if(self.debug){
+                        bodyB.set({
+                            vLin:[v[0], v[1]],
+                            vAng:v[2]
+                        });
+
+                        bodyA.set({
+                            vLin:[v[3], v[4]],
+                            vAng:v[5]
+                        });
+                    }
+                    else{
+                        bodyB.vLin = [v[0], v[1]];
+                        bodyB.vAng = v[2];
+                        bodyA.vLin = [v[3], v[4]];
+                        bodyA.vAng = v[5];
+                    }
                 }
             }
         }
@@ -405,7 +431,7 @@ define(['QuadTree','MV','FrictionPhysics','AppObject'],function(QuadTree,MV,Fric
             Jt[i] = [-normal[1],normal[0],pAcA[0]*normal[0]-pAcA[1]*-normal[1],normal[1],-normal[0],-((pB[0]-cB[0])*-normal[1]-(pB[1]-cB[1])*-normal[1])];
             vPreNormal = ((-(pA[1]-cA[1])*vAngA+vLinA[0])-(-(pB[1]-cB[1])*vAngB+vLinB[0])*normal[0])+(((pA[0]-cA[0])*vAngA+vLinA[1])-((pB[0]-cB[0])*vAngB+vLinB[1])*normal[1]);
             C = (pA[0]-pB[0])*normal[0]+(pA[1]-pB[1])*normal[1];
-            bias[i] = beta / dt * ((C < 0) ? C : 0) + 0.2 * vPreNormal;
+            bias[i] = beta / dt * ((C < 0) ? C : 0) + 0.1 * vPreNormal;
             lambdaAccumulated[i] = 0;
         }
 
@@ -449,10 +475,24 @@ define(['QuadTree','MV','FrictionPhysics','AppObject'],function(QuadTree,MV,Fric
                 for(k=0;k<=5;k++){
                     v[k] = (MInv[j][k]*lambdaFriction*Jt[j][k])+((MInv[j][k]*lambda*Jn[j][k])+v[k]);
                 }
-                bodyA.vLin = [v[0], v[1]];
-                bodyA.vAng = v[2];
-                bodyB.vLin = [v[3], v[4]];
-                bodyB.vAng = v[5];
+
+                if(self.debug){
+                    bodyA.set({
+                        vLin:[v[0], v[1]],
+                        vAng:v[2]
+                    });
+
+                    bodyB.set({
+                        vLin:[v[3], v[4]],
+                        vAng:v[5]
+                    });
+                }
+                else{
+                    bodyA.vLin = [v[0], v[1]];
+                    bodyA.vAng = v[2];
+                    bodyB.vLin = [v[3], v[4]];
+                    bodyB.vAng = v[5];
+                }
             }
         }
     };
