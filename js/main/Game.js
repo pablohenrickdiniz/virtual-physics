@@ -9,6 +9,7 @@ define(['World','CanvasEngine','MV','AppObject','Canvas'],function(World,CanvasE
         var self = this;
         self.canvasEngine = null;
         self.container = null;
+        self.debugContainer = null;
         self.world = null;
         self.objectsLayer = null;
         self.quadLayer = null;
@@ -20,6 +21,7 @@ define(['World','CanvasEngine','MV','AppObject','Canvas'],function(World,CanvasE
         self.showAABBS = false;
         self.loopCallback = null;
         self.useQuadTree = true;
+        self.debug = true;
         self.dt = 1/60;
         self.set(options);
     };
@@ -52,7 +54,7 @@ define(['World','CanvasEngine','MV','AppObject','Canvas'],function(World,CanvasE
         var self = this;
         if(self.world == null){
             self.world = new World({
-                useQuadTree:self.useQuadTree
+                debug:self.debug
             });
         }
         return self.world;

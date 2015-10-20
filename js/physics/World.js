@@ -86,27 +86,35 @@ define(['QuadTree','MV','FrictionPhysics','AppObject'],function(QuadTree,MV,Fric
     };
 
     World.prototype.move = function(){
-        var d = this;
-        d.quadTree.clear();
-        d.removes.forEach(function (f) {
-            f = d.bodies.indexOf(f);
-            -1 != f && d.bodies.splice(f, 1)
-        });
-        d.removes = [];
-        d.bodies.forEach(function (f, e, h) {
-            f.index = e;
-            var a = !0;
-            if (f.dinamic) {
-                var c = MV.VpV(f.center, MV.SxV(d.dt, f.vLin)), b = d.dt * f.vAng;
-                f.center = c;
-                f.shape.center = f.center;
-                f.shape.theta += b;
-                c = FrictionPhysics.getAABB(f);
-                FrictionPhysics.AABBoverlap(c, d.quadTree.AABB, 0) || (h.splice(e, 1), a = !1)
+        var self = this;
+        self.quadTree.clear();
+        self.removes.forEach(function (f) {
+            var index = self.bodies.indexOf(f);
+            if(index != -1){
+                self.bodies[index].destroy();
+                self.bodies.splice(index, 1)
             }
-            a && d.quadTree.add(f);
-            f.vertsAbsolute = null;
-            f.AABB = null;
+        });
+
+        self.removes = [];
+        self.bodies.forEach(function (body, index, bodies) {
+            body.index = index;
+            var a = !0;
+            if (body.dinamic) {
+                var c = MV.VpV(body.center, MV.SxV(d.dt, body.vLin)), b = d.dt * body.vAng;
+                body.center = c;
+                body.shape.center = body.center;
+                body.shape.theta += b;
+                c = FrictionPhysics.getAABB(body);
+                if(!FrictionPhysics.AABBoverlap(c, d.quadTree.AABB, 0)){
+                    bodies[index].destroy();
+                    bodies.splice(index, 1);
+                    a = !1
+                }
+            }
+            a && d.quadTree.add(body);
+            body.vertsAbsolute = null;
+            body.AABB = null;
         })
     };
 
