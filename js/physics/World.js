@@ -101,18 +101,18 @@ define(['QuadTree','MV','FrictionPhysics','AppObject'],function(QuadTree,MV,Fric
             body.index = index;
             var a = !0;
             if (body.dinamic) {
-                var c = MV.VpV(body.center, MV.SxV(d.dt, body.vLin)), b = d.dt * body.vAng;
+                var c = MV.VpV(body.center, MV.SxV(self.dt, body.vLin)), b = self.dt * body.vAng;
                 body.center = c;
                 body.shape.center = body.center;
                 body.shape.theta += b;
                 c = FrictionPhysics.getAABB(body);
-                if(!FrictionPhysics.AABBoverlap(c, d.quadTree.AABB, 0)){
+                if(!FrictionPhysics.AABBoverlap(c, self.quadTree.AABB, 0)){
                     bodies[index].destroy();
                     bodies.splice(index, 1);
                     a = !1
                 }
             }
-            a && d.quadTree.add(body);
+            a && self.quadTree.add(body);
             body.vertsAbsolute = null;
             body.AABB = null;
         })
