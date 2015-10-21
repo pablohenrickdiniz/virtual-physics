@@ -1,4 +1,4 @@
-define(['Shape','Material','MV','FrictionPhysics','AppObject'],function(Shape,Material,MV,FrictionPhysics,AppObject){
+define(['Shape','Material','MV','FrictionPhysics','AppObject','DebugElement'],function(Shape,Material,MV,FrictionPhysics,AppObject,DebugElement){
     var Body = function(properties) {
         var self = this;
         self.shape = new Shape();
@@ -17,6 +17,8 @@ define(['Shape','Material','MV','FrictionPhysics','AppObject'],function(Shape,Ma
         self.rotMatTheta = null; // used to avoid unnecessary rotation matrix computations
         self.rotationMatrix = null;
         self.index = null;
+        self.debugElement = null;
+        self.getDebugElement();
         self.bindProperties();
         self.set(properties);
         self.getRotationMatrix();
@@ -44,6 +46,30 @@ define(['Shape','Material','MV','FrictionPhysics','AppObject'],function(Shape,Ma
 
         self.onChange('material',function(material){
             self.update();
+        });
+
+        self.beforeSet('center',function(old,center){
+            if(isNaN(center[0]) || isNaN(center[1])){
+                throw new TypeError('Center cannot be NaN');
+                return old;
+            }
+            return center;
+        });
+
+        self.beforeSet('vLin',function(old,vLin){
+            if(isNaN(vLin[0]) || isNaN(vLin[1])){
+                throw new TypeError('Vlin cannot be NaN');
+                return old;
+            }
+            return vLin;
+        });
+
+        self.beforeSet('vAng',function(old, vAng){
+            if(isNaN(vAng)){
+                throw new TypeError('vAng cannot be NaN');
+                return old;
+            }
+            return vAng;
         });
     };
 
@@ -115,6 +141,21 @@ define(['Shape','Material','MV','FrictionPhysics','AppObject'],function(Shape,Ma
         }
 
         return self.vertsAbsolute;
+    };
+
+
+    Body.prototype.getDebugElement = function(){
+        var self = this;
+        if(self.debugElement == null){
+            self.debugElement = new DebugElement(self);
+            self.debugElement.debug('center').debug('vLin').debug('vAng');
+        }
+        return self.debugElement;
+    };
+
+    Body.prototype.destroy = function(){
+        var self = this;
+        self.getDebugElement().destroy();
     };
 
 

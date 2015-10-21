@@ -1,6 +1,7 @@
 define([
     'Game',
-    'React',
+    'reactDom',
+    'react',
     'ToolMenu',
     'Rect',
     'Math',
@@ -14,7 +15,7 @@ define([
     'MV',
     'Border',
     'chart'
-],function(Game,React,ToolMenu,Rect,Math,Body,Material,Polygon,KeyReader,Regular,Color,FrictionPhysics,MV,Border,Chart){
+],function(Game,reactDom,React,ToolMenu,Rect,Math,Body,Material,Polygon,KeyReader,Regular,Color,FrictionPhysics,MV,Border,Chart){
     var GameEditor = {
         game:null,
         tools:[
@@ -80,7 +81,7 @@ define([
                         shape.updateCenter();
                         shape.updateRelative();
                         var body = new Body({shape:shape,material:Material.Iron,dinamic:self.dinamic});
-                        game.getWorld().add(body);
+                        game.add(body);
                         self.drawing = false;
                         self.shape = null;
                         drawLayer.clear();
@@ -198,7 +199,7 @@ define([
                 }
             });
 
-            React.render(
+            reactDom.render(
                 <ToolMenu items={self.tools} onItemCheck={self.onToolSelect}/>,
                 document.getElementById('tool-menu')
             );
@@ -262,7 +263,7 @@ define([
             else{
                 self.drawing = false;
                 var body = new Body({shape:self.shape,material:Material.Iron,dinamic:self.dinamic});
-                self.getGame().getWorld().add(body);
+                self.getGame().add(body);
             }
         },
         executePolygonTool:function(sp){
@@ -323,7 +324,7 @@ define([
             else{
                 self.drawing = false;
                 var body = new Body({shape:self.shape,material:Material.Iron,dinamic:self.dinamic});
-                self.getGame().getWorld().add(body);
+                self.getGame().add(body);
             }
         },
         executeRegularMove:function(sp,ep){
@@ -377,6 +378,7 @@ define([
             if(self.game == null){
                 self.game = new Game({
                     container:'#canvas-container',
+                    debuggerContainer:'#debugger',
                     loopCallback:function(){
                         var fps = 0;
                         if(!self.lastCalledTime) {

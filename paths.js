@@ -40,15 +40,17 @@ requirejs.config({
         "CanvasLayer":"bower_components/CanvasEngine/src/core/CanvasLayer.min",
         "AppObject":"bower_components/CanvasEngine/src/core/AppObject.min",
         "Math":"bower_components/MathLib/src/Math.min",
-        "GameEditor":"js/main/build/GameEditor.min",
-        "ToolMenu":"bower_components/ReactElements/build/ToolMenu.min",
-        "React":"bower_components/react/react.min",
-        "InputNumberMixin":"bower_components/ReactElements/build/mixins/inputNumberMixin.min",
-        "InputNumberVertical":"bower_components/ReactElements/build/InputNumberVertical.min",
-        "SetIntervalMixin":"bower_components/ReactElements/build/mixins/setIntervalMixin.min",
+        "GameEditor":"js/main/build/GameEditor",
+        "ToolMenu":"bower_components/ReactElements/build/ToolMenu",
+        "react":"bower_components/react/react.min",
+        "InputNumberMixin":"bower_components/ReactElements/build/mixins/inputNumberMixin",
+        "InputNumberVertical":"bower_components/ReactElements/build/InputNumberVertical",
+        "SetIntervalMixin":"bower_components/ReactElements/build/mixins/setIntervalMixin",
         "chart":"bower_components/AdminLTE/plugins/chartjs/Chart.min",
         "lodash":"bower_components/lodash/lodash.min",
-        "QuadTest":"js/main/build/QuadTest.min"
+        "QuadTest":"js/main/build/QuadTest.min",
+        "DebugElement":"js/debug/DebugElement.min",
+        "reactDom":"bower_components/react/react-dom.min"
     },
     "shim":{
         "LinearGradient":{
@@ -67,7 +69,7 @@ requirejs.config({
             ]
         },
         "Body":{
-            deps:['Shape','Material','MV','FrictionPhysics']
+            deps:['Shape','Material','MV','FrictionPhysics','DebugElement']
         },
         "DistanceJoint":{
             deps:["Joint"]
@@ -127,19 +129,25 @@ requirejs.config({
             deps:['jquery','AppObject']
         },
         "InputNumberVertical":{
-            deps:["InputNumberMixin","React"]
+            deps:["InputNumberMixin",'react']
         },
         "InputNumberMixin":{
-            deps:["SetIntervalMixin","React"]
+            deps:["SetIntervalMixin",'react']
         },
         "GameEditor":{
-            deps:['Game','React','ToolMenu','Rect','Math','Body','Material','Polygon']
+            deps:['Game','react','ToolMenu','Rect','Math','Body','Material','Polygon']
         },
         "AppObject":{
             deps:["lodash"]
         },
         "QuadTest":{
             deps:['AppObject','Game']
+        },
+        "DebugElement":{
+            deps:["jquery"]
+        },
+        "reactDom":{
+            deps:["react"]
         }
     }
 });

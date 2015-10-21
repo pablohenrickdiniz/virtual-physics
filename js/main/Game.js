@@ -22,7 +22,8 @@ define(['World','CanvasEngine','MV','AppObject','Canvas'],function(World,CanvasE
         self.loopCallback = null;
         self.useQuadTree = true;
         self.debug = true;
-        self.dt = 1/60;
+        self.debuggerContainer = null;
+        self.dt = 1/30;
         self.set(options);
     };
 
@@ -108,9 +109,15 @@ define(['World','CanvasEngine','MV','AppObject','Canvas'],function(World,CanvasE
             });
         }
     };
+
     Game.prototype.add = function(body){
         var self = this;
         self.getWorld().add(body);
+
+        if(self.debuggerContainer != null){
+            console.log(self.debugContainer);
+            $(self.debuggerContainer).append(body.getDebugElement().element);
+        }
         if(!self.running){
             self.refreshDraw();
         }

@@ -102,9 +102,24 @@ define(['QuadTree','MV','FrictionPhysics','AppObject'],function(QuadTree,MV,Fric
             var a = !0;
             if (body.dinamic) {
                 var c = MV.VpV(body.center, MV.SxV(self.dt, body.vLin)), b = self.dt * body.vAng;
+
+
+                /*
+                Fast
                 body.center = c;
                 body.shape.center = body.center;
-                body.shape.theta += b;
+                body.shape.theta += b;*/
+
+
+                /*Debugger */
+                body.set({
+                    center:c
+                });
+
+                body.shape.set({
+                    theta:body.shape.theta+b
+                });
+
                 c = FrictionPhysics.getAABB(body);
                 if(!FrictionPhysics.AABBoverlap(c, self.quadTree.AABB, 0)){
                     bodies[index].destroy();
@@ -329,6 +344,8 @@ define(['QuadTree','MV','FrictionPhysics','AppObject'],function(QuadTree,MV,Fric
                     vLinB = bodyB.vLin;
                     vAngA = bodyA.vAng;
                     vAngB = bodyB.vAng;
+
+
                     v = [vLinB[0],vLinB[1],vAngB,vLinA[0],vLinA[1],vAngA];
                     dot = 0;
                     for(k=0;k<=5;k++){
@@ -432,16 +449,82 @@ define(['QuadTree','MV','FrictionPhysics','AppObject'],function(QuadTree,MV,Fric
             pAcA = [pA[0]-cA[0],pA[1]-cA[1]];
             pBcB = [pB[0]-cB[0],pB[1]-cB[1]];
 
+
+            normal.forEach(function(val){
+                if(isNaN(val)){
+                    throw new TypeError('normal has Nan Values');
+                }
+            });
+
+            pAcA.forEach(function(val){
+                if(isNaN(val)){
+                    throw new TypeError('pAcA has Nan Values');
+                }
+            });
+
+            pBcB.forEach(function(val){
+                if(isNaN(val)){
+                    throw new TypeError('pAcB has Nan Values');
+                }
+            });
+
+
             // compute the Jacobians (they don't change in the iterations)
             Jn[i] = [normal[0], normal[1], pAcA[0] * normal[1] - pAcA[1] * normal[0],-normal[0], -normal[1], -(pBcB[0] * normal[1] - pBcB[1] * normal[0])];
+
             // Jacobian for friction - like Jacobian for collision,
             // but with tangent in place of normal
             Jt[i] = [-normal[1],normal[0],pAcA[0]*normal[0]-pAcA[1]*-normal[1],normal[1],-normal[0],-((pB[0]-cB[0])*-normal[1]-(pB[1]-cB[1])*-normal[1])];
             vPreNormal = ((-(pA[1]-cA[1])*vAngA+vLinA[0])-(-(pB[1]-cB[1])*vAngB+vLinB[0])*normal[0])+(((pA[0]-cA[0])*vAngA+vLinA[1])-((pB[0]-cB[0])*vAngB+vLinB[1])*normal[1]);
+
+            if(isNaN(vPreNormal)){
+                throw new TypeError('vPreNormal is Nan');
+            }
+
+
             C = (pA[0]-pB[0])*normal[0]+(pA[1]-pB[1])*normal[1];
+
+
+            if(isNaN(C)){
+                throw new TypeError('C is Nan');
+            }
+
+
+            if(isNaN(beta)){
+                throw new TypeError('beta is Nan');
+            }
+
+
             bias[i] = beta / dt * ((C < 0) ? C : 0) + 0.1 * vPreNormal;
             lambdaAccumulated[i] = 0;
         }
+
+
+        Jn.forEach(function(val){
+            if(isNaN(val)){
+                throw new TypeError('Jn has nan values');
+            }
+        });
+
+        Jt.forEach(function(val){
+            if(isNaN(val)){
+                throw new TypeError('Jt has nan values');
+            }
+        });
+
+        bias.forEach(function(val){
+            if(isNaN(val)){
+                throw new TypeError('bias has nan values');
+            }
+        });
+
+
+        lambdaAccumulated.forEach(function(val){
+            if(isNaN(val)){
+                throw new TypeError('lambdaAcumulates has nan values');
+            }
+        });
+
 
         for (i = 0; i < n; i++) {
             for (j = 0; j < size; j++) {
@@ -483,6 +566,66 @@ define(['QuadTree','MV','FrictionPhysics','AppObject'],function(QuadTree,MV,Fric
                 for(k=0;k<=5;k++){
                     v[k] = (MInv[j][k]*lambdaFriction*Jt[j][k])+((MInv[j][k]*lambda*Jn[j][k])+v[k]);
                 }
+
+                /*Debug vars*/
+
+
+                if(isNaN(a)){
+                    throw new TypeError('a is NaN');
+                }
+
+                if(isNaN(b)){
+                    throw new TypeError('b is NaN');
+                }
+
+                if(isNaN(c)){
+                    throw new TypeError('c is NaN');
+                }
+
+                if(isNaN(d)){
+                    throw new TypeError('d is NaN');
+                }
+
+                if(isNaN(bias[j])){
+                    throw new TypeError('bias[j] is NaN');
+                }
+
+
+                if(isNaN(fl)){
+                    throw new TypeError('fl is NaN');
+                }
+
+
+                if(isNaN(lambda)){
+                    throw new TypeError('lambda is NaN');
+                }
+
+
+                if(isNaN(lambdaFriction)){
+                    throw new TypeError('lambdaFriction is NaN');
+                }
+
+                lambdaAccumulated.forEach(function(val){
+                    if(isNaN(val)){
+                        throw new TypeError('lambda Acumulates has NaN values');
+                    }
+                });
+
+
+                v.forEach(function(element){
+                    if(element instanceof Array){
+                        element.forEach(function(val){
+                            if(isNaN(val)){
+                                throw new TypeError('va has NaN values');
+                            }
+                        });
+                    }
+                    else if(isNaN(element)){
+                        throw new TypeError('va has NaN values');
+                    }
+                });
+
+
 
                 if(self.debug){
                     bodyA.set({

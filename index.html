@@ -19,6 +19,11 @@
             maxBodies:1000
         };
     </script>
+    <script type="text/javascript">
+        Array.prototype.toString = function(){
+            return '['+this.join(',')+']';
+        };
+    </script>
     <script type="text/javascript" src="bower_components/requirejs/require.js"></script>
     <script type="text/javascript" src="js/main/main.js"></script>
 </head>
@@ -119,9 +124,15 @@
     </div>
 </div>
 <div class="col-md-6">
-    <canvas id="chart"  width="800" height="400"></canvas>
+    <canvas id="chart"  width="700" height="400"></canvas>
 </div>
-<div class="col-md-6" id="debugger">
-
+<div class="col-md-6">
+    <table class="table table-striped" id="debugger">
+        <tr>
+            <th>Center</th>
+            <th>vLin</th>
+            <th>vAng</th>
+        </tr>
+    </table>
 </div>
 </body>
