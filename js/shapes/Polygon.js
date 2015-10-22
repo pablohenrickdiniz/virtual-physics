@@ -1,4 +1,4 @@
-define(['Shape','Color','Border','MV'],function(Shape,Color,Border,MV){
+define(['Shape','Color','Border','MV','lodash'],function(Shape,Color,Border,MV,_){
     var Polygon = function(properties) {
         var self = this;
         Shape.apply(self);
@@ -14,11 +14,16 @@ define(['Shape','Color','Border','MV'],function(Shape,Color,Border,MV){
 
     Polygon.prototype.add = function(vertice){
         var self = this;
-        if(!self.contains(vertice)){
-            self.vertices.push(vertice);
-            return true;
+        if(self.contains(vertice)){
+            throw new TypeError('Esse vertice já existe no polígono');
         }
-        return false;
+        else if(!_.isNumber(vertice[0]) || !_.isNumber(vertice[1])){
+            throw new TypeError('O vertice deve ser um array de números');
+        }
+        else{
+            self.vertices.push(vertice);
+        }
+        return self;
     };
 
 

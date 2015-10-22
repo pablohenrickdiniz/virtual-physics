@@ -21,7 +21,7 @@ define(['World','CanvasEngine','MV','AppObject','Canvas'],function(World,CanvasE
         self.showAABBS = false;
         self.loopCallback = null;
         self.useQuadTree = true;
-        self.debug = true;
+        self.debug = false;
         self.debuggerContainer = null;
         self.dt = 1/30;
         self.set(options);
@@ -115,7 +115,6 @@ define(['World','CanvasEngine','MV','AppObject','Canvas'],function(World,CanvasE
         self.getWorld().add(body);
 
         if(self.debuggerContainer != null){
-            console.log(self.debugContainer);
             $(self.debuggerContainer).append(body.getDebugElement().element);
         }
         if(!self.running){

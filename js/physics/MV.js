@@ -78,7 +78,6 @@ define(function(){
             return Math.sqrt(MV.dot(x, x));
         },
         normalize: function (x) { //normalize a vector
-
             return MV.SxV(1 / MV.norm(x), x);
         },
         min: function (x, dim) { // min of vector (or matrix along dimension dim)
@@ -142,14 +141,14 @@ define(function(){
             var nb = MV.norm(vb);
             var round = pe / (na * nb);
 
-            if(isNaN(round)){
-                console.log('fail');
-                console.log('va:',va);
-                console.log('vb:',vb);
-                console.log('pe:',pe);
-                console.log('na:',na);
-                console.log('nb:',nb);
-            }
+            //if(isNaN(round)){
+            //    console.log('fail');
+            //    console.log('va:',va);
+            //    console.log('vb:',vb);
+            //    console.log('pe:',pe);
+            //    console.log('na:',na);
+            //    console.log('nb:',nb);
+            //}
 
             return Math.acos(round);
         },

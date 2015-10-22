@@ -138,6 +138,16 @@ define(['Shape','Material','MV','FrictionPhysics','AppObject','DebugElement'],fu
             for (i = 0; i < size; i++) {
                 self.vertsAbsolute.push(MV.VpV(center, MV.MxV(rotationMatrix, vertices[i])));
             }
+
+            self.vertsAbsolute.forEach(function(vertice){
+                if(isNaN(vertice[0]) || isNaN(vertice[1])){
+                    console.log('begin----------------------');
+                    console.log('center',center);
+                    console.log('rotationMatrix',rotationMatrix);
+                    console.log('shape vertices',shape.vertices);
+                    throw new TypeError('body contain vertices absolutes nans');
+                }
+            });
         }
 
         return self.vertsAbsolute;

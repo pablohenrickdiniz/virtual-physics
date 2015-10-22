@@ -378,7 +378,6 @@ define([
             if(self.game == null){
                 self.game = new Game({
                     container:'#canvas-container',
-                    debuggerContainer:'#debugger',
                     loopCallback:function(){
                         var fps = 0;
                         if(!self.lastCalledTime) {

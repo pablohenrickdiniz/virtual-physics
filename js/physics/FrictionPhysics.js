@@ -55,10 +55,54 @@ define(['MV','Contact'],function(MV,Contact){
         getFaceNormals:function(vertices){
             var normals = [], size = vertices.length, i, face, N;
             for (i = 0; i < size; i++) {
+
+                //vertices[i].forEach(function(val){
+                //    if(isNaN(val)){
+                //        throw new TypeError('vertices[i] has nan values');
+                //    }
+                //});
+                //
+                //vertices[(i + 1) % size].forEach(function(val){
+                //    if(isNaN(val)){
+                //        throw new TypeError('vertices[i] has nan values');
+                //    }
+                //});
+
+
                 face = MV.VmV(vertices[(i + 1) % size], vertices[i]);
+
+
+                //
+                //if(isNaN(face[0]) || isNaN(face[1])){
+                //    throw new TypeError('face has nan');
+                //}
+
+
+
                 N = [-face[1], face[0]];
-                normals.push(MV.normalize(N));
+
+
+                /*
+                    Problema!
+                    Se o vetor for [0,0], a simulação falha,
+                 */
+
+                if(N[0] != 0 || N[1] != 0){
+                    N = MV.normalize(N);
+                }
+
+                normals.push(N);
             }
+
+
+            normals.forEach(function(normal){
+                normal.forEach(function(val){
+                    if(isNaN(val)){
+                        throw new TypeError('normals array has nan normal');
+                    }
+                });
+            });
+
             return normals;
         },
         getCollisionCandidates:function(world){
