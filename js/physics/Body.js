@@ -29,7 +29,7 @@ define(['Shape','Material','MV','FrictionPhysics','AppObject','DebugElement'],fu
     Body.prototype.bindProperties = function(){
         var self = this;
         self.onChange('shape',function(shape){
-            self.center = shape.center;
+            self.center = shape.getCenter();
             shape.parent = self;
             self.update();
         });
@@ -48,29 +48,29 @@ define(['Shape','Material','MV','FrictionPhysics','AppObject','DebugElement'],fu
             self.update();
         });
 
-        self.beforeSet('center',function(old,center){
-            if(isNaN(center[0]) || isNaN(center[1])){
-                throw new TypeError('Center cannot be NaN');
-                return old;
-            }
-            return center;
-        });
-
-        self.beforeSet('vLin',function(old,vLin){
-            if(isNaN(vLin[0]) || isNaN(vLin[1])){
-                throw new TypeError('Vlin cannot be NaN');
-                return old;
-            }
-            return vLin;
-        });
-
-        self.beforeSet('vAng',function(old, vAng){
-            if(isNaN(vAng)){
-                throw new TypeError('vAng cannot be NaN');
-                return old;
-            }
-            return vAng;
-        });
+        //self.beforeSet('center',function(old,center){
+        //    if(isNaN(center[0]) || isNaN(center[1])){
+        //        throw new TypeError('Center cannot be NaN');
+        //        return old;
+        //    }
+        //    return center;
+        //});
+        //
+        //self.beforeSet('vLin',function(old,vLin){
+        //    if(isNaN(vLin[0]) || isNaN(vLin[1])){
+        //        throw new TypeError('Vlin cannot be NaN');
+        //        return old;
+        //    }
+        //    return vLin;
+        //});
+        //
+        //self.beforeSet('vAng',function(old, vAng){
+        //    if(isNaN(vAng)){
+        //        throw new TypeError('vAng cannot be NaN');
+        //        return old;
+        //    }
+        //    return vAng;
+        //});
     };
 
     Body.prototype.addLeaf = function(quad){

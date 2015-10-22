@@ -95,13 +95,13 @@ define(['MV','Contact'],function(MV,Contact){
             }
 
 
-            normals.forEach(function(normal){
-                normal.forEach(function(val){
-                    if(isNaN(val)){
-                        throw new TypeError('normals array has nan normal');
-                    }
-                });
-            });
+            //normals.forEach(function(normal){
+            //    normal.forEach(function(val){
+            //        if(isNaN(val)){
+            //            throw new TypeError('normals array has nan normal');
+            //        }
+            //    });
+            //});
 
             return normals;
         },

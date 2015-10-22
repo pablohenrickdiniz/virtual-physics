@@ -23,7 +23,7 @@ define(['World','CanvasEngine','MV','AppObject','Canvas'],function(World,CanvasE
         self.useQuadTree = true;
         self.debug = false;
         self.debuggerContainer = null;
-        self.dt = 1/30;
+        self.dt = 1/60;
         self.set(options);
     };
 

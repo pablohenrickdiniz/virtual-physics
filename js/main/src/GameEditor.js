@@ -78,6 +78,7 @@ define([
                         if (!shape.isClockWise()) {
                             shape.invertPath();
                         }
+                        debugger;
                         shape.updateCenter();
                         shape.updateRelative();
                         var body = new Body({shape:shape,material:Material.Iron,dinamic:self.dinamic});

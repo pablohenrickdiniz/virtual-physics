@@ -24,8 +24,7 @@ requirejs.config({
         "World":"js/physics/World.min",
         "Arc":"js/shapes/Arc.min",
         "Circle":"js/shapes/Circle.min",
-        "Point":"js/shapes/Point.min",
-        "Polygon":"js/shapes/Polygon.min",
+        "Polygon":"js/shapes/Polygon",
         "Rect":"js/shapes/Rect.min",
         "Regular":"js/shapes/Regular.min",
         "Shape":"js/shapes/Shape.min",
@@ -99,7 +98,7 @@ requirejs.config({
             deps:['Polygon','MV']
         },
         "Shape":{
-            deps:['Color','Point']
+            deps:['Color']
         },
         "Trapezius":{
             deps:["Polygon"]

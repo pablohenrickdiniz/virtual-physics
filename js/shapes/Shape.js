@@ -1,4 +1,4 @@
-define(['Color','Point','Border','AppObject'],function(Color,Point,Border,AppObject){
+define(['Color','Border','AppObject'],function(Color,Border,AppObject){
     var  Shape = function(properties) {
         var self = this;
         self.center = [0,0];

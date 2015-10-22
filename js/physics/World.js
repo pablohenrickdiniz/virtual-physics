@@ -2,11 +2,10 @@ define(['QuadTree','MV','FrictionPhysics','AppObject'],function(QuadTree,MV,Fric
 
     var World = function (properties) {
         var self = this;
-        self.dt = 1 / 60;
-        self.nIterations = 100;
+        self.dt = 1/60;
+        self.nIterations = 60;
         self.beta = 0.2;
         self.bodies = [];
-        self.t = 0;
         self.friction = 1;
         self.contacts = [];
         self.gravity = 90.81;

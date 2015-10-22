@@ -1,4 +1,4 @@
-define(['Shape','Color','Border','MV','lodash'],function(Shape,Color,Border,MV,_){
+define(['Shape','Color','Border','MV','lodash','FrictionPhysics'],function(Shape,Color,Border,MV,_,Fp){
     var Polygon = function(properties) {
         var self = this;
         Shape.apply(self);
@@ -6,6 +6,7 @@ define(['Shape','Color','Border','MV','lodash'],function(Shape,Color,Border,MV,_
         self.min = [];
         self.max = [];
         self.AABB = null;
+        self.centroid = null;
         self.bindProperties();
         self.set(properties);
     };
@@ -80,25 +81,37 @@ define(['Shape','Color','Border','MV','lodash'],function(Shape,Color,Border,MV,_
     };
 
     Polygon.prototype.getVerticesInWorldCoords = function () {
+        debugger;
         var self = this;
         var a = [];
         var g = self.vertices;
         var f = g.length;
         var cx = self.getCenter();
         for(var i = 0; i < f;i++){
-            a.push(MV.rotate(MV.VpV(cx,g[i]),MV.toDegree(self.theta),self.center));
+            a.push(MV.rotate(MV.VpV(cx,g[i]),MV.toDegree(self.theta),cx));
         }
         return a;
     };
 
+    Polygon.prototype.getCentroid = function(){
+        debugger;
+        if(this.centroid == null || this.centroid == undefined){
+            this.updateCentroid();
+        }
+        return this.centroid;
+    };
+
     Polygon.prototype.getCenter = function(){
+        debugger;
         if(this.center == null || this.center == undefined){
             this.updateCenter();
         }
         return this.center;
     };
 
+
     Polygon.prototype.getRelativeVertices = function(){
+        debugger;
         var self = this;
         var g = self.vertices;
         var size = g.length;
@@ -126,13 +139,21 @@ define(['Shape','Color','Border','MV','lodash'],function(Shape,Color,Border,MV,_
         }
     };
 
-    Polygon.prototype.updateCenter = function () {
+    Polygon.prototype.updateCentroid = function () {
+        debugger;
         var self = this;
-        self.center = Polygon.centroid(self.vertices);
+        self.centroid = Polygon.centroid(self.vertices);
         self.area = Polygon.area(self.vertices);
     };
 
+    Polygon.prototype.updateCenter = function(){
+        debugger;
+        var self = this;
+        self.center = Polygon.verticesCenter(self.vertices);
+    };
+
     Polygon.prototype.moi2 = function (mass) {
+        debugger;
         var self = this;
         var sum1 = 0;
         var sum2 = 0;
@@ -155,8 +176,9 @@ define(['Shape','Color','Border','MV','lodash'],function(Shape,Color,Border,MV,_
     };
 
     Polygon.prototype.moi = function (mass) {
+        debugger;
         var self = this;
-        var cv = self.center;
+        var cv = self.getCenter();
         var moi = 0;
         var i;
         var size = self.vertices.length;
@@ -194,6 +216,7 @@ define(['Shape','Color','Border','MV','lodash'],function(Shape,Color,Border,MV,_
     };
 
     Polygon.prototype.updateRelative = function () {
+        debugger;
         var self = this;
         self.vertices = self.vertices.reverse();
         var cx = self.center[0], cy = self.center[1], i, size = self.vertices.length, vertex;
@@ -202,10 +225,12 @@ define(['Shape','Color','Border','MV','lodash'],function(Shape,Color,Border,MV,_
             vertex[0] = (cx - vertex[0]) * -1;
             vertex[1] = (cy - vertex[1]) * -1;
         }
+
         self.updateMinAndMax();
     };
 
     Polygon.prototype.updateMinAndMax = function () {
+        debugger;
         var self = this;
         var min = [self.vertices[0][0], self.vertices[0][1]];
         var max = [self.vertices[0][0], self.vertices[0][1]];
@@ -280,7 +305,14 @@ define(['Shape','Color','Border','MV','lodash'],function(Shape,Color,Border,MV,_
         return centroid;
     };
 
+    Polygon.verticesCenter = function(vertices){
+        debugger;
+        var AABB = Fp.getAABB2(vertices);
+        return [(AABB[2]-AABB[0])/2,(AABB[3]-AABB[1])/2];
+    };
+
     Polygon.area = function(vertices){
+        debugger;
         var a = 0;
         var size = vertices.length;
         var pos;
