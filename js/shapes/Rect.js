@@ -43,14 +43,22 @@ define(['Polygon'],function(Polygon){
         return mass / 12 * (self.height * self.height + self.width * self.width);
     };
 
+
+    Rect.prototype.getArea = function(){
+        var self = this;
+        if(self.area == null){
+            self.area = self.width * self.height;
+        }
+        return self.area;
+    };
+
     Rect.prototype.updateDimen = function(width,height){
         var self = this;
         self.width = width;
         self.height = height;
-        self.area = self.width * self.height;
         var mw = self.width * 0.5;
         var mh = self.height * 0.5;
-
+        self.area = null;
         self.vertices = [];
         self.add([mw, -mh]).add([-mw, -mh]).add([-mw, mh]).add([mw, mh]);
         self.updateMinAndMax();

@@ -18,7 +18,6 @@ define(['Shape','Material','MV','FrictionPhysics','AppObject','DebugElement'],fu
         self.rotationMatrix = null;
         self.index = null;
         self.debugElement = null;
-        self.getDebugElement();
         self.bindProperties();
         self.set(properties);
         self.getRotationMatrix();
@@ -29,7 +28,7 @@ define(['Shape','Material','MV','FrictionPhysics','AppObject','DebugElement'],fu
     Body.prototype.bindProperties = function(){
         var self = this;
         self.onChange('shape',function(shape){
-            self.center = shape.getCenter();
+            self.center = shape.center;
             shape.parent = self;
             self.update();
         });

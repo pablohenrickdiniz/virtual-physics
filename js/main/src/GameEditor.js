@@ -78,9 +78,10 @@ define([
                         if (!shape.isClockWise()) {
                             shape.invertPath();
                         }
-                        debugger;
                         shape.updateCenter();
                         shape.updateRelative();
+
+
                         var body = new Body({shape:shape,material:Material.Iron,dinamic:self.dinamic});
                         game.add(body);
                         self.drawing = false;
@@ -313,6 +314,8 @@ define([
                     }
                 }
             }
+
+
         },
         executeRegularTool:function(sp){
             var self = this;

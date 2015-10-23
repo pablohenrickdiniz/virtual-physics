@@ -81,7 +81,6 @@ define(['Shape','Color','Border','MV','lodash','FrictionPhysics'],function(Shape
     };
 
     Polygon.prototype.getVerticesInWorldCoords = function () {
-        debugger;
         var self = this;
         var a = [];
         var g = self.vertices;
@@ -94,7 +93,6 @@ define(['Shape','Color','Border','MV','lodash','FrictionPhysics'],function(Shape
     };
 
     Polygon.prototype.getCentroid = function(){
-        debugger;
         if(this.centroid == null || this.centroid == undefined){
             this.updateCentroid();
         }
@@ -102,7 +100,6 @@ define(['Shape','Color','Border','MV','lodash','FrictionPhysics'],function(Shape
     };
 
     Polygon.prototype.getCenter = function(){
-        debugger;
         if(this.center == null || this.center == undefined){
             this.updateCenter();
         }
@@ -111,7 +108,6 @@ define(['Shape','Color','Border','MV','lodash','FrictionPhysics'],function(Shape
 
 
     Polygon.prototype.getRelativeVertices = function(){
-        debugger;
         var self = this;
         var g = self.vertices;
         var size = g.length;
@@ -139,21 +135,36 @@ define(['Shape','Color','Border','MV','lodash','FrictionPhysics'],function(Shape
         }
     };
 
-    Polygon.prototype.updateCentroid = function () {
-        debugger;
+    Polygon.prototype.updateCenter = function () {
         var self = this;
-        self.centroid = Polygon.centroid(self.vertices);
-        self.area = Polygon.area(self.vertices);
+        var centroid = [0, 0];
+        var a = 0;
+        var size = self.vertices.length;
+        var pos;
+        var vb;
+        var mult;
+        var va;
+        var m;
+        var i;
+        for (i = 0; i < size; i++) {
+            pos = i + 1 == size ? 0 : i + 1;
+            va = self.vertices[i];
+            vb = self.vertices[pos];
+            mult = va[0] * vb[1] - vb[0] * va[1];
+            centroid[0] += (va[0] + vb[0]) * mult;
+            centroid[1] += (va[1] + vb[1]) * mult;
+            a += mult;
+        }
+        a *= 0.5;
+        self.area = a;
+        m = 1 / (6 * a);
+        centroid[0] *= m;
+        centroid[1] *= m;
+        self.center = centroid;
     };
 
-    Polygon.prototype.updateCenter = function(){
-        debugger;
-        var self = this;
-        self.center = Polygon.verticesCenter(self.vertices);
-    };
 
     Polygon.prototype.moi2 = function (mass) {
-        debugger;
         var self = this;
         var sum1 = 0;
         var sum2 = 0;
@@ -176,9 +187,8 @@ define(['Shape','Color','Border','MV','lodash','FrictionPhysics'],function(Shape
     };
 
     Polygon.prototype.moi = function (mass) {
-        debugger;
         var self = this;
-        var cv = self.getCenter();
+        var cv = self.center;
         var moi = 0;
         var i;
         var size = self.vertices.length;
@@ -216,7 +226,6 @@ define(['Shape','Color','Border','MV','lodash','FrictionPhysics'],function(Shape
     };
 
     Polygon.prototype.updateRelative = function () {
-        debugger;
         var self = this;
         self.vertices = self.vertices.reverse();
         var cx = self.center[0], cy = self.center[1], i, size = self.vertices.length, vertex;
@@ -230,7 +239,6 @@ define(['Shape','Color','Border','MV','lodash','FrictionPhysics'],function(Shape
     };
 
     Polygon.prototype.updateMinAndMax = function () {
-        debugger;
         var self = this;
         var min = [self.vertices[0][0], self.vertices[0][1]];
         var max = [self.vertices[0][0], self.vertices[0][1]];
@@ -306,13 +314,16 @@ define(['Shape','Color','Border','MV','lodash','FrictionPhysics'],function(Shape
     };
 
     Polygon.verticesCenter = function(vertices){
-        debugger;
         var AABB = Fp.getAABB2(vertices);
         return [(AABB[2]-AABB[0])/2,(AABB[3]-AABB[1])/2];
     };
 
+
+    Polygon.prototype.getArea = function(){
+        return Polygon.area(this.vertices);
+    };
+
     Polygon.area = function(vertices){
-        debugger;
         var a = 0;
         var size = vertices.length;
         var pos;

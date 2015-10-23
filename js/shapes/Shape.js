@@ -7,6 +7,7 @@ define(['Color','Border','AppObject'],function(Color,Border,AppObject){
         self.shadow = null;
         self.theta = 0;
         self.vertices = [];
+        self.area = null;
         self.set(properties);
     };
 
