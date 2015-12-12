@@ -58,7 +58,7 @@ define(['Polygon'],function(Polygon){
         self.height = height;
         var mw = self.width * 0.5;
         var mh = self.height * 0.5;
-        self.area = null;
+        self.getArea();
         self.vertices = [];
         self.add([mw, -mh]).add([-mw, -mh]).add([-mw, mh]).add([mw, mh]);
         self.updateMinAndMax();
