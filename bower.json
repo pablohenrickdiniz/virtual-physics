@@ -1,5 +1,5 @@
 {
-  "name": "phydokz/virtual-physics",
+  "name": "virtual-physics",
   "homepage": "https://github.com/pablohenrickdiniz/Virtual-Physics",
   "authors": [
     "Pablo Henrick <phydokz@hotmail.com>"
@@ -18,11 +18,7 @@
   ],
   "dependencies": {
     "AdminLTE": "admin-lte#~2.3.0",
-    "ReactElements": "https://github.com/pablohenrickdiniz/ReactElements.git",
     "bootstrap": "~3.3.6",
-    "font-awesome": "~4.5.0",
-    "react": "~0.14.0",
-    "lodash": "~3.10.1",
-    "requirejs": "~2.1.20"
+    "font-awesome": "~4.5.0"
   }
 }
