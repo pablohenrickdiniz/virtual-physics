@@ -1,14 +1,18 @@
-define(['Border','Shape'],function(Border,Shape){
+(function(w){
+    if(w.Shape == undefined){
+        throw "Arc requires Shape"
+    }
+
+
     var Arc = function (center, radius, start, end) {
         var self = this;
-        Shape.apply(self,[center, 'white', new Border('black', 1), 0]);
+        Shape.call(self,center, 'white', new Border('black', 1), 0);
         self.start = start;
         self.end = end;
     };
 
-    Arc.prototype = new Shape([0,0],null,null,0);
+    Arc.prototype = Object.create(Shape.prototype);
+    Arc.constructor = Arc;
 
-    return Arc;
-});
-
-
+    w.Arc = Arc;
+})(window);

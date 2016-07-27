@@ -1,4 +1,4 @@
-define(['Body','FrictionPhysics'],function(Body,FrictionPhysics){
+(function(w){
     var QuadTree = function(AABB, l) {
         var self = this;
         self.AABB = AABB;
@@ -128,9 +128,7 @@ define(['Body','FrictionPhysics'],function(Body,FrictionPhysics){
     QuadTree.maxl = 8;
     QuadTree.maxo = 3;
 
-
-    return QuadTree;
-});
-
+    w.QuadTree = QuadTree;
+})(window);
 
 

@@ -1,5 +1,5 @@
-define(['Color','Border','AppObject'],function(Color,Border,AppObject){
-    var  Shape = function(properties) {
+(function(w){
+    w.Shape = function() {
         var self = this;
         self.center = [0,0];
         self.color = new Color({alpha:0});
@@ -8,12 +8,6 @@ define(['Color','Border','AppObject'],function(Color,Border,AppObject){
         self.theta = 0;
         self.vertices = [];
         self.area = null;
-        self.set(properties);
     };
-
-    Shape.prototype = new AppObject;
-
-    return Shape;
-});
-
+})(window);
 

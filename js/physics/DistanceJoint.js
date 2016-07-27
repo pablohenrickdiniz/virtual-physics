@@ -1,12 +1,13 @@
-/**
- * Created by Pablo Henrick Diniz on 15/10/14.
- */
-define(['Joint'],function(Joint){
-    var Distance = function (bodyA, vertexA, bodyB, vertexB) {
+(function(w){
+    if(w.Joint == undefined){
+        "DistanceJoint requires Joint"
+    }
+
+    var DistanceJoint = function (bodyA, vertexA, bodyB, vertexB) {
         var self = this;
         Joint.apply(self, [bodyA, vertexA, bodyB, vertexB]);
     };
-    Distance.prototype = new Joint;
-    return Distance;
-});
 
+    DistanceJoint.prototype = Object.create(Joint.prototype);
+    DistanceJoint.constructor = DistanceJoint;
+})(window);

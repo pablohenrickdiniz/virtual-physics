@@ -1,7 +1,7 @@
 /**
  * Created by Pablo Henrick Diniz on 12/10/14.
  */
-define(['Body','Material','Shape','MV','Rect'],function(Body,Material,Shape,MV,Rect){
+(function(w){
     var MouseBody = function(shape) {
         var self = this;
         self.vLin = [0, 0];
@@ -15,7 +15,8 @@ define(['Body','Material','Shape','MV','Rect'],function(Body,Material,Shape,MV,R
         self.rotationMatrix = null;
     };
 
-    MouseBody.prototype = new Body(new Rect([0,0],1,1),Material.Iron,true);
+    MouseBody.prototype = Object.create(Body.prototype);
+    MouseBody.constructorr = MouseBody;
 
     MouseBody.prototype.getVerticesInWorldCoords = function () {
         var self = this;
@@ -42,7 +43,7 @@ define(['Body','Material','Shape','MV','Rect'],function(Body,Material,Shape,MV,R
         }
         return self.rotationMatrix;
     };
+})(window);
 
-    return MouseBody;
-});
+
 

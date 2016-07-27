@@ -22,9 +22,8 @@
  *THE SOFTWARE.
  */
 
-
-define(['MV','Contact'],function(MV,Contact){
-    return {
+(function(w){
+    var FrictionPhysics = {
         getAABB:function(body){
             var verticesWorld = body.getVerticesInWorldCoords();
             var AABB = [];
@@ -83,8 +82,8 @@ define(['MV','Contact'],function(MV,Contact){
 
 
                 /*
-                    Problema!
-                    Se o vetor for [0,0], a simulação falha,
+                 Problema!
+                 Se o vetor for [0,0], a simulação falha,
                  */
 
                 if(N[0] != 0 || N[1] != 0){
@@ -116,7 +115,7 @@ define(['MV','Contact'],function(MV,Contact){
             }
 
             var collisionCandidates = [];
-                var bodies;
+            var bodies;
             var AABBs;
             var size1 = AABBsGroups.length;
             var size2;
@@ -266,7 +265,10 @@ define(['MV','Contact'],function(MV,Contact){
             return contacts;
         }
     }
-});
+
+    w.FrictionPhysics = FrictionPhysics;
+})(window);
+
 
 /*
  function polygonsIntersect(polygonA, polygonB){

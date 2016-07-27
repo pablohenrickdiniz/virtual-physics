@@ -1,48 +1,35 @@
-define(['Polygon'],function(Polygon){
-    var Rect = function(properties) {
+(function(w){
+    var Rect = function(width,height) {
         var self = this;
         Polygon.apply(self);
-        self.width =  10;
-        self.height = 10;
-        self.parent = null;
-        self.bindProperties();
-        self.set(properties);
+        self.width =  width;
+        self.height = height;
         self.updateDimen(self.width,self.height);
     };
 
-    Rect.prototype = new Polygon;
+    Rect.prototype = Object.create(Polygon.prototype);
+    Rect.constructor = Rect;
 
-    Rect.prototype.bindProperties = function(){
+    Rect.prototype.setWidth = function(width){
         var self = this;
-        self.onChange('width',function(width){
+        if(self.width != width){
+            self.width = width;
             self.updateDimen(width, self.height);
-        });
-        self.onChange('height',function(height){
+        }
+    };
+
+    Rect.prototype.setHeight = function(height){
+        var self = this;
+        if(self.height != height){
+            self.height = height;
             self.updateDimen(self.width, height);
-        });
-
-        self.beforeSet('width',function(oldVal,newVal){
-            newVal = parseFloat(newVal);
-            if(isNaN(newVal) || newVal < 10){
-                return oldVal;
-            }
-            return newVal;
-        });
-
-        self.beforeSet('height',function(oldVal,newVal){
-            newVal = parseFloat(newVal);
-            if(isNaN(newVal) || newVal < 10){
-                return oldVal;
-            }
-            return newVal;
-        });
+        }
     };
 
     Rect.prototype.moi = function(mass){
         var self = this;
         return mass / 12 * (self.height * self.height + self.width * self.width);
     };
-
 
     Rect.prototype.getArea = function(){
         var self = this;
@@ -67,6 +54,5 @@ define(['Polygon'],function(Polygon){
         }
     };
 
-    return Rect;
-});
-
+    w.Rect = Rect;
+})(window);

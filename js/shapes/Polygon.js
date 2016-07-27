@@ -1,30 +1,24 @@
-define(['Shape','Color','Border','MV','lodash','FrictionPhysics'],function(Shape,Color,Border,MV,_,Fp){
-    var Polygon = function(properties) {
+(function(w){
+    if(w.Shape == undefined){
+        throw "Polygon requires Shape"
+    }
+
+    var Polygon = function() {
         var self = this;
-        Shape.apply(self);
+        Shape.call(self);
         self.vertices = [];
         self.min = [];
         self.max = [];
         self.AABB = null;
         self.centroid = null;
-        self.bindProperties();
-        self.set(properties);
     };
 
-    Polygon.prototype = new Shape;
+    Polygon.prototype = Object.create(Shape.prototype);
+    Polygon.constructor = Polygon;
 
     Polygon.prototype.add = function(vertice){
         var self = this;
-        if(self.contains(vertice)){
-            throw new TypeError('Esse vertice já existe no polígono');
-        }
-        else if(!_.isNumber(vertice[0]) || !_.isNumber(vertice[1])){
-            throw new TypeError('O vertice deve ser um array de números');
-        }
-        else{
-            self.vertices.push(vertice);
-        }
-        return self;
+        self.vertices.push(vertice);
     };
 
 
@@ -59,11 +53,10 @@ define(['Shape','Color','Border','MV','lodash','FrictionPhysics'],function(Shape
         }
     };
 
-    Polygon.prototype.bindProperties = function(){
+    Polygon.prototype.setVertices = function(vertices){
         var self = this;
-        self.onChange('vertices',function(){
-            self.updateCenter();
-        });
+        self.vertices = vertices;
+        self.updateCenter();
     };
 
 
@@ -378,8 +371,7 @@ define(['Shape','Color','Border','MV','lodash','FrictionPhysics'],function(Shape
         return Polygon.sumAngles(vertices) > 360;
     };
 
-    return Polygon;
-});
-
+    w.Polygon = Polygon;
+})(window);
 
 

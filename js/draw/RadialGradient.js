@@ -1,4 +1,4 @@
-define(['Color'],function(Color){
+(function(w){
     var RadialGradient = function(cx, cy, r, fx, fy) {
         var self = this;
         self.r = isNaN(r) || r < 0 || r > 100 ? 50 : r;
@@ -19,6 +19,6 @@ define(['Color'],function(Color){
         }
         self.colorsStop[self.colorsStop.length] = [stop, color];
     };
-    return RadialGradient;
-});
 
+    w.RadialGradient = RadialGradient;
+})(window);

@@ -1,13 +1,4 @@
-/**
- * Created by Pablo Henrick Diniz on 26/04/14.
- */
-define(['MV',
-    'Body',
-    'Polygon',
-    'LinearGradient',
-    'RadialGradient',
-    'Color','CanvasLayer'],function(MV,Body,Polygon,LinearGradient,RadialGradient,Color,CanvasLayer){
-
+(function(w){
     var Canvas = function(options,canvas) {
         var self = this;
         CanvasLayer.apply(self,[options,canvas]);
@@ -15,7 +6,8 @@ define(['MV',
         self.min = [0, 0];
     };
 
-    Canvas.prototype = new CanvasLayer;
+    Canvas.prototype = Object.create(CanvasLayer.prototype);
+    Canvas.constructor = Canvas;
 
     Canvas.prototype.drawShape = function (shape) {
         var self = this;
@@ -241,5 +233,5 @@ define(['MV',
         }
     };
 
-    return Canvas;
-});
+    w.Canvas = Canvas;
+})(window);

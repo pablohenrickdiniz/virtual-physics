@@ -1,7 +1,7 @@
-define(['Polygon'],function(Polygon){
+(function(w){
     var Trapezius = function(center, ba, bb, height) {
         var self = this;
-        Polygon.apply(self, [center, 0]);
+        Polygon.call(self, center, 0);
         self.ba = ba;
         self.bb = bb;
         self.height = height;
@@ -16,9 +16,12 @@ define(['Polygon'],function(Polygon){
         ];
     };
 
-    Trapezius.prototype = new Polygon([0,0],0);
+    Trapezius.prototype = Object.create(Polygon.prototype);
+    Trapezius.constructor = Trapezius;
 
 
-    return Trapezius;
-});
+    w.Trapezius = Trapezius;
+})(window);
+
+
 

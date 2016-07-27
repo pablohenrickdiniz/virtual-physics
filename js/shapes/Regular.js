@@ -1,43 +1,32 @@
-define(['Polygon','MV'],function(Polygon,MV){
-    var Regular = function(properties) {
+(function(){
+    var Regular = function(radius,sides) {
         var self = this;
         Polygon.apply(self);
-        self.radius = 10;
-        self.sides = 3;
+        self.radius = radius;
+        self.sides = sides;
         self.thickness = 1;
         self.area = 0.5 * self.sides * (2 * self.radius * Math.sin(MV.toRadians(180 / self.sides))) * self.radius;
-        self.bindProperties();
-        self.set(properties);
         self.updateVertices();
     };
 
-    Regular.prototype = new Polygon;
+    Regular.prototype = Object.create(Polygon.prototype);
+    Regular.constructor = Regular;
 
-    Regular.prototype.bindProperties = function(){
+
+    Regular.prototype.setRadius = function(radius){
         var self = this;
-        self.onChange('radius',function(){
+        if(self.radius != radius){
+            self.radius = radius;
             self.updateVertices();
-        });
+        }
+    };
 
-        self.onChange('sides',function(){
+    Regular.prototype.setSides = function(sides){
+        var self = this;
+        if(self.sides != sides){
+            self.sides = sides;
             self.updateVertices();
-        });
-
-        self.beforeSet('radius',function(oldVal,newVal){
-            newVal = parseFloat(newVal);
-            if(isNaN(newVal) || newVal < 10){
-                return oldVal;
-            }
-            return newVal;
-        });
-
-        self.beforeSet('sides',function(oldVal,newVal){
-            newVal = parseInt(newVal);
-            if(isNaN(newVal) || newVal < 3){
-                return oldVal;
-            }
-            return newVal;
-        });
+        }
     };
 
 
@@ -64,34 +53,35 @@ define(['Polygon','MV'],function(Polygon,MV){
         }
         self.updateMinAndMax();
     };
-    /*
-    Regular.prototype.moi = function (mass) {
-        var self = this;
-        var size;
-        if(self.vertices.length == 4){
-            size = MV.distance(self.vertices[0],self.vertices[1]);
-            return mass / 12 * (size * size + size * size);
-        }
-        else{
-            var sum1 = 0;
-            var sum2 = 0;
-            size = self.vertices.length;
-            var n;
-            var pn;
-            var pn1;
-            var norm;
-            var pos;
-            for (n = 0; n < size; n++) {
-                pos = n + 1 == size ? 0 : n + 1;
-                pn = self.vertices[n];
-                pn1 = self.vertices[pos];
-                norm = MV.norm(MV.VxV(pn, pn1));
-                sum1 += norm * MV.dot(pn1, pn1) + MV.dot(pn1, pn) + MV.dot(pn, pn);
-                sum2 += norm;
-            }
-            return (mass / 6) * (sum1 / sum2);
-        }
-    };*/
 
-    return Regular;
-});
+    w.Regular = Regular;
+
+    /*
+     Regular.prototype.moi = function (mass) {
+     var self = this;
+     var size;
+     if(self.vertices.length == 4){
+     size = MV.distance(self.vertices[0],self.vertices[1]);
+     return mass / 12 * (size * size + size * size);
+     }
+     else{
+     var sum1 = 0;
+     var sum2 = 0;
+     size = self.vertices.length;
+     var n;
+     var pn;
+     var pn1;
+     var norm;
+     var pos;
+     for (n = 0; n < size; n++) {
+     pos = n + 1 == size ? 0 : n + 1;
+     pn = self.vertices[n];
+     pn1 = self.vertices[pos];
+     norm = MV.norm(MV.VxV(pn, pn1));
+     sum1 += norm * MV.dot(pn1, pn1) + MV.dot(pn1, pn) + MV.dot(pn, pn);
+     sum2 += norm;
+     }
+     return (mass / 6) * (sum1 / sum2);
+     }
+     };*/
+})(window);

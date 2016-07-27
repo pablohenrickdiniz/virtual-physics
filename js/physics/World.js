@@ -1,5 +1,4 @@
-define(['QuadTree','MV','FrictionPhysics','AppObject'],function(QuadTree,MV,FrictionPhysics,AppObject){
-
+(function(w){
     var World = function (properties) {
         var self = this;
         self.dt = 1/60;
@@ -20,7 +19,8 @@ define(['QuadTree','MV','FrictionPhysics','AppObject'],function(QuadTree,MV,Fric
     };
 
 
-    World.prototype = new AppObject;
+    World.prototype = Object.create(AppObject.prototype);
+    World.constructor = World;
 
     World.prototype.step = function () {
         var self = this;
@@ -660,5 +660,5 @@ define(['QuadTree','MV','FrictionPhysics','AppObject'],function(QuadTree,MV,Fric
         ];
     };
 
-    return World;
-});
+    w.World = World;
+})(window);

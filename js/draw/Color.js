@@ -1,4 +1,4 @@
-define(function(){
+(function(w){
     var Color = function(red, blue, green, alpha) {
         var self = this;
         if (arguments.length == 1) {
@@ -577,5 +577,5 @@ define(function(){
         return color;
     };
 
-    return Color;
-});
+    w.Color = Color;
+})();

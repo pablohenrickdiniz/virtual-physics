@@ -1,3 +1,0 @@
-define(['chart-tmp'],function(ct){
-    return ct.noConflict();
-});

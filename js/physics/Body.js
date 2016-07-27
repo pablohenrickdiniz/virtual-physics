@@ -1,7 +1,11 @@
-define(['Shape','Material','MV','FrictionPhysics','AppObject','DebugElement'],function(Shape,Material,MV,FrictionPhysics,AppObject,DebugElement){
-    var Body = function(properties) {
+(function(w){
+    if(w.Material == undefined){
+        throw "Body requires Material"
+    }
+
+    var Body = function(shape) {
         var self = this;
-        self.shape = new Shape();
+        self.shape = shape;
         self.center = [0,0];
         self.dinamic = true;
         self.material = Material.Iron;
@@ -17,59 +21,38 @@ define(['Shape','Material','MV','FrictionPhysics','AppObject','DebugElement'],fu
         self.rotMatTheta = null; // used to avoid unnecessary rotation matrix computations
         self.rotationMatrix = null;
         self.index = null;
-        self.debugElement = null;
-        self.bindProperties();
-        self.set(properties);
         self.getRotationMatrix();
     };
 
-    Body.prototype = new AppObject;
-    
-    Body.prototype.bindProperties = function(){
-        var self = this;
-        self.onChange('shape',function(shape){
+
+    Body.prototype.setShape = function(shape){
+        if(shape instanceof Shape){
+            var self = this;
+            self.shape = shape;
             self.center = shape.center;
             shape.parent = self;
             self.update();
-        });
+        }
+    };
 
-        self.onChange('dinamic',function(dinamic){
-            self.update();
-        });
+    Body.prototype.setMass = function(mass){
+        var self = this;
+        self.mass = mass;
+        self.mInv = mass == 0 ? 0 : 1 / mass; // inverse of the mass
+        self.moiInv = mass == 0 ? 0 : 1 / self.shape.moi(mass);// inverse of the moment of inertia
+        self.rotationMatrix = null;
+    };
 
-        self.onChange('mass',function(mass){
-            self.mInv = mass == 0 ? 0 : 1 / mass; // inverse of the mass
-            self.moiInv = mass == 0 ? 0 : 1 / self.shape.moi(mass);// inverse of the moment of inertia
-            self.rotationMatrix = null;
-        });
+    Body.prototype.setDinamic = function(dinamic){
+        var self = this;
+        self.dinamic = true;
+        self.update();
+    };
 
-        self.onChange('material',function(material){
-            self.update();
-        });
-
-        //self.beforeSet('center',function(old,center){
-        //    if(isNaN(center[0]) || isNaN(center[1])){
-        //        throw new TypeError('Center cannot be NaN');
-        //        return old;
-        //    }
-        //    return center;
-        //});
-        //
-        //self.beforeSet('vLin',function(old,vLin){
-        //    if(isNaN(vLin[0]) || isNaN(vLin[1])){
-        //        throw new TypeError('Vlin cannot be NaN');
-        //        return old;
-        //    }
-        //    return vLin;
-        //});
-        //
-        //self.beforeSet('vAng',function(old, vAng){
-        //    if(isNaN(vAng)){
-        //        throw new TypeError('vAng cannot be NaN');
-        //        return old;
-        //    }
-        //    return vAng;
-        //});
+    Body.prototype.setMaterial = function(material){
+        var self = this;
+        self.material = material;
+        self.update();
     };
 
     Body.prototype.addLeaf = function(quad){
@@ -152,22 +135,5 @@ define(['Shape','Material','MV','FrictionPhysics','AppObject','DebugElement'],fu
         return self.vertsAbsolute;
     };
 
-
-    Body.prototype.getDebugElement = function(){
-        var self = this;
-        if(self.debugElement == null){
-            self.debugElement = new DebugElement(self);
-            self.debugElement.debug('center').debug('vLin').debug('vAng');
-        }
-        return self.debugElement;
-    };
-
-    Body.prototype.destroy = function(){
-        var self = this;
-        self.getDebugElement().destroy();
-    };
-
-
-    return Body;
-});
-
+    w.Body = Body;
+})(window);

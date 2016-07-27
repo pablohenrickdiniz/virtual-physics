@@ -1,11 +1,16 @@
-define(['Arc'],function(Arc){
+(function(w){
+    if(w.Arc == undefined){
+        throw "Circle requires Arc"
+    }
+
+
     var Circle = function(center, radius) {
         var self = this;
-        Arc.apply(self, [center, radius, 0, 360]);
+        Arc.call(self, center, radius, 0, 360);
     };
 
-    Circle.prototype = new Arc([0,0],1,0,360);
-
+    Circle.prototype = Object.create(Arc.prototype);
+    Circle.constructor = Circle;
 
     Circle.prototype.getArea = function(){
         var self = this;
@@ -26,6 +31,7 @@ define(['Arc'],function(Arc){
         return mass * self.radius * self.radius / 2;
     };
 
-    return Circle;
-});
+    w.Circle = Circle;
+})(window);
+
 

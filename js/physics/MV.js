@@ -21,8 +21,9 @@
  *OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *THE SOFTWARE.
  */
-define(function(){
-    var MV =  {
+
+(function(w){
+    w.MV =  {
         dot: function (x, y) { //dot product
             return x.reduce(function (p, c, i) {
                 return p + x[i] * y[i];
@@ -170,5 +171,5 @@ define(function(){
             return 0 == a || 0 == d ? null : [d / a, (b * g - h * c) / a];
         }
     };
-    return MV;
-});
+})(window);
+

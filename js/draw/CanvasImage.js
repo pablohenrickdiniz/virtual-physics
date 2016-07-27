@@ -1,5 +1,5 @@
-define(function(){
-    var Image = function(url) {
+(function(w){
+    var CanvasImage = function(url) {
         var self = this;
         self.url = url;
         self.sx = 0;
@@ -45,10 +45,13 @@ define(function(){
         };
     };
 
-    Image.REPEAT = 'repeat';
-    Image.REPEATX = 'repeat-x';
-    Image.REPEATY = 'repeat-y';
-    Image.NOREPEAT = 'no-repeat';
-    return Image;
-});
+    CanvasImage.REPEAT = 'repeat';
+    CanvasImage.REPEATX = 'repeat-x';
+    CanvasImage.REPEATY = 'repeat-y';
+    CanvasImage.NOREPEAT = 'no-repeat';
+
+    w.CanvasImage = CanvasImage;
+})(window);
+
+
 

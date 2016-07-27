@@ -1,4 +1,4 @@
-define(['Color'],function(Color){
+(function(w){
     var LinearGradient = function(px0, py0, px1, py1) {
         var self = this;
         self.px0 = isNaN(px0) || px0 < 0 || px0 > 100 ? 0 : px0;
@@ -20,6 +20,6 @@ define(['Color'],function(Color){
         self.colorsStop[self.colorsStop.length] = [stop, color];
     };
 
-    return LinearGradient;
-});
 
+    w.LinearGradient = LinearGradient;
+})(window);
